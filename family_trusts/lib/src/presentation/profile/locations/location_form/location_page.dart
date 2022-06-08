@@ -9,11 +9,9 @@ import 'package:familytrusts/src/domain/user/user.dart';
 import 'package:familytrusts/src/helper/log_mixin.dart';
 import 'package:familytrusts/src/helper/snackbar_helper.dart';
 import 'package:familytrusts/src/presentation/core/my_apps_bars.dart';
-import 'package:flutter/foundation.dart';
+import 'package:familytrusts/src/presentation/profile/locations/location_form/widgets/location_form.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-
-import 'widgets/location_form.dart';
 
 typedef OnLocationSaveCallback = Function(
   Location updatedLocation,
@@ -70,22 +68,25 @@ class LocationPage extends StatelessWidget with LogMixin {
             (result) {
               result.fold((failure) {
                 showErrorMessage(
-                    failure.map(
-                      unexpected: (_) => LocaleKeys.global_unexpected.tr(),
-                      insufficientPermission: (_) =>
-                          LocaleKeys.global_insufficientPermission.tr(),
-                      unableToUpdate: (_) =>
-                          LocaleKeys.profile_updateLocationFailure.tr(),
-                      unableToCreate: (_) =>
-                          LocaleKeys.profile_addLocationFailure.tr(),
-                      unableToDelete: (_) =>
-                          LocaleKeys.profile_deleteLocationFailure.tr(),
-                    ),
-                    context);
+                  failure.map(
+                    unexpected: (_) => LocaleKeys.global_unexpected.tr(),
+                    insufficientPermission: (_) =>
+                        LocaleKeys.global_insufficientPermission.tr(),
+                    unableToUpdate: (_) =>
+                        LocaleKeys.profile_updateLocationFailure.tr(),
+                    unableToCreate: (_) =>
+                        LocaleKeys.profile_addLocationFailure.tr(),
+                    unableToDelete: (_) =>
+                        LocaleKeys.profile_deleteLocationFailure.tr(),
+                  ),
+                  context,
+                );
               }, (success) {
                 success.map(
                   updateSuccess: (_) => showSuccessMessage(
-                      LocaleKeys.profile_updateLocationSuccess.tr(), context),
+                    LocaleKeys.profile_updateLocationSuccess.tr(),
+                    context,
+                  ),
                   createSuccess: (_) => showSuccessMessage(
                     LocaleKeys.profile_addLocationSuccess.tr(),
                     context,

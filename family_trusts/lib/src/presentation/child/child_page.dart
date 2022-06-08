@@ -18,7 +18,6 @@ import 'package:familytrusts/src/presentation/core/my_button.dart';
 import 'package:familytrusts/src/presentation/core/my_image.dart';
 import 'package:familytrusts/src/presentation/core/separator.dart';
 import 'package:familytrusts/src/presentation/profile/widgets/profile_image.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:quiver/strings.dart' as quiver;
@@ -182,7 +181,8 @@ class _ChildPageState extends State<ChildPage> {
                       keyboardType: TextInputType.datetime,
                       controller: dateCtl,
                       decoration: InputDecoration(
-                          labelText: LocaleKeys.form_birthday_label.tr()),
+                        labelText: LocaleKeys.form_birthday_label.tr(),
+                      ),
                       validator: (val) {
                         if (val == null || val.trim().isEmpty) {
                           return LocaleKeys.form_birthday_error.tr();
@@ -240,17 +240,18 @@ class _ChildPageState extends State<ChildPage> {
                         textColor: Colors.white,
                         onPressed: () async {
                           await AlertHelper().confirm(
-                              context,
-                              LocaleKeys.profile_deleteChildConfirm
-                                  .tr(args: [widget.child.displayName]),
-                              onConfirmCallback: () {
-                            context.read<ChildrenFormBloc>().add(
-                                  ChildrenFormEvent.deleteChild(
-                                    child: widget.child,
-                                    user: widget.connectedUser,
-                                  ),
-                                );
-                          });
+                            context,
+                            LocaleKeys.profile_deleteChildConfirm
+                                .tr(args: [widget.child.displayName]),
+                            onConfirmCallback: () {
+                              context.read<ChildrenFormBloc>().add(
+                                    ChildrenFormEvent.deleteChild(
+                                      child: widget.child,
+                                      user: widget.connectedUser,
+                                    ),
+                                  );
+                            },
+                          );
                         },
                       ),
                     ]
@@ -267,7 +268,7 @@ class _ChildPageState extends State<ChildPage> {
   Future<void> selectBirthday() async {
     final dartz.Option<DateTime> initialDate =
         (quiver.isNotBlank(dateCtl?.text))
-            ? DateHelper.birthdayConverterToDate(dateCtl?.text)
+            ? birthdayConverterToDate(dateCtl?.text)
             : dartz.some(DateTime.now());
 
     final DateTime? choice = await showDatePicker(
@@ -281,7 +282,7 @@ class _ChildPageState extends State<ChildPage> {
     if (choice != null) {
       setState(
         () {
-          dateCtl?.text = DateHelper.birthdayConverterToString(choice);
+          dateCtl?.text = birthdayConverterToString(choice);
         },
       );
     }

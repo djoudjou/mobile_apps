@@ -49,12 +49,13 @@ class AskPage extends StatelessWidget {
                         imageTag: "CHILDREN_LOOKUP",
                       ),
                       Container(
-                          width: 100,
-                          child: MyText(
-                            LocaleKeys.ask_childlookup_title.tr(),
-                            fontSize: 13,
-                            maxLines: 3,
-                          )),
+                        width: 100,
+                        child: MyText(
+                          LocaleKeys.ask_childlookup_title.tr(),
+                          fontSize: 13,
+                          maxLines: 3,
+                        ),
+                      ),
                     ],
                   ),
                 ),
@@ -67,9 +68,11 @@ class AskPage extends StatelessWidget {
   }
 
   void gotoChildrenLookup(BuildContext context) {
-    AutoRouter.of(context).push(ChildrenLookupPageRoute(
-      currentUserId: user.id!,
-      currentFamilyId: user.familyId,
-    ));
+    AutoRouter.of(context).push(
+      ChildrenLookupPageRoute(
+        currentUserId: user.id!,
+        currentFamilyId: user.familyId,
+      ),
+    );
   }
 }

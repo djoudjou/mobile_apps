@@ -1,15 +1,15 @@
 import 'package:auto_route/auto_route.dart';
-import 'package:familytrusts/injection.dart';
-import 'package:familytrusts/src/application/demands/bloc.dart';
-import 'package:familytrusts/src/domain/user/user.dart';
-import 'package:familytrusts/src/presentation/core/loading_content.dart';
-import 'package:familytrusts/src/presentation/routes/router.gr.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:familytrusts/generated/locale_keys.g.dart';
+import 'package:familytrusts/injection.dart';
+import 'package:familytrusts/src/application/demands/bloc.dart';
 import 'package:familytrusts/src/domain/children_lookup/children_lookup.dart';
+import 'package:familytrusts/src/domain/user/user.dart';
 import 'package:familytrusts/src/presentation/core/children_lookup/children_lookup_widget.dart';
 import 'package:familytrusts/src/presentation/core/error_content.dart';
+import 'package:familytrusts/src/presentation/core/loading_content.dart';
 import 'package:familytrusts/src/presentation/core/my_text.dart';
+import 'package:familytrusts/src/presentation/routes/router.gr.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -25,9 +25,10 @@ class DemandsTab extends StatelessWidget {
       create: (context) => getIt<DemandsBloc>()
         ..add(DemandsEvent.loadDemands(connectedUser.familyId)),
       child: BlocConsumer<DemandsBloc, DemandsState>(
-          listener: (context, state) {},
-          builder: (context, state) {
-            return state.map(demandsLoading: (demandsLoading) {
+        listener: (context, state) {},
+        builder: (context, state) {
+          return state.map(
+            demandsLoading: (demandsLoading) {
               return Center(
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -36,7 +37,8 @@ class DemandsTab extends StatelessWidget {
                   ],
                 ),
               );
-            }, demandsLoaded: (demandsLoaded) {
+            },
+            demandsLoaded: (demandsLoaded) {
               if (demandsLoaded.demands.isLeft()) {
                 return Center(
                   child: Column(
@@ -72,8 +74,11 @@ class DemandsTab extends StatelessWidget {
                           childrenLookups[index];
                       return InkWell(
                         onTap: () {
-                          context.pushRoute(ChildrenLookupDetailsPageRoute(
-                              childrenLookup: childrenLookup));
+                          context.pushRoute(
+                            ChildrenLookupDetailsPageRoute(
+                              childrenLookup: childrenLookup,
+                            ),
+                          );
                         },
                         child: ChildrenLookupWidget(
                           cardWidth: MediaQuery.of(context).size.width * .7,
@@ -86,7 +91,8 @@ class DemandsTab extends StatelessWidget {
                   );
                 }
               }
-            }, demandsNotLoaded: (demandsNotLoaded) {
+            },
+            demandsNotLoaded: (demandsNotLoaded) {
               return Center(
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -95,8 +101,10 @@ class DemandsTab extends StatelessWidget {
                   ],
                 ),
               );
-            });
-          }),
+            },
+          );
+        },
+      ),
     );
   }
 }

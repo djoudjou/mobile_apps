@@ -1,7 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:familytrusts/src/domain/notification/event.dart';
-import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:flutter/foundation.dart';
+import 'package:freezed_annotation/freezed_annotation.dart';
+
 part 'event_entity.freezed.dart';
 
 part 'event_entity.g.dart';
@@ -35,7 +36,9 @@ class EventEntity with _$EventEntity {
   factory EventEntity.fromJson(Map<String, dynamic> json) =>
       _$EventEntityFromJson(json);
 
-  factory EventEntity.fromFirestore(DocumentSnapshot<Map<String, dynamic>>doc) {
+  factory EventEntity.fromFirestore(
+    DocumentSnapshot<Map<String, dynamic>> doc,
+  ) {
     return EventEntity.fromJson(doc.data()!).copyWith(id: doc.id);
   }
 }

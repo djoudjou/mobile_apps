@@ -4,6 +4,7 @@ import 'package:bloc/bloc.dart';
 import 'package:dartz/dartz.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:familytrusts/generated/locale_keys.g.dart';
+import 'package:familytrusts/src/application/children_lookup/bloc.dart';
 import 'package:familytrusts/src/domain/auth/i_auth_facade.dart';
 import 'package:familytrusts/src/domain/children_lookup/children_lookup.dart';
 import 'package:familytrusts/src/domain/children_lookup/children_lookup_failure.dart';
@@ -20,15 +21,14 @@ import 'package:familytrusts/src/domain/notification/value_objects.dart';
 import 'package:familytrusts/src/domain/user/i_user_repository.dart';
 import 'package:familytrusts/src/domain/user/user.dart';
 import 'package:familytrusts/src/domain/user/user_failure.dart';
+import 'package:familytrusts/src/helper/bloc_helper.dart';
 import 'package:injectable/injectable.dart';
 import 'package:quiver/strings.dart' as quiver;
-import 'package:rxdart/rxdart.dart';
-
-import 'bloc.dart';
 
 @injectable
 class ChildrenLookupBloc
     extends Bloc<ChildrenLookupEvent, ChildrenLookupState> {
+  static const bounceDuration = Duration(milliseconds: 500);
   final IAuthFacade _authFacade;
   final IUserRepository _userRepository;
   final IFamilyRepository _familyRepository;
@@ -44,33 +44,26 @@ class ChildrenLookupBloc
     this._familyRepository,
     this._childrenLookupRepository,
     this._notificationRepository,
-  ) : super(ChildrenLookupState.initial());
-
-  @override
-  Stream<Transition<ChildrenLookupEvent, ChildrenLookupState>> transformEvents(
-      Stream<ChildrenLookupEvent> events,
-      TransitionFunction<ChildrenLookupEvent, ChildrenLookupState>
-          transitionFn) {
-    final nonDebounceStream = events.where((event) => event is! NoteChanged);
-
-    final debounceStream =
-        events.where((event) => event is NoteChanged).debounceTime(
-              const Duration(milliseconds: 500),
-            );
-
-    return super.transformEvents(
-        MergeStream([nonDebounceStream, debounceStream]), transitionFn);
+  ) : super(ChildrenLookupState.initial()) {
+    on<ChildrenLookupEvent>(
+      (event, emit) => mapEventToState(event, emit),
+      transformer: debounce(bounceDuration),
+    );
   }
 
-  @override
-  Stream<ChildrenLookupState> mapEventToState(
-      ChildrenLookupEvent event) async* {
-    yield* event.map(
-      init: (ChildrenLookupInit e) async* {
+  Future<void> mapEventToState(
+    ChildrenLookupEvent event,
+    Emitter<ChildrenLookupState> emit,
+  ) async {
+    event.map(
+      init: (ChildrenLookupInit e) {
         if (quiver.isBlank(e.familyId)) {
-          yield state.copyWith(
+          emit(
+            state.copyWith(
               failureOrSuccessOption:
-                  some(left(const ChildrenLookupFailure.noFamily())));
+                  some(left(const ChildrenLookupFailure.noFamily())),
+            ),
+          );
         } else {
           _childrenSubscription?.cancel();
           _childrenSubscription =
@@ -80,65 +73,85 @@ class ChildrenLookupBloc
 
           _locationsSubscription?.cancel();
           _locationsSubscription =
-              _familyRepository.getLocations(e.familyId!).listen((event) {
-            add(ChildrenLookupEvent.locationsUpdated(eitherLocations: event));
-          }, onError: (_) {
-            _locationsSubscription?.cancel();
-          });
+              _familyRepository.getLocations(e.familyId!).listen(
+            (event) {
+              add(ChildrenLookupEvent.locationsUpdated(eitherLocations: event));
+            },
+            onError: (_) {
+              _locationsSubscription?.cancel();
+            },
+          );
 
-          yield state.copyWith(
-            isInitializing: false,
-            showErrorMessages: true,
-            familyId: e.familyId,
+          emit(
+            state.copyWith(
+              isInitializing: false,
+              showErrorMessages: true,
+              familyId: e.familyId,
+            ),
           );
         }
       },
-      noteChanged: (NoteChanged e) async* {
-        yield state.copyWith(
-          notesStep: state.notesStep.copyWith(noteBody: NoteBody(e.note)),
-          failureOrSuccessOption: none(),
+      noteChanged: (NoteChanged e) {
+        emit(
+          state.copyWith(
+            notesStep: state.notesStep.copyWith(noteBody: NoteBody(e.note)),
+            failureOrSuccessOption: none(),
+          ),
         );
       },
-      rendezVousChanged: (RendezVousChanged value) async* {
-        yield state.copyWith(
-          rendezVousStep: state.rendezVousStep
-              .copyWith(rendezVous: RendezVous.fromDate(value.dateTime)),
-          failureOrSuccessOption: none(),
+      rendezVousChanged: (RendezVousChanged value) {
+        emit(
+          state.copyWith(
+            rendezVousStep: state.rendezVousStep
+                .copyWith(rendezVous: RendezVous.fromDate(value.dateTime)),
+            failureOrSuccessOption: none(),
+          ),
         );
       },
-      childrenUpdated: (ChildrenUpdated value) async* {
-        yield state.copyWith(
-          childrenStep: state.childrenStep
-              .copyWith(optionEitherChildren: some(value.eitherChildren)),
-          failureOrSuccessOption: none(),
+      childrenUpdated: (ChildrenUpdated value) {
+        emit(
+          state.copyWith(
+            childrenStep: state.childrenStep
+                .copyWith(optionEitherChildren: some(value.eitherChildren)),
+            failureOrSuccessOption: none(),
+          ),
         );
       },
-      locationsUpdated: (LocationsUpdated value) async* {
-        yield state.copyWith(
-          locationsStep: state.locationsStep
-              .copyWith(optionEitherLocations: some(value.eitherLocations)),
-          failureOrSuccessOption: none(),
+      locationsUpdated: (LocationsUpdated value) {
+        emit(
+          state.copyWith(
+            locationsStep: state.locationsStep
+                .copyWith(optionEitherLocations: some(value.eitherLocations)),
+            failureOrSuccessOption: none(),
+          ),
         );
       },
-      childSelected: (ChildSelected value) async* {
-        yield state.copyWith(
-          childrenStep: state.childrenStep.copyWith(selectedChild: value.child),
-          failureOrSuccessOption: none(),
+      childSelected: (ChildSelected value) {
+        emit(
+          state.copyWith(
+            childrenStep:
+                state.childrenStep.copyWith(selectedChild: value.child),
+            failureOrSuccessOption: none(),
+          ),
         );
         //add(const Next());
       },
-      locationSelected: (LocationSelected value) async* {
-        yield state.copyWith(
-          locationsStep:
-              state.locationsStep.copyWith(selectedLocation: value.location),
-          failureOrSuccessOption: none(),
+      locationSelected: (LocationSelected value) {
+        emit(
+          state.copyWith(
+            locationsStep:
+                state.locationsStep.copyWith(selectedLocation: value.location),
+            failureOrSuccessOption: none(),
+          ),
         );
         //add(const Next());
       },
-      submitted: (Submitted value) async* {
-        yield state.copyWith(
-          isSubmitting: true,
-          failureOrSuccessOption: none(),
+      submitted: (Submitted value) async {
+        emit(
+          state.copyWith(
+            isSubmitting: true,
+            failureOrSuccessOption: none(),
+          ),
         );
 
         final String userId =
@@ -205,15 +218,19 @@ class ChildrenLookupBloc
             ),
           );
 
-          yield state.copyWith(
-            isSubmitting: false,
-            failureOrSuccessOption: some(right(unit)),
+          emit(
+            state.copyWith(
+              isSubmitting: false,
+              failureOrSuccessOption: some(right(unit)),
+            ),
           );
         } else {
-          yield state.copyWith(
-            isSubmitting: false,
-            failureOrSuccessOption:
-                some(left(const ChildrenLookupFailure.userNotConnected())),
+          emit(
+            state.copyWith(
+              isSubmitting: false,
+              failureOrSuccessOption:
+                  some(left(const ChildrenLookupFailure.userNotConnected())),
+            ),
           );
         }
       },
@@ -221,8 +238,10 @@ class ChildrenLookupBloc
         if (state.currentStep + 1 < 4) {
           add(Goto(state.currentStep + 1));
         } else {
-          yield state.copyWith(
-            isCompleted: isValid(),
+          emit(
+            state.copyWith(
+              isCompleted: isValid(),
+            ),
           );
         }
       },
@@ -230,31 +249,38 @@ class ChildrenLookupBloc
         if (state.currentStep > 0) {
           add(Goto(state.currentStep - 1));
         }
-        yield state.copyWith(
-          isCompleted: false,
+        emit(
+          state.copyWith(
+            isCompleted: false,
+          ),
         );
       },
       goTo: (Goto value) async* {
-        yield state.copyWith(
-          currentStep: value.step,
-          childrenStep: state.childrenStep.copyWith(isActive: value.step == 0),
-          locationsStep:
-              state.locationsStep.copyWith(isActive: value.step == 1),
-          rendezVousStep:
-              state.rendezVousStep.copyWith(isActive: value.step == 2),
-          notesStep: state.notesStep.copyWith(isActive: value.step == 3),
-          //isCompleted: isValid(),
+        emit(
+          state.copyWith(
+            currentStep: value.step,
+            childrenStep:
+                state.childrenStep.copyWith(isActive: value.step == 0),
+            locationsStep:
+                state.locationsStep.copyWith(isActive: value.step == 1),
+            rendezVousStep:
+                state.rendezVousStep.copyWith(isActive: value.step == 2),
+            notesStep: state.notesStep.copyWith(isActive: value.step == 3),
+            //isCompleted: isValid(),
+          ),
         );
       },
     );
   }
 
   String childrenLookupMsg() {
-    return LocaleKeys.ask_childlookup_notification_template.tr(args: [
-      state.childrenStep.selectedChild!.displayName,
-      state.locationsStep.selectedLocation!.title.getOrCrash(),
-      state.rendezVousStep.rendezVous.toText,
-    ]);
+    return LocaleKeys.ask_childlookup_notification_template.tr(
+      args: [
+        state.childrenStep.selectedChild!.displayName,
+        state.locationsStep.selectedLocation!.title.getOrCrash(),
+        state.rendezVousStep.rendezVous.toText,
+      ],
+    );
   }
 
   bool isValid() {

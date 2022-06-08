@@ -11,10 +11,9 @@ import 'package:familytrusts/src/presentation/core/my_button.dart';
 import 'package:familytrusts/src/presentation/core/my_text.dart';
 import 'package:familytrusts/src/presentation/core/separator.dart';
 import 'package:familytrusts/src/presentation/routes/router.gr.dart';
+import 'package:familytrusts/src/presentation/sign_in/widgets/sign_in.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-
-import 'sign_in.dart';
 
 class SignInForm extends StatelessWidget with LogMixin {
   @override
@@ -27,20 +26,19 @@ class SignInForm extends StatelessWidget with LogMixin {
           (either) => either.fold(
             (failure) {
               showErrorMessage(
-                  failure.map(
-                    cancelledByUser: (_) =>
-                        LocaleKeys.login_cancelledByUser.tr(),
-                    serverError: (_) => LocaleKeys.global_serverError.tr(),
-                    emailAlreadyInUse: (_) =>
-                        LocaleKeys.login_emailAlreadyInUse.tr(),
-                    invalidEmailAndPasswordCombination: (_) => LocaleKeys
-                        .login_invalidEmailAndPasswordCombination
-                        .tr(),
-                    alreadySignWithAnotherMethod: (e) => LocaleKeys
-                        .register_alreadySignedWithAnotherMethod
-                        .tr(args: [e.providerName]),
-                  ),
-                  context);
+                failure.map(
+                  cancelledByUser: (_) => LocaleKeys.login_cancelledByUser.tr(),
+                  serverError: (_) => LocaleKeys.global_serverError.tr(),
+                  emailAlreadyInUse: (_) =>
+                      LocaleKeys.login_emailAlreadyInUse.tr(),
+                  invalidEmailAndPasswordCombination: (_) =>
+                      LocaleKeys.login_invalidEmailAndPasswordCombination.tr(),
+                  alreadySignWithAnotherMethod: (e) => LocaleKeys
+                      .register_alreadySignedWithAnotherMethod
+                      .tr(args: [e.providerName]),
+                ),
+                context,
+              );
             },
             (userId) {
               AutoRouter.of(context).replace(

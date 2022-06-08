@@ -1,5 +1,6 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:familytrusts/injection.dart';
 import 'package:familytrusts/src/application/auth/bloc.dart';
 import 'package:familytrusts/src/application/core/simple_navigator_observer.dart';
 import 'package:familytrusts/src/application/messages/bloc.dart';
@@ -11,12 +12,9 @@ import 'package:familytrusts/src/presentation/routes/auth_guard.dart';
 import 'package:familytrusts/src/presentation/routes/router.gr.dart'
     as router_gr;
 import 'package:firebase_analytics/firebase_analytics.dart';
-import 'package:firebase_analytics/observer.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
-
-import '../../../injection.dart';
 
 class AppWidget extends StatelessWidget with LogMixin {
   final _scaffoldKey = GlobalKey<ScaffoldState>();
@@ -65,11 +63,9 @@ class AppWidget extends StatelessWidget with LogMixin {
           ),
         ),
         primaryColor: Colors.blue,
-        accentColor: Colors.blueAccent,
         focusColor: Colors.red,
         backgroundColor: Colors.indigo,
         dividerColor: Colors.grey,
-        primarySwatch: primaryColor,
         tabBarTheme: const TabBarTheme(
           labelColor: Colors.black,
           unselectedLabelColor: Colors.grey,
@@ -114,6 +110,8 @@ class AppWidget extends StatelessWidget with LogMixin {
             decorationColor: Colors.grey,
           ),
         ),
+        colorScheme: ColorScheme.fromSwatch(primarySwatch: primaryColor)
+            .copyWith(secondary: Colors.blueAccent),
       ),
     );
 
@@ -124,14 +122,16 @@ class AppWidget extends StatelessWidget with LogMixin {
     return MultiBlocProvider(
       providers: [
         BlocProvider(
-            create: (context) =>
-                getIt<MessagesBloc>()..add(const MessagesEvent.init())),
+          create: (context) =>
+              getIt<MessagesBloc>()..add(const MessagesEvent.init()),
+        ),
         BlocProvider(
-            create: (context) => getIt<AuthenticationBloc>()
-              ..add(const AuthenticationEvent.authCheckRequested())),
+          create: (context) => getIt<AuthenticationBloc>()
+            ..add(const AuthenticationEvent.authCheckRequested()),
+        ),
         BlocProvider(
-          create: (context) => getIt<ProfilTabBloc>()
-              ..add(const ProfilTabEvent.gotoChildren()),
+          create: (context) =>
+              getIt<ProfilTabBloc>()..add(const ProfilTabEvent.gotoChildren()),
         ),
         BlocProvider(
           create: (context) => getIt<NotificationTabBloc>(),

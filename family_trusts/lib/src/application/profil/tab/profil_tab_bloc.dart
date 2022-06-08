@@ -1,19 +1,24 @@
-import 'dart:async';
-
 import 'package:bloc/bloc.dart';
+import 'package:bloc_concurrency/bloc_concurrency.dart';
+import 'package:familytrusts/src/application/profil/tab/bloc.dart';
 import 'package:familytrusts/src/domain/profil/profil_tab.dart';
 import 'package:injectable/injectable.dart';
 
-import 'bloc.dart';
-
 @injectable
 class ProfilTabBloc extends Bloc<ProfilTabEvent, ProfilTabState> {
-  ProfilTabBloc() : super(ProfilTabState.initial());
+  ProfilTabBloc() : super(ProfilTabState.initial()) {
+    on<ProfilTabEvent>(
+      (event, emit) => mapEventToState(event, emit),
+      transformer: restartable(),
+    );
+  }
 
-  @override
-  Stream<ProfilTabState> mapEventToState(ProfilTabEvent event) async* {
-    yield* event.map(
-      init: (Init value) async* {
+  void mapEventToState(
+    ProfilTabEvent event,
+    Emitter<ProfilTabState> emit,
+  ) {
+    event.map(
+      init: (Init value) {
         switch (value.currentTab) {
           case ProfilTab.children:
             add(const ProfilTabEvent.gotoChildren());
@@ -26,19 +31,25 @@ class ProfilTabBloc extends Bloc<ProfilTabEvent, ProfilTabState> {
             break;
         }
       },
-      gotoChildren: (GotoChildren value) async* {
-        yield state.copyWith(
-          current: ProfilTab.children,
+      gotoChildren: (GotoChildren value) {
+        emit(
+          state.copyWith(
+            current: ProfilTab.children,
+          ),
         );
       },
-      gotoTrustedUsers: (GotoTrustedUsers value) async* {
-        yield state.copyWith(
-          current: ProfilTab.trustedUsers,
+      gotoTrustedUsers: (GotoTrustedUsers value) {
+        emit(
+          state.copyWith(
+            current: ProfilTab.trustedUsers,
+          ),
         );
       },
-      gotoLocations: (GotoLocations value) async* {
-        yield state.copyWith(
-          current: ProfilTab.locations,
+      gotoLocations: (GotoLocations value) {
+        emit(
+          state.copyWith(
+            current: ProfilTab.locations,
+          ),
         );
       },
     );

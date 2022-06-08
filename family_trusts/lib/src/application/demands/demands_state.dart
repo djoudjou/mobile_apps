@@ -6,7 +6,7 @@ import 'package:freezed_annotation/freezed_annotation.dart';
 part 'demands_state.freezed.dart';
 
 @freezed
-abstract class DemandsState with _$DemandsState {
+class DemandsState with _$DemandsState {
   const factory DemandsState.demandsLoading() = DemandsLoading;
 
   const factory DemandsState.demandsLoaded(Either<DemandsFailure,Demands> demands) = DemandsLoaded;

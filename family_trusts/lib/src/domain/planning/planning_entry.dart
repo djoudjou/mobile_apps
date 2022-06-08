@@ -1,6 +1,7 @@
 import 'package:familytrusts/src/domain/children_lookup/children_lookup.dart';
-import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:flutter/foundation.dart';
+import 'package:freezed_annotation/freezed_annotation.dart';
+
 part 'planning_entry.freezed.dart';
 
 @freezed

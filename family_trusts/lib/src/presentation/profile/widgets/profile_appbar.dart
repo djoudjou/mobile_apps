@@ -27,19 +27,20 @@ class ProfileAppBar extends SliverAppBar {
           bottom: _tabBar,
           actions: <Widget>[
             IconButton(
-                color: Colors.black,
-                icon: const Icon(Icons.exit_to_app),
-                onPressed: () {
-                  AlertHelper().confirm(
-                    context,
-                    LocaleKeys.logout.tr(),
-                    onConfirmCallback: () {
-                      context
-                          .read<AuthenticationBloc>()
-                          .add(const AuthenticationEvent.signedOut());
-                    },
-                  );
-                })
+              color: Colors.black,
+              icon: const Icon(Icons.exit_to_app),
+              onPressed: () {
+                AlertHelper().confirm(
+                  context,
+                  LocaleKeys.logout.tr(),
+                  onConfirmCallback: () {
+                    context
+                        .read<AuthenticationBloc>()
+                        .add(const AuthenticationEvent.signedOut());
+                  },
+                );
+              },
+            )
           ],
           flexibleSpace: FlexibleSpaceBar(
             titlePadding: _tabBar != null

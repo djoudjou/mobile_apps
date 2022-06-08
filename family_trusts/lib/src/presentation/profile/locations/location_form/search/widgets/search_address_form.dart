@@ -3,12 +3,11 @@ import 'package:familytrusts/generated/locale_keys.g.dart';
 import 'package:familytrusts/src/application/location/bloc.dart';
 import 'package:familytrusts/src/domain/location/complex_address.dart';
 import 'package:familytrusts/src/helper/snackbar_helper.dart';
-import 'package:familytrusts/src/presentation/core/separator.dart';
 import 'package:familytrusts/src/presentation/core/my_text.dart';
+import 'package:familytrusts/src/presentation/core/separator.dart';
+import 'package:familytrusts/src/presentation/profile/locations/location_form/search/search_address_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-
-import '../search_address_page.dart';
 
 class SearchAddressForm extends StatelessWidget {
   final OnSelectAddressCallback onSelectAddressCallback;
@@ -38,19 +37,20 @@ class SearchAddressForm extends StatelessWidget {
         );
       },
       child: BlocBuilder<SearchLocationBloc, SearchLocationState>(
-          builder: (context, state) {
-        return Padding(
-          padding: const EdgeInsets.all(20),
-          child: Column(
-            children: <Widget>[
-              const MyVerticalSeparator(),
-              addressLookupText(context),
-              const MyVerticalSeparator(),
-              buildResult(state, context),
-            ],
-          ),
-        );
-      }),
+        builder: (context, state) {
+          return Padding(
+            padding: const EdgeInsets.all(20),
+            child: Column(
+              children: <Widget>[
+                const MyVerticalSeparator(),
+                addressLookupText(context),
+                const MyVerticalSeparator(),
+                buildResult(state, context),
+              ],
+            ),
+          );
+        },
+      ),
     );
   }
 
@@ -93,11 +93,12 @@ class SearchAddressForm extends StatelessWidget {
                       ),
                     ),
                     title: Align(
-                        alignment: Alignment.centerLeft,
-                        child: MyText(
-                          complexAddress.address!,
-                          maxLines: 2,
-                        )),
+                      alignment: Alignment.centerLeft,
+                      child: MyText(
+                        complexAddress.address!,
+                        maxLines: 2,
+                      ),
+                    ),
                     leading: const Icon(Icons.location_on),
                   );
                 },

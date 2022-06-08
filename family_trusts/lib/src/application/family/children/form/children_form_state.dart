@@ -1,5 +1,5 @@
-import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:flutter/foundation.dart';
+import 'package:freezed_annotation/freezed_annotation.dart';
 
 part 'children_form_state.freezed.dart';
 
@@ -13,13 +13,15 @@ class ChildrenFormState with _$ChildrenFormState {
 
   const factory ChildrenFormState.addChildFailure() = _AddChildFailure;
 
-  const factory ChildrenFormState.updateChildInProgress() = _UpdateChildInProgress;
+  const factory ChildrenFormState.updateChildInProgress() =
+      _UpdateChildInProgress;
 
   const factory ChildrenFormState.updateChildSuccess() = _UpdateChildSuccess;
 
   const factory ChildrenFormState.updateChildFailure() = _UpdateChildFailure;
 
-  const factory ChildrenFormState.deleteChildInProgress() = _DeleteChildInProgress;
+  const factory ChildrenFormState.deleteChildInProgress() =
+      _DeleteChildInProgress;
 
   const factory ChildrenFormState.deleteChildSuccess() = _DeleteChildSuccess;
 

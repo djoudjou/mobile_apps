@@ -29,8 +29,8 @@ class FirebaseMessagesRepository with LogMixin implements IMessagesRepository {
 
   @override
   Stream<Either<MessagesFailure, Message>> getMessages() {
-    return controller.stream.onErrorReturnWith((e,stacktrace) {
-      _errorService.logException(e,stackTrace: stacktrace);
+    return controller.stream.onErrorReturnWith((e, stacktrace) {
+      _errorService.logException(e, stackTrace: stacktrace);
       return left(const MessagesFailure.serverError());
     });
   }
@@ -38,7 +38,8 @@ class FirebaseMessagesRepository with LogMixin implements IMessagesRepository {
   @override
   Future<Either<MessagesFailure, Unit>> init() async {
     try {
-      final NotificationSettings settings = await _firebaseMessaging.requestPermission(
+      final NotificationSettings settings =
+          await _firebaseMessaging.requestPermission(
         alert: true,
         announcement: true,
         badge: true,
@@ -48,20 +49,18 @@ class FirebaseMessagesRepository with LogMixin implements IMessagesRepository {
         sound: true,
       );
 
-      if(settings.authorizationStatus == AuthorizationStatus.authorized) {
-
-
+      if (settings.authorizationStatus == AuthorizationStatus.authorized) {
         FirebaseMessaging.onMessage.listen((RemoteMessage message) {
           log("onMessage: $message");
           addMessage("onMessage", message.data);
         }
 
-        // FirebaseMessaging.onMessageOpenedApp.listen((event) {
-        //   log("onMessage: $event");
-        //   addMessage("onMessage", event.data);
-        // })
+            // FirebaseMessaging.onMessageOpenedApp.listen((event) {
+            //   log("onMessage: $event");
+            //   addMessage("onMessage", event.data);
+            // })
 
-        /*
+            /*
           _firebaseMessaging.configure(
           onMessage: (Map<String, dynamic> message) async {
             log("onMessage: $message");
@@ -80,9 +79,7 @@ class FirebaseMessagesRepository with LogMixin implements IMessagesRepository {
             addMessage("onBackgroundMessage", message);
           },
           */
-        );
-
-
+            );
       }
 
       return right(unit);
@@ -94,8 +91,15 @@ class FirebaseMessagesRepository with LogMixin implements IMessagesRepository {
 
   void addMessage(String from, Map<String, dynamic> message) {
     final MessageEntity me = MessageEntity.fromData(message);
-    controller.add(right(Message(
-        date: TimestampVo.now(), title: me.title, body: me.body)));
+    controller.add(
+      right(
+        Message(
+          date: TimestampVo.now(),
+          title: me.title,
+          body: me.body,
+        ),
+      ),
+    );
   }
 
   @override

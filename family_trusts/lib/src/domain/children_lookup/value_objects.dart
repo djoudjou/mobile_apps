@@ -13,11 +13,15 @@ class RendezVous extends ValueObject<DateTime> {
   }
 
   factory RendezVous.fromValue(String text) {
-    final Option<DateTime> val = DateHelper.rendezVousConverterToDate(text);
+    final Option<DateTime> val = rendezVousConverterToDate(text);
     return val.fold(
-        () => RendezVous._(left(
-            ValueFailure.invalidRendezVousValue(failedValue: DateTime.now()))),
-        (a) => RendezVous.fromDate(a));
+      () => RendezVous._(
+        left(
+          ValueFailure.invalidRendezVousValue(failedValue: DateTime.now()),
+        ),
+      ),
+      (a) => RendezVous.fromDate(a),
+    );
     //return RendezVous.fromDate(val);
   }
 
@@ -25,8 +29,9 @@ class RendezVous extends ValueObject<DateTime> {
 
   const RendezVous._(this.value);
 
-  String get toText => DateHelper.rendezVousConverterToString(getOrCrash());
-  String get toHourText => DateHelper.rendezVousConverterToHourString(getOrCrash());
+  String get toText => rendezVousConverterToString(getOrCrash());
+
+  String get toHourText => rendezVousConverterToHourString(getOrCrash());
 }
 
 ///
@@ -124,7 +129,8 @@ class MissionEventType extends ValueObject<MissionEventTypeEnum> {
 
     return (val == null)
         ? MissionEventType._(
-            left(ValueFailure.invalidEnumValue(failedValue: text)))
+            left(ValueFailure.invalidEnumValue(failedValue: text)),
+          )
         : MissionEventType._(right(val));
   }
 

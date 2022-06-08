@@ -10,13 +10,12 @@ import 'package:familytrusts/src/domain/notification/event.dart';
 import 'package:familytrusts/src/domain/notification/i_notification_repository.dart';
 import 'package:familytrusts/src/domain/notification/value_objects.dart';
 import 'package:familytrusts/src/domain/user/i_user_repository.dart';
+import 'package:familytrusts/src/domain/user/user.dart';
 import 'package:familytrusts/src/domain/user/value_objects.dart';
 import 'package:familytrusts/src/helper/analytics_svc.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:familytrusts/src/domain/user/user.dart';
-import 'package:mockito/mockito.dart';
-
 import 'package:mockito/annotations.dart';
+import 'package:mockito/mockito.dart';
 
 import 'trusted_user_form_bloc_test.mocks.dart';
 
@@ -59,12 +58,13 @@ void main() {
 
   group('TrustedUserForm', () {
     final User berangere = User(
-        id: "BGU",
-        familyId: "DJOUTSOP_ID",
-        email: EmailAddress("berangere.guilley@me.com"),
-        name: Name("Guilley"),
-        surname: Surname("Bérangère"),
-        photoUrl: "https://toto.jpeg");
+      id: "BGU",
+      familyId: "DJOUTSOP_ID",
+      email: EmailAddress("berangere.guilley@me.com"),
+      name: Name("Guilley"),
+      surname: Surname("Bérangère"),
+      photoUrl: "https://toto.jpeg",
+    );
     final User aurelien = User(
       id: "ADJ",
       familyId: "DJOUTSOP_ID",
@@ -85,14 +85,18 @@ void main() {
         when(mockUserRepository!.getUser(aurelien.id!))
             .thenAnswer((_) async => right(aurelien));
 
-        when(mockFamilyRepository!.addTrustedUser(
+        when(
+          mockFamilyRepository!.addTrustedUser(
             familyId: aurelien.familyId!,
             trustedUser: TrustedUser(
               user: berangere,
               since: now,
-            ))).thenAnswer((_) async => right(unit));
+            ),
+          ),
+        ).thenAnswer((_) async => right(unit));
 
-        when(mockNotificationRepository!.createEvent(
+        when(
+          mockNotificationRepository!.createEvent(
             aurelien.id!,
             Event(
               date: now,
@@ -102,7 +106,9 @@ void main() {
               type: EventType.trustAdded(),
               fromConnectedUser: true,
               subject: '',
-            ))).thenAnswer((_) async => right(unit));
+            ),
+          ),
+        ).thenAnswer((_) async => right(unit));
 
         return TrustedUserFormBloc(
           mockFamilyRepository!,
@@ -112,12 +118,13 @@ void main() {
           mockAnalyticsSvc!,
         );
       },
-      act: (TrustedUserFormBloc bloc) =>
-          bloc.add(TrustedUserFormEvent.addTrustedUser(
-        currentUser: aurelien,
-        userToAdd: berangere,
-        time: now,
-      )),
+      act: (TrustedUserFormBloc bloc) => bloc.add(
+        TrustedUserFormEvent.addTrustedUser(
+          currentUser: aurelien,
+          userToAdd: berangere,
+          time: now,
+        ),
+      ),
       expect: () => [
         TrustedUserFormState(
           state: TrustedUserFormStateEnum.adding,

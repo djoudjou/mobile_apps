@@ -10,7 +10,7 @@ import 'package:familytrusts/src/presentation/core/my_text.dart';
 import 'package:familytrusts/src/presentation/routes/router.gr.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:google_maps_place_picker/google_maps_place_picker.dart';
+import 'package:google_maps_place_picker_mb/google_maps_place_picker.dart';
 
 typedef OnSelectPlaceCallback = Function(OnSelectPlaceParams params);
 
@@ -40,7 +40,8 @@ class SelectPlacePickerInput extends StatefulWidget {
   _SelectPlacePickerInputState createState() => _SelectPlacePickerInputState();
 }
 
-class _SelectPlacePickerInputState extends State<SelectPlacePickerInput> with LogMixin {
+class _SelectPlacePickerInputState extends State<SelectPlacePickerInput>
+    with LogMixin {
   @override
   Widget build(BuildContext context) {
     return ElevatedButton.icon(
@@ -50,10 +51,12 @@ class _SelectPlacePickerInputState extends State<SelectPlacePickerInput> with Lo
       label: MyText(LocaleKeys.location_form_placePicker_label.tr()),
       icon: const Icon(Icons.location_on),
       onPressed: () {
-        context.pushRoute(SelectPlacePickerPageRoute(
-          currentPosition: widget.currentPosition,
-          onSelectPlaceCallback: widget.onSelectPlaceCallback,
-        ));
+        context.pushRoute(
+          SelectPlacePickerPageRoute(
+            currentPosition: widget.currentPosition,
+            onSelectPlaceCallback: widget.onSelectPlaceCallback,
+          ),
+        );
       },
     );
   }
@@ -93,7 +96,10 @@ class SelectPlacePickerPage extends StatelessWidget with LogMixin {
   }
 
   Widget _placeWidgetBuilder(
-      BuildContext context, PickResult data, SearchingState state) {
+    BuildContext context,
+    PickResult data,
+    SearchingState state,
+  ) {
     return FloatingCard(
       bottomPosition: MediaQuery.of(context).size.height * 0.05,
       leftPosition: MediaQuery.of(context).size.width * 0.025,
@@ -176,10 +182,11 @@ class SelectPlacePickerPage extends StatelessWidget with LogMixin {
                           Container(
                         child: MyImage(
                           photoUrl: _buildPhotoURL(
-                              result.photos![itemIndex].photoReference),
+                            result.photos![itemIndex].photoReference,
+                          ),
                           defaultImage: const Image(
-                              image:
-                                  defaultLocationImages), // todo : il faut une image pa défaut pour cet écran
+                            image: defaultLocationImages,
+                          ), // todo : il faut une image pa défaut pour cet écran
                         ),
                       ),
                     ),
@@ -213,9 +220,10 @@ class SelectPlacePickerPage extends StatelessWidget with LogMixin {
                   OnSelectPlaceParams(
                     address: result.formattedAddress!,
                     photoUrl: _buildPhotoURL(
-                        result.photos != null && result.photos!.isNotEmpty
-                            ? result.photos![selectedPhoto].photoReference
-                            : ''),
+                      result.photos != null && result.photos!.isNotEmpty
+                          ? result.photos![selectedPhoto].photoReference
+                          : '',
+                    ),
                     position: LatLng(
                       result.geometry!.location.lat,
                       result.geometry!.location.lng,

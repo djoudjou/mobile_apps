@@ -13,12 +13,11 @@ import 'package:familytrusts/src/domain/family/locations/location.dart';
 import 'package:familytrusts/src/domain/family/value_objects.dart';
 import 'package:familytrusts/src/domain/notification/i_notification_repository.dart';
 import 'package:familytrusts/src/domain/user/i_user_repository.dart';
+import 'package:familytrusts/src/domain/user/user.dart';
 import 'package:familytrusts/src/domain/user/value_objects.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:familytrusts/src/domain/user/user.dart';
-import 'package:mockito/mockito.dart';
-
 import 'package:mockito/annotations.dart';
+import 'package:mockito/mockito.dart';
 
 import 'children_lookup_details_bloc_test.mocks.dart';
 
@@ -57,12 +56,13 @@ void main() {
 
   group('ChildrenLookupDetails', () {
     final User berangere = User(
-        id: "BGU",
-        familyId: "DJOUTSOP_ID",
-        email: EmailAddress("berangere.guilley@me.com"),
-        name: Name("Guilley"),
-        surname: Surname("Bérangère"),
-        photoUrl: "https://toto.jpeg");
+      id: "BGU",
+      familyId: "DJOUTSOP_ID",
+      email: EmailAddress("berangere.guilley@me.com"),
+      name: Name("Guilley"),
+      surname: Surname("Bérangère"),
+      photoUrl: "https://toto.jpeg",
+    );
     final User aurelien = User(
       id: "ADJ",
       familyId: "DJOUTSOP_ID",
@@ -119,13 +119,16 @@ void main() {
     blocTest(
       'emits [init] with issuer=connected user, should return a valid ChildrenDetails',
       build: () {
-        when(mockChildrenLookupRepository!
-                .watchChildrenLookup(childrenLookupId: recupererLiam.id!))
-            .thenAnswer((_) => Stream.fromIterable([eitherChildrenLookup_1]));
+        when(
+          mockChildrenLookupRepository!
+              .watchChildrenLookup(childrenLookupId: recupererLiam.id!),
+        ).thenAnswer((_) => Stream.fromIterable([eitherChildrenLookup_1]));
 
-        when(mockChildrenLookupRepository!.getChildrenLookupHistories(
-                childrenLookupId: recupererLiam.id!))
-            .thenAnswer((_) => const Stream.empty());
+        when(
+          mockChildrenLookupRepository!.getChildrenLookupHistories(
+            childrenLookupId: recupererLiam.id!,
+          ),
+        ).thenAnswer((_) => const Stream.empty());
 
         when(mockAuthFacade!.getSignedInUserId())
             .thenAnswer((_) => some(aurelien.id!));
@@ -178,13 +181,16 @@ void main() {
     blocTest(
       'emits [init] with issuer<>connected user, should return a valid ChildrenDetails',
       build: () {
-        when(mockChildrenLookupRepository!
-                .watchChildrenLookup(childrenLookupId: recupererLiam.id!))
-            .thenAnswer((_) => Stream.fromIterable([eitherChildrenLookup_1]));
+        when(
+          mockChildrenLookupRepository!
+              .watchChildrenLookup(childrenLookupId: recupererLiam.id!),
+        ).thenAnswer((_) => Stream.fromIterable([eitherChildrenLookup_1]));
 
-        when(mockChildrenLookupRepository!.getChildrenLookupHistories(
-                childrenLookupId: recupererLiam.id!))
-            .thenAnswer((_) => const Stream.empty());
+        when(
+          mockChildrenLookupRepository!.getChildrenLookupHistories(
+            childrenLookupId: recupererLiam.id!,
+          ),
+        ).thenAnswer((_) => const Stream.empty());
 
         when(mockAuthFacade!.getSignedInUserId())
             .thenAnswer((_) => some(berangere.id!));

@@ -1,4 +1,8 @@
+import 'dart:async';
+
+import 'package:bloc_concurrency/bloc_concurrency.dart';
 import 'package:dartz/dartz.dart';
+import 'package:familytrusts/src/application/family/location/form/bloc.dart';
 import 'package:familytrusts/src/domain/core/value_objects.dart';
 import 'package:familytrusts/src/domain/family/i_family_repository.dart';
 import 'package:familytrusts/src/domain/family/locations/location_failure.dart';
@@ -14,10 +18,7 @@ import 'package:familytrusts/src/helper/analytics_svc.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:injectable/injectable.dart';
-
 import 'package:quiver/strings.dart' as quiver;
-
-import 'bloc.dart';
 
 @injectable
 class LocationFormBloc extends Bloc<LocationFormEvent, LocationFormState> {
@@ -29,56 +30,76 @@ class LocationFormBloc extends Bloc<LocationFormEvent, LocationFormState> {
     this._familyRepository,
     this._notificationRepository,
     this._analyticsSvc,
-  ) : super(LocationFormState.initial());
+  ) : super(LocationFormState.initial()) {
+    on<LocationFormEvent>(
+      (event, emit) => mapEventToState(event, emit),
+      transformer: restartable(),
+    );
+  }
 
-  @override
-  Stream<LocationFormState> mapEventToState(LocationFormEvent event) async* {
-    yield* event.map(
-      pictureUrlChanged: (PictureUrlChanged e) async* {
-        yield state.copyWith(
-          photoUrl: e.pickedFileUrl,
-          failureOrSuccessOption: none(),
-        );
-      },
-      picturePathChanged: (PicturePathChanged e) async* {
-        yield state.copyWith(
-          imagePath: e.pickedFilePath,
-          failureOrSuccessOption: none(),
-        );
-      },
-      latLngChanged: (LatLngChanged e) async* {
-        yield state.copyWith(
-          gpsPosition: GpsPosition.fromPosition(
-            latitude: e.position.latitude,
-            longitude: e.position.longitude,
+  Future<void> mapEventToState(
+    LocationFormEvent event,
+    Emitter<LocationFormState> emit,
+  ) async {
+    event.map(
+      pictureUrlChanged: (PictureUrlChanged e) {
+        emit(
+          state.copyWith(
+            photoUrl: e.pickedFileUrl,
+            failureOrSuccessOption: none(),
           ),
-          failureOrSuccessOption: none(),
         );
       },
-      titleChanged: (TitleChanged e) async* {
-        yield state.copyWith(
-          title: Name(e.title),
-          failureOrSuccessOption: none(),
+      picturePathChanged: (PicturePathChanged e) {
+        emit(
+          state.copyWith(
+            imagePath: e.pickedFilePath,
+            failureOrSuccessOption: none(),
+          ),
         );
       },
-      addressChanged: (AddresChanged e) async* {
-        yield state.copyWith(
-          address: Address(e.address),
-          failureOrSuccessOption: none(),
+      latLngChanged: (LatLngChanged e) {
+        emit(
+          state.copyWith(
+            gpsPosition: GpsPosition.fromPosition(
+              latitude: e.position.latitude,
+              longitude: e.position.longitude,
+            ),
+            failureOrSuccessOption: none(),
+          ),
         );
       },
-      noteChanged: (NoteChanged e) async* {
-        yield state.copyWith(
-          note: NoteBody(e.note),
-          failureOrSuccessOption: none(),
+      titleChanged: (TitleChanged e) {
+        emit(
+          state.copyWith(
+            title: Name(e.title),
+            failureOrSuccessOption: none(),
+          ),
         );
       },
-      init: (LocationInit e) async* {
+      addressChanged: (AddresChanged e) {
+        emit(
+          state.copyWith(
+            address: Address(e.address),
+            failureOrSuccessOption: none(),
+          ),
+        );
+      },
+      noteChanged: (NoteChanged e) {
+        emit(
+          state.copyWith(
+            note: NoteBody(e.note),
+            failureOrSuccessOption: none(),
+          ),
+        );
+      },
+      init: (LocationInit e) async {
         final location = e.location;
         Position? position = await Geolocator.getLastKnownPosition();
         // if position is null it will look to geolocator
         position ??= await Geolocator.getCurrentPosition(
-            desiredAccuracy: LocationAccuracy.high);
+          desiredAccuracy: LocationAccuracy.high,
+        );
 
         final LocationFormState newState = state.copyWith(
           id: e.location.id,
@@ -95,24 +116,29 @@ class LocationFormBloc extends Bloc<LocationFormEvent, LocationFormState> {
           gpsPosition: e.location.gpsPosition,
           failureOrSuccessOption: none(),
         );
-        yield newState;
+        emit(newState);
       },
       saveLocation: (event) {
-        return _mapSaveLocationToState(event);
+        _mapSaveLocationToState(event, emit);
       },
       deleteLocation: (event) {
-        return _mapDeleteLocationToState(event);
+        _mapDeleteLocationToState(event, emit);
       },
     );
   }
 
-  Stream<LocationFormState> _mapSaveLocationToState(SaveLocation event) async* {
+  FutureOr<void> _mapSaveLocationToState(
+    SaveLocation event,
+    Emitter<LocationFormState> emit,
+  ) async {
     try {
-      yield state.copyWith(
-        state: quiver.isNotBlank(event.location.id)
-            ? LocationFormStateEnum.updating
-            : LocationFormStateEnum.adding,
-        failureOrSuccessOption: none(),
+      emit(
+        state.copyWith(
+          state: quiver.isNotBlank(event.location.id)
+              ? LocationFormStateEnum.updating
+              : LocationFormStateEnum.adding,
+          failureOrSuccessOption: none(),
+        ),
       );
       final User user = event.connectedUser;
 
@@ -123,27 +149,34 @@ class LocationFormBloc extends Bloc<LocationFormEvent, LocationFormState> {
         pickedFilePath: event.pickedFilePath,
       );
 
-      yield result.fold(
-        (failure) {
-          _analyticsSvc.debug("error during location save/update $failure");
-          return state.copyWith(
+      emit(
+        result.fold(
+          (failure) {
+            _analyticsSvc.debug("error during location save/update $failure");
+            return state.copyWith(
               state: LocationFormStateEnum.none,
-              failureOrSuccessOption: some(left(
-                quiver.isNotBlank(event.location.id)
-                    ? const LocationFailure.unableToUpdate()
-                    : const LocationFailure.unableToCreate(),
-              )));
-        },
-        (success) {
-          return state.copyWith(
-            state: LocationFormStateEnum.none,
-            failureOrSuccessOption: some(right(
-              quiver.isNotBlank(event.location.id)
-                  ? const LocationSuccess.updateSuccess()
-                  : const LocationSuccess.createSuccess(),
-            )),
-          );
-        },
+              failureOrSuccessOption: some(
+                left(
+                  quiver.isNotBlank(event.location.id)
+                      ? const LocationFailure.unableToUpdate()
+                      : const LocationFailure.unableToCreate(),
+                ),
+              ),
+            );
+          },
+          (success) {
+            return state.copyWith(
+              state: LocationFormStateEnum.none,
+              failureOrSuccessOption: some(
+                right(
+                  quiver.isNotBlank(event.location.id)
+                      ? const LocationSuccess.updateSuccess()
+                      : const LocationSuccess.createSuccess(),
+                ),
+              ),
+            );
+          },
+        ),
       );
 
       if (result.isRight()) {
@@ -170,23 +203,31 @@ class LocationFormBloc extends Bloc<LocationFormEvent, LocationFormState> {
         }
       }
     } catch (_) {
-      yield state.copyWith(
-        state: LocationFormStateEnum.none,
-        failureOrSuccessOption: some(left(
-          quiver.isNotBlank(event.location.id)
-              ? const LocationFailure.unableToUpdate()
-              : const LocationFailure.unableToCreate(),
-        )),
+      emit(
+        state.copyWith(
+          state: LocationFormStateEnum.none,
+          failureOrSuccessOption: some(
+            left(
+              quiver.isNotBlank(event.location.id)
+                  ? const LocationFailure.unableToUpdate()
+                  : const LocationFailure.unableToCreate(),
+            ),
+          ),
+        ),
       );
     }
   }
 
-  Stream<LocationFormState> _mapDeleteLocationToState(
-      DeleteLocation event) async* {
+  FutureOr<void> _mapDeleteLocationToState(
+    DeleteLocation event,
+    Emitter<LocationFormState> emit,
+  ) async {
     try {
-      yield state.copyWith(
-        state: LocationFormStateEnum.deleting,
-        failureOrSuccessOption: none(),
+      emit(
+        state.copyWith(
+          state: LocationFormStateEnum.deleting,
+          failureOrSuccessOption: none(),
+        ),
       );
       final User user = event.connectedUser;
       final Either<LocationFailure, Unit> result =
@@ -194,21 +235,23 @@ class LocationFormBloc extends Bloc<LocationFormEvent, LocationFormState> {
         familyId: user.familyId!,
         location: event.location,
       );
-      yield result.fold(
-        (failure) {
-          _analyticsSvc.debug("error during location suppression $failure");
-          return state.copyWith(
-            state: LocationFormStateEnum.none,
-            failureOrSuccessOption: some(left(failure)),
-          );
-        },
-        (success) {
-          return state.copyWith(
-            state: LocationFormStateEnum.none,
-            failureOrSuccessOption:
-                some(right(const LocationSuccess.deleteSucces())),
-          );
-        },
+      emit(
+        result.fold(
+          (failure) {
+            _analyticsSvc.debug("error during location suppression $failure");
+            return state.copyWith(
+              state: LocationFormStateEnum.none,
+              failureOrSuccessOption: some(left(failure)),
+            );
+          },
+          (success) {
+            return state.copyWith(
+              state: LocationFormStateEnum.none,
+              failureOrSuccessOption:
+                  some(right(const LocationSuccess.deleteSucces())),
+            );
+          },
+        ),
       );
 
       if (result.isRight()) {
@@ -216,10 +259,12 @@ class LocationFormBloc extends Bloc<LocationFormEvent, LocationFormState> {
       }
     } catch (e) {
       _analyticsSvc.debug("error during location suppression $e");
-      yield state.copyWith(
-        state: LocationFormStateEnum.none,
-        failureOrSuccessOption:
-            some(left(const LocationFailure.unableToDelete())),
+      emit(
+        state.copyWith(
+          state: LocationFormStateEnum.none,
+          failureOrSuccessOption:
+              some(left(const LocationFailure.unableToDelete())),
+        ),
       );
     }
   }

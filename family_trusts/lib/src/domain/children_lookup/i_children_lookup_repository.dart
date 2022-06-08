@@ -30,8 +30,11 @@ abstract class IChildrenLookupRepository {
     required ChildrenLookup childrenLookup,
   });
 
-  Stream<Either<ChildrenLookupFailure, ChildrenLookup>> watchChildrenLookup(
-      {required String childrenLookupId});
+  Stream<Either<ChildrenLookupFailure, ChildrenLookup>> watchChildrenLookup({
+    required String childrenLookupId,
+  });
 
-  Stream<Either<PlanningFailure, Planning>> getPlanning({required String userId});
+  Stream<Either<PlanningFailure, Planning>> getPlanning({
+    required String userId,
+  });
 }

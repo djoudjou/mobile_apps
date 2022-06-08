@@ -1,8 +1,7 @@
 import 'package:familytrusts/src/domain/invitation/invitation.dart';
 import 'package:familytrusts/src/domain/user/user.dart';
+import 'package:familytrusts/src/presentation/profile/widgets/profile_appbar.dart';
 import 'package:flutter/material.dart';
-
-import 'profile_appbar.dart';
 
 class ProfilCustomScrollView extends StatelessWidget {
   final User user;

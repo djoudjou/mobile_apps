@@ -11,10 +11,9 @@ import 'package:familytrusts/src/helper/log_mixin.dart';
 import 'package:familytrusts/src/helper/snackbar_helper.dart';
 import 'package:familytrusts/src/presentation/core/empty_content.dart';
 import 'package:familytrusts/src/presentation/core/my_text.dart';
+import 'package:familytrusts/src/presentation/profile/trusted_users/trusted_user_form/widgets/trusted_user_card_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-
-import 'trusted_user_card_widget.dart';
 
 class TrustedUserForm extends StatelessWidget with LogMixin {
   final User connectedUser;
@@ -63,14 +62,15 @@ class TrustedUserForm extends StatelessWidget with LogMixin {
           (result) {
             result.fold((failure) {
               showErrorMessage(
-                  failure.map(
-                    unexpected: (_) => LocaleKeys.global_unexpected.tr(),
-                    insufficientPermission: (_) =>
-                        LocaleKeys.global_insufficientPermission.tr(),
-                    unableToAddTrustedUser: (_) =>
-                        LocaleKeys.profile_addLocationFailure.tr(),
-                  ),
-                  context);
+                failure.map(
+                  unexpected: (_) => LocaleKeys.global_unexpected.tr(),
+                  insufficientPermission: (_) =>
+                      LocaleKeys.global_insufficientPermission.tr(),
+                  unableToAddTrustedUser: (_) =>
+                      LocaleKeys.profile_addLocationFailure.tr(),
+                ),
+                context,
+              );
             }, (success) {
               showSuccessMessage(
                 LocaleKeys.profile_addTrustedUserSuccess.tr(),
@@ -145,12 +145,12 @@ class TrustedUserForm extends StatelessWidget with LogMixin {
       ),
       keyboardType: TextInputType.text,
       autocorrect: false,
-      onChanged: (value) => context
-          .read<TrustedUserFormBloc>()
-          .add(TrustedUserFormEvent.userLookupChanged(
-            userLookupText: value,
-            currentUser: connectedUser,
-          )),
+      onChanged: (value) => context.read<TrustedUserFormBloc>().add(
+            TrustedUserFormEvent.userLookupChanged(
+              userLookupText: value,
+              currentUser: connectedUser,
+            ),
+          ),
     );
   }
 

@@ -1,4 +1,7 @@
+import 'package:bloc_concurrency/bloc_concurrency.dart';
 import 'package:dartz/dartz.dart';
+import 'package:familytrusts/src/application/auth/sign_in_form/sign_in_form_event.dart';
+import 'package:familytrusts/src/application/auth/sign_in_form/sign_in_form_state.dart';
 import 'package:familytrusts/src/domain/auth/auth_failure.dart';
 import 'package:familytrusts/src/domain/auth/i_auth_facade.dart';
 import 'package:familytrusts/src/domain/user/value_objects.dart';
@@ -6,47 +9,58 @@ import 'package:familytrusts/src/helper/analytics_svc.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:injectable/injectable.dart';
 
-import 'sign_in_form_event.dart';
-import 'sign_in_form_state.dart';
-
 @injectable
 class SignInFormBloc extends Bloc<SignInFormEvent, SignInFormState> {
   final IAuthFacade _authFacade;
   final AnalyticsSvc _analyticsSvc;
 
-  SignInFormBloc(this._authFacade, this._analyticsSvc) : super(SignInFormState.initial());
+  SignInFormBloc(this._authFacade, this._analyticsSvc)
+      : super(SignInFormState.initial()) {
+    on<SignInFormEvent>(
+      (event, emit) => mapEventToState(event, emit),
+      transformer: restartable(),
+    );
+  }
 
-  @override
-  Stream<SignInFormState> mapEventToState(
+  Future<void> mapEventToState(
     SignInFormEvent event,
-  ) async* {
-    yield* event.map(
-      emailChanged: (e) async* {
-        yield state.copyWith(
-          emailAddress: EmailAddress(e.emailStr),
-          authFailureOrSuccessOption: none(),
+    Emitter<SignInFormState> emit,
+  ) async {
+    event.map(
+      emailChanged: (e) {
+        emit(
+          state.copyWith(
+            emailAddress: EmailAddress(e.emailStr),
+            authFailureOrSuccessOption: none(),
+          ),
         );
       },
-      passwordChanged: (e) async* {
-        yield state.copyWith(
-          password: Password(e.passwordStr),
-          authFailureOrSuccessOption: none(),
+      passwordChanged: (e) {
+        emit(
+          state.copyWith(
+            password: Password(e.passwordStr),
+            authFailureOrSuccessOption: none(),
+          ),
         );
       },
-      registerWithEmailAndPasswordPressed: (e) async* {
-        yield* _performActionOnAuthFacadeWithEmailAndPassword(
+      registerWithEmailAndPasswordPressed: (e) {
+        _performActionOnAuthFacadeWithEmailAndPassword(
           _authFacade.registerWithEmailAndPassword,
+          emit,
         );
       },
       signInWithEmailAndPasswordPressed: (e) async* {
-        yield* _performActionOnAuthFacadeWithEmailAndPassword(
+        _performActionOnAuthFacadeWithEmailAndPassword(
           _authFacade.signInWithEmailAndPassword,
+          emit,
         );
       },
       signInWithGooglePressed: (e) async* {
-        yield state.copyWith(
-          isSubmitting: true,
-          authFailureOrSuccessOption: none(),
+        emit(
+          state.copyWith(
+            isSubmitting: true,
+            authFailureOrSuccessOption: none(),
+          ),
         );
 
         final failureOrSuccess = await _authFacade.signInWithGoogle();
@@ -55,47 +69,56 @@ class SignInFormBloc extends Bloc<SignInFormEvent, SignInFormState> {
           (userId) => _analyticsSvc.loginWithGoogle(userId),
         );
 
-        yield state.copyWith(
-          isSubmitting: false,
-          authFailureOrSuccessOption: some(failureOrSuccess),
+        emit(
+          state.copyWith(
+            isSubmitting: false,
+            authFailureOrSuccessOption: some(failureOrSuccess),
+          ),
         );
       },
-      signInWithFacebookPressed: (SignInWithFacebookPressed value)  async* {
-        yield state.copyWith(
-          isSubmitting: true,
-          authFailureOrSuccessOption: none(),
+      signInWithFacebookPressed: (SignInWithFacebookPressed value) async* {
+        emit(
+          state.copyWith(
+            isSubmitting: true,
+            authFailureOrSuccessOption: none(),
+          ),
         );
 
         final failureOrSuccess = await _authFacade.signInWithFacebook();
         failureOrSuccess.fold(
-              (l) => null,
-              (userId) => _analyticsSvc.loginWithFacebook(userId),
+          (l) => null,
+          (userId) => _analyticsSvc.loginWithFacebook(userId),
         );
 
-        yield state.copyWith(
-          isSubmitting: false,
-          authFailureOrSuccessOption: some(failureOrSuccess),
+        emit(
+          state.copyWith(
+            isSubmitting: false,
+            authFailureOrSuccessOption: some(failureOrSuccess),
+          ),
         );
       },
     );
   }
 
-  Stream<SignInFormState> _performActionOnAuthFacadeWithEmailAndPassword(
+  Future<void> _performActionOnAuthFacadeWithEmailAndPassword(
     Future<Either<AuthFailure, String>> Function({
       required EmailAddress emailAddress,
       required Password password,
     })
         forwardedCall,
-  ) async* {
+    Emitter<SignInFormState> emit,
+  ) async {
     Either<AuthFailure, String>? failureOrSuccess;
 
     final bool isEmailValid = state.emailAddress.isValid();
     final bool isPasswordValid = state.password.isValid();
 
     if (isEmailValid && isPasswordValid) {
-      yield state.copyWith(
-        isSubmitting: true,
-        authFailureOrSuccessOption: none(),
+      emit(
+        state.copyWith(
+          isSubmitting: true,
+          authFailureOrSuccessOption: none(),
+        ),
       );
 
       failureOrSuccess = await forwardedCall(
@@ -109,10 +132,12 @@ class SignInFormBloc extends Bloc<SignInFormEvent, SignInFormState> {
       );
     }
 
-    yield state.copyWith(
-      isSubmitting: false,
-      showErrorMessages: true,
-      authFailureOrSuccessOption: optionOf(failureOrSuccess),
+    emit(
+      state.copyWith(
+        isSubmitting: false,
+        showErrorMessages: true,
+        authFailureOrSuccessOption: optionOf(failureOrSuccess),
+      ),
     );
   }
 }

@@ -1,8 +1,10 @@
 import 'dart:async';
 
 import 'package:bloc/bloc.dart';
+import 'package:bloc_concurrency/bloc_concurrency.dart';
 import 'package:dartz/dartz.dart';
 import 'package:familytrusts/injection.dart';
+import 'package:familytrusts/src/application/register/bloc.dart';
 import 'package:familytrusts/src/domain/auth/auth_failure.dart';
 import 'package:familytrusts/src/domain/auth/i_auth_facade.dart';
 import 'package:familytrusts/src/domain/auth/user_info.dart';
@@ -13,8 +15,6 @@ import 'package:familytrusts/src/domain/user/user_failure.dart';
 import 'package:familytrusts/src/domain/user/value_objects.dart';
 import 'package:familytrusts/src/helper/log_mixin.dart';
 
-import 'bloc.dart';
-
 class RegisterBloc extends Bloc<RegisterEvent, RegisterState> with LogMixin {
   late IAuthFacade _authFacade;
   late IUserRepository _userRepository;
@@ -22,14 +22,19 @@ class RegisterBloc extends Bloc<RegisterEvent, RegisterState> with LogMixin {
   RegisterBloc() : super(RegisterState.initial()) {
     _userRepository = getIt<IUserRepository>();
     _authFacade = getIt<IAuthFacade>();
+
+    on<RegisterEvent>(
+      (event, emit) => mapEventToState(event, emit),
+      transformer: sequential(),
+    );
   }
 
-  @override
-  Stream<RegisterState> mapEventToState(
+  void mapEventToState(
     RegisterEvent event,
-  ) async* {
-    yield* event.map(
-      init: (e) async* {
+    Emitter<RegisterState> emit,
+  ) {
+    event.map(
+      init: (e) async {
         final Option<MyUserInfo> optionUserInfo =
             await _authFacade.getSignedUserInfo();
 
@@ -37,59 +42,75 @@ class RegisterBloc extends Bloc<RegisterEvent, RegisterState> with LogMixin {
         if (optionUserInfo.isSome()) {
           final MyUserInfo userInfo = optionUserInfo.toNullable()!;
 
-          yield state.copyWith(
-            registerFailureOrSuccessOption: none(),
-            emailAddress: EmailAddress(userInfo.email),
-            name: Name(userInfo.displayName),
-            isEditEmailPwdEnabled: false,
-            isInitializing: false,
-            photoUrl: userInfo.photoUrl,
+          emit(
+            state.copyWith(
+              registerFailureOrSuccessOption: none(),
+              emailAddress: EmailAddress(userInfo.email),
+              name: Name(userInfo.displayName),
+              isEditEmailPwdEnabled: false,
+              isInitializing: false,
+              photoUrl: userInfo.photoUrl,
+            ),
           );
         } else {
-          yield state.copyWith(
-            registerFailureOrSuccessOption: none(),
-            isInitializing: false,
-            isEditEmailPwdEnabled: true,
+          emit(
+            state.copyWith(
+              registerFailureOrSuccessOption: none(),
+              isInitializing: false,
+              isEditEmailPwdEnabled: true,
+            ),
           );
         }
       },
-      registerPictureChanged: (e) async* {
-        yield state.copyWith(
-          imagePath: e.pickedFilePath,
-          registerFailureOrSuccessOption: none(),
+      registerPictureChanged: (e) {
+        emit(
+          state.copyWith(
+            imagePath: e.pickedFilePath,
+            registerFailureOrSuccessOption: none(),
+          ),
         );
       },
-      registerEmailChanged: (e) async* {
-        yield state.copyWith(
-          emailAddress: EmailAddress(e.email),
-          registerFailureOrSuccessOption: none(),
+      registerEmailChanged: (e) {
+        emit(
+          state.copyWith(
+            emailAddress: EmailAddress(e.email),
+            registerFailureOrSuccessOption: none(),
+          ),
         );
       },
-      registerPasswordChanged: (e) async* {
-        yield state.copyWith(
-          password: Password(e.password),
-          registerFailureOrSuccessOption: none(),
+      registerPasswordChanged: (e) {
+        emit(
+          state.copyWith(
+            password: Password(e.password),
+            registerFailureOrSuccessOption: none(),
+          ),
         );
       },
-      registerNameChanged: (e) async* {
-        yield state.copyWith(
-          name: Name(e.name),
-          registerFailureOrSuccessOption: none(),
+      registerNameChanged: (e) {
+        emit(
+          state.copyWith(
+            name: Name(e.name),
+            registerFailureOrSuccessOption: none(),
+          ),
         );
       },
-      registerSurnameChanged: (e) async* {
-        yield state.copyWith(
-          surname: Surname(e.surname),
-          registerFailureOrSuccessOption: none(),
+      registerSurnameChanged: (e) {
+        emit(
+          state.copyWith(
+            surname: Surname(e.surname),
+            registerFailureOrSuccessOption: none(),
+          ),
         );
       },
-      registerSubmitted: (e) async* {
-        yield* _performRegister();
+      registerSubmitted: (e) {
+        _performRegister(emit);
       },
     );
   }
 
-  Stream<RegisterState> _performRegister() async* {
+  FutureOr<void> _performRegister(
+    Emitter<RegisterState> emit,
+  ) async {
     Either<RegisterFailure, String>? registerFailureOrSuccess;
 
     final bool isEmailValid = state.emailAddress.isValid();
@@ -98,9 +119,11 @@ class RegisterBloc extends Bloc<RegisterEvent, RegisterState> with LogMixin {
     log("isEmailValid $isEmailValid, isPasswordValid $isPasswordValid");
 
     if (!state.isEditEmailPwdEnabled || (isEmailValid && isPasswordValid)) {
-      yield state.copyWith(
-        isSubmitting: true,
-        registerFailureOrSuccessOption: none(),
+      emit(
+        state.copyWith(
+          isSubmitting: true,
+          registerFailureOrSuccessOption: none(),
+        ),
       );
 
       Either<AuthFailure, String> authenticationFailureOrSuccess;
@@ -119,21 +142,21 @@ class RegisterBloc extends Bloc<RegisterEvent, RegisterState> with LogMixin {
 
       log("result authenticationFailureOrSuccess $authenticationFailureOrSuccess");
       registerFailureOrSuccess = authenticationFailureOrSuccess.fold(
-          (failure) => left(
-                failure.map(
-                  cancelledByUser: (_) =>
-                      const RegisterFailure.cancelledByUser(),
-                  serverError: (_) => const RegisterFailure.serverError(),
-                  emailAlreadyInUse: (_) =>
-                      const RegisterFailure.emailAlreadyInUse(),
-                  invalidEmailAndPasswordCombination: (_) =>
-                      const RegisterFailure.emailAlreadyInUse(),
-                  alreadySignWithAnotherMethod: (e) =>
-                      RegisterFailure.alreadySignWithAnotherMethod(
-                          e.providerName),
-                ),
-              ),
-          (userId) => right(userId));
+        (failure) => left(
+          failure.map(
+            cancelledByUser: (_) => const RegisterFailure.cancelledByUser(),
+            serverError: (_) => const RegisterFailure.serverError(),
+            emailAlreadyInUse: (_) => const RegisterFailure.emailAlreadyInUse(),
+            invalidEmailAndPasswordCombination: (_) =>
+                const RegisterFailure.emailAlreadyInUse(),
+            alreadySignWithAnotherMethod: (e) =>
+                RegisterFailure.alreadySignWithAnotherMethod(
+              e.providerName,
+            ),
+          ),
+        ),
+        (userId) => right(userId),
+      );
 
       if (registerFailureOrSuccess!.isRight()) {
         final String userId = registerFailureOrSuccess.toOption().toNullable()!;
@@ -161,10 +184,12 @@ class RegisterBloc extends Bloc<RegisterEvent, RegisterState> with LogMixin {
 
     log("_performRegister result $registerFailureOrSuccess");
 
-    yield state.copyWith(
-      isSubmitting: false,
-      showErrorMessages: true,
-      registerFailureOrSuccessOption: optionOf(registerFailureOrSuccess),
+    emit(
+      state.copyWith(
+        isSubmitting: false,
+        showErrorMessages: true,
+        registerFailureOrSuccessOption: optionOf(registerFailureOrSuccess),
+      ),
     );
   }
 }

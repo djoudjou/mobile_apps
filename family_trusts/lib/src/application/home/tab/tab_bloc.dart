@@ -1,34 +1,39 @@
-import 'dart:async';
-
 import 'package:bloc/bloc.dart';
+import 'package:bloc_concurrency/bloc_concurrency.dart';
+import 'package:familytrusts/src/application/home/tab/bloc.dart';
 import 'package:familytrusts/src/domain/home/app_tab.dart';
 import 'package:injectable/injectable.dart';
 
-import 'bloc.dart';
-
 @injectable
 class TabBloc extends Bloc<TabEvent, TabState> {
-  TabBloc() : super(const TabState.ask());
+  TabBloc() : super(const TabState.ask()) {
+    on<TabEvent>(
+      (event, emit) => mapEventToState(event, emit),
+      transformer: sequential(),
+    );
+  }
 
-  @override
-  Stream<TabState> mapEventToState(TabEvent event) async* {
-    yield* event.map(
-      gotoAsk: (e) async* {
-        yield const TabState.ask();
+  void mapEventToState(
+    TabEvent event,
+    Emitter<TabState> emit,
+  ) {
+    event.map(
+      gotoAsk: (e) {
+        emit(const TabState.ask());
       },
-      gotoMyDemands: (e) async* {
-        yield const TabState.myDemands();
+      gotoMyDemands: (e) {
+        emit(const TabState.myDemands());
       },
       //gotoLookup: (e) async* {
       //  yield TabState.lookup(state.optionFailureOrNotifications);
       //},
-      gotoNotification: (e) async* {
-        yield const TabState.notification();
+      gotoNotification: (e) {
+        emit(const TabState.notification());
       },
-      gotoMe: (e) async* {
-        yield const TabState.me();
+      gotoMe: (e) {
+        emit(const TabState.me());
       },
-      init: (Init value) async* {
+      init: (Init value) {
         switch (value.currentTab) {
           case AppTab.ask:
             add(const TabEvent.gotoAsk());

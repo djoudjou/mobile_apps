@@ -3,8 +3,8 @@ import 'package:familytrusts/src/domain/children_lookup/children_lookup_failure.
 import 'package:familytrusts/src/domain/children_lookup/children_lookup_step.dart';
 import 'package:familytrusts/src/domain/children_lookup/value_objects.dart';
 import 'package:familytrusts/src/domain/family/value_objects.dart';
-import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:flutter/foundation.dart';
+import 'package:freezed_annotation/freezed_annotation.dart';
 
 part 'children_lookup_state.freezed.dart';
 

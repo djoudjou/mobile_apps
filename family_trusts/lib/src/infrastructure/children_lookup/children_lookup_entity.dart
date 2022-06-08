@@ -107,7 +107,8 @@ class ChildrenLookupEntity with _$ChildrenLookupEntity {
   }
 
   factory ChildrenLookupEntity.fromFirestore(
-      DocumentSnapshot<Map<String, dynamic>> doc) {
+    DocumentSnapshot<Map<String, dynamic>> doc,
+  ) {
     return ChildrenLookupEntity.fromJson(doc.data()!).copyWith(id: doc.id);
   }
 

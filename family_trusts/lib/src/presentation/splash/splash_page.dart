@@ -1,5 +1,4 @@
 import 'package:auto_route/auto_route.dart';
-import 'package:familytrusts/src/application/auth/authentication_bloc.dart';
 import 'package:familytrusts/src/application/auth/bloc.dart';
 import 'package:familytrusts/src/domain/home/app_tab.dart';
 import 'package:familytrusts/src/presentation/routes/router.gr.dart';
@@ -16,10 +15,12 @@ class SplashPage extends StatelessWidget {
         state.map(
           initial: (_) {},
           authenticated: (e) {
-            AutoRouter.of(context).replace(HomePageRoute(
-              currentTab: AppTab.ask,
-              connectedUserId: e.userId,
-            ));
+            AutoRouter.of(context).replace(
+              HomePageRoute(
+                currentTab: AppTab.ask,
+                connectedUserId: e.userId,
+              ),
+            );
           },
           unauthenticated: (_) {
             AutoRouter.of(context).replace(const SignInPageRoute());

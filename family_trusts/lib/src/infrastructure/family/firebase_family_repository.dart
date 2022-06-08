@@ -18,6 +18,7 @@ import 'package:familytrusts/src/helper/constants.dart';
 import 'package:familytrusts/src/helper/firebase_helper.dart';
 import 'package:familytrusts/src/infrastructure/core/firestore_helpers.dart';
 import 'package:familytrusts/src/infrastructure/core/storage_reference_helpers.dart';
+import 'package:familytrusts/src/infrastructure/family/child_entity.dart';
 import 'package:familytrusts/src/infrastructure/family/location_entity.dart';
 import 'package:familytrusts/src/infrastructure/family/trusted_user_entity.dart';
 import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
@@ -26,8 +27,6 @@ import 'package:geoflutterfire/geoflutterfire.dart';
 import 'package:injectable/injectable.dart';
 import 'package:quiver/strings.dart' as quiver;
 import 'package:rxdart/rxdart.dart';
-
-import 'child_entity.dart';
 
 @LazySingleton(as: IFamilyRepository)
 class FirebaseFamilyRepository implements IFamilyRepository {
@@ -56,16 +55,18 @@ class FirebaseFamilyRepository implements IFamilyRepository {
         .snapshots()
         .map((snapshot) {
       return right<ChildrenFailure, List<Either<ChildrenFailure, Child>>>(
-          snapshot.docs.map((doc) {
-        try {
-          final domain = ChildEntity.fromFirestore(doc).toDomain();
-          return right<ChildrenFailure, Child>(domain);
-        } catch (e) {
-          _errorService.logException(e);
-          return left<ChildrenFailure, Child>(
-              const ChildrenFailure.unexpected());
-        }
-      }).toList());
+        snapshot.docs.map((doc) {
+          try {
+            final domain = ChildEntity.fromFirestore(doc).toDomain();
+            return right<ChildrenFailure, Child>(domain);
+          } catch (e) {
+            _errorService.logException(e);
+            return left<ChildrenFailure, Child>(
+              const ChildrenFailure.unexpected(),
+            );
+          }
+        }).toList(),
+      );
     }).onErrorReturnWith(
       (e, stacktrace) {
         _errorService.logException(e);
@@ -80,8 +81,10 @@ class FirebaseFamilyRepository implements IFamilyRepository {
   }
 
   @override
-  Future<Either<ChildrenFailure, Child>> getChildById(
-      {required String familyId, required String childId}) async {
+  Future<Either<ChildrenFailure, Child>> getChildById({
+    required String familyId,
+    required String childId,
+  }) async {
     try {
       final DocumentSnapshot<Map<String, dynamic>> snapshot =
           await _firebaseFirestore
@@ -99,7 +102,8 @@ class FirebaseFamilyRepository implements IFamilyRepository {
 
   @override
   Future<Either<UserFailure, List<TrustedUser>>> getFutureTrustedUsers(
-      String familyId) async {
+    String familyId,
+  ) async {
     try {
       final snapshot = await _firebaseFirestore
           .familyById(familyId)
@@ -136,7 +140,8 @@ class FirebaseFamilyRepository implements IFamilyRepository {
 
   @override
   Stream<Either<UserFailure, List<TrustedUser>>> getTrustedUsers(
-      String familyId) {
+    String familyId,
+  ) {
     final future = _firebaseFirestore
         .familyById(familyId)
         .trustedCollection
@@ -173,14 +178,16 @@ class FirebaseFamilyRepository implements IFamilyRepository {
   }
 
   Stream<Either<UserFailure, List<TrustedUser>>> transformStream(
-      Stream<Future<Either<UserFailure, List<TrustedUser>>>> values) async* {
+    Stream<Future<Either<UserFailure, List<TrustedUser>>>> values,
+  ) async* {
     await for (final domains in values) {
       yield await domains;
     }
   }
 
   Future<Either<UserFailure, TrustedUser>> trustedUserEntityToTrustedUser(
-      TrustedUserEntity trustedUserEntity) async {
+    TrustedUserEntity trustedUserEntity,
+  ) async {
     final Either<UserFailure, User> eitherTrustedUser =
         await _userRepository.getUser(trustedUserEntity.id);
 
@@ -196,8 +203,10 @@ class FirebaseFamilyRepository implements IFamilyRepository {
   }
 
   @override
-  Future<Either<UserFailure, Unit>> addTrustedUser(
-      {required String familyId, required TrustedUser trustedUser}) async {
+  Future<Either<UserFailure, Unit>> addTrustedUser({
+    required String familyId,
+    required TrustedUser trustedUser,
+  }) async {
     try {
       final TrustedUserEntity trustedUserEntity = trustedUser.toEntity();
 
@@ -220,8 +229,10 @@ class FirebaseFamilyRepository implements IFamilyRepository {
   }
 
   @override
-  Future<Either<UserFailure, Unit>> deleteTrustedUser(
-      {required String familyId, required String trustedUserId}) async {
+  Future<Either<UserFailure, Unit>> deleteTrustedUser({
+    required String familyId,
+    required String trustedUserId,
+  }) async {
     try {
       await _firebaseFirestore
           .familyById(familyId)
@@ -278,11 +289,12 @@ class FirebaseFamilyRepository implements IFamilyRepository {
       Child updatedChild = child;
       if (quiver.isBlank(child.id)) {
         updatedChild = child.copyWith(
-            id: _firebaseFirestore
-                .familyById(familyId)
-                .childrenCollection
-                .doc()
-                .id);
+          id: _firebaseFirestore
+              .familyById(familyId)
+              .childrenCollection
+              .doc()
+              .id,
+        );
       }
 
       if (quiver.isNotBlank(pickedFilePath)) {
@@ -411,12 +423,14 @@ class FirebaseFamilyRepository implements IFamilyRepository {
           snapshot.docs.map((doc) {
             try {
               final locationEntity = LocationEntity.fromFirestore(doc).copyWith(
-                  position: doc.data()["position"]["geopoint"] as GeoPoint);
+                position: doc.data()["position"]["geopoint"] as GeoPoint,
+              );
               final domain = locationEntity.toDomain();
               return right<LocationFailure, Location>(domain);
             } catch (_) {
               return left<LocationFailure, Location>(
-                  const LocationFailure.unexpected());
+                const LocationFailure.unexpected(),
+              );
             }
           }).toList(),
         );
@@ -435,8 +449,10 @@ class FirebaseFamilyRepository implements IFamilyRepository {
   }
 
   @override
-  Future<Either<LocationFailure, Location>> getLocationById(
-      {required String familyId, required String locationId}) async {
+  Future<Either<LocationFailure, Location>> getLocationById({
+    required String familyId,
+    required String locationId,
+  }) async {
     try {
       final DocumentSnapshot<Map<String, dynamic>> snapshot =
           await _firebaseFirestore
@@ -446,7 +462,8 @@ class FirebaseFamilyRepository implements IFamilyRepository {
               .get();
 
       final locationEntity = LocationEntity.fromFirestore(snapshot).copyWith(
-          position: snapshot.data()!["position"]["geopoint"] as GeoPoint);
+        position: snapshot.data()!["position"]["geopoint"] as GeoPoint,
+      );
       final domain = locationEntity.toDomain();
       return right<LocationFailure, Location>(domain);
     } catch (_) {

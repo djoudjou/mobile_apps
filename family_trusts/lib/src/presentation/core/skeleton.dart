@@ -4,7 +4,8 @@ class Skeleton extends StatefulWidget {
   final double height;
   final double width;
 
-  const Skeleton({Key? key, this.height = 20, this.width = 200}) : super(key: key);
+  const Skeleton({Key? key, this.height = 20, this.width = 200})
+      : super(key: key);
 
   @override
   _SkeletonState createState() => _SkeletonState();
@@ -19,7 +20,9 @@ class _SkeletonState extends State<Skeleton>
   void initState() {
     super.initState();
     _controller = AnimationController(
-        duration: const Duration(milliseconds: 1500), vsync: this);
+      duration: const Duration(milliseconds: 1500),
+      vsync: this,
+    );
 
     gradientPosition = Tween<double>(
       begin: -3,

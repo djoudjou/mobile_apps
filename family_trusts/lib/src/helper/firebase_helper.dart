@@ -6,7 +6,9 @@ import 'package:path/path.dart' as path;
 
 class FirebaseHelper {
   static Future<String> addImage(
-      File file, firebase_storage.Reference ref) async {
+    File file,
+    firebase_storage.Reference ref,
+  ) async {
     final firebase_storage.UploadTask uploadTask = ref.putFile(file);
 
     // Storage tasks function as a Delegating Future so we can await them.

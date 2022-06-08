@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:bloc_concurrency/bloc_concurrency.dart';
 import 'package:familytrusts/src/application/core/loader/simple_loader_event.dart';
 import 'package:familytrusts/src/application/core/loader/simple_loader_state.dart';
 import 'package:familytrusts/src/helper/log_mixin.dart';
@@ -9,15 +10,20 @@ abstract class SimpleLoaderBloc<Type>
     extends Bloc<SimpleLoaderEvent, SimpleLoaderState> with LogMixin {
   StreamSubscription? _itemsSubscription;
 
-  SimpleLoaderBloc() : super(const SimpleLoaderState.simpleInitialState());
+  SimpleLoaderBloc() : super(const SimpleLoaderState.simpleInitialState()) {
+    on<SimpleLoaderEvent>(
+      (event, emit) => mapEventToState(event, emit),
+      transformer: restartable(),
+    );
+  }
 
-  @override
-  Stream<SimpleLoaderState> mapEventToState(
+  Future<void> mapEventToState(
     SimpleLoaderEvent event,
-  ) async* {
-    yield* event.map(
-      startLoading: (startLoading) async* {
-        yield const SimpleLoaderState.simpleLoadingState();
+    Emitter<SimpleLoaderState> emit,
+  ) async {
+    event.map(
+      startLoading: (startLoading) {
+        emit(const SimpleLoaderState.simpleLoadingState());
         try {
           _itemsSubscription?.cancel();
           _itemsSubscription = load(startLoading).listen(
@@ -28,11 +34,11 @@ abstract class SimpleLoaderBloc<Type>
           );
         } catch (e) {
           log("Erreur technique > $e");
-          yield const SimpleLoaderState.simpleErrorEventState();
+          emit(const SimpleLoaderState.simpleErrorEventState());
         }
       },
-      itemsUpdated: (itemsUpdated) async* {
-        yield SimpleLoaderState.simpleSuccessEventState(itemsUpdated.events);
+      itemsUpdated: (itemsUpdated) {
+        emit(SimpleLoaderState.simpleSuccessEventState(itemsUpdated.events));
       },
     );
   }

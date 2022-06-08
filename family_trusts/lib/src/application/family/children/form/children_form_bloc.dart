@@ -1,6 +1,8 @@
 import 'dart:async';
 
 import 'package:bloc/bloc.dart';
+import 'package:bloc_concurrency/bloc_concurrency.dart';
+import 'package:familytrusts/src/application/family/children/bloc.dart';
 import 'package:familytrusts/src/domain/core/value_objects.dart';
 import 'package:familytrusts/src/domain/family/i_family_repository.dart';
 import 'package:familytrusts/src/domain/notification/event.dart';
@@ -10,9 +12,6 @@ import 'package:familytrusts/src/domain/user/user.dart';
 import 'package:injectable/injectable.dart';
 import 'package:quiver/strings.dart' as quiver;
 
-import '../bloc.dart';
-import 'children_form_state.dart';
-
 @injectable
 class ChildrenFormBloc extends Bloc<ChildrenFormEvent, ChildrenFormState> {
   final IFamilyRepository _familyRepository;
@@ -21,28 +20,36 @@ class ChildrenFormBloc extends Bloc<ChildrenFormEvent, ChildrenFormState> {
   ChildrenFormBloc(
     this._familyRepository,
     this._notificationRepository,
-  ) : super(const ChildrenFormState.init());
+  ) : super(const ChildrenFormState.init()) {
+    on<ChildrenFormEvent>(
+      (event, emit) => mapEventToState(event, emit),
+      transformer: restartable(),
+    );
+  }
 
-  @override
-  Stream<ChildrenFormState> mapEventToState(
-      ChildrenFormEvent event,
-  ) async* {
-    yield* event.map(
+  Future<void> mapEventToState(
+    ChildrenFormEvent event,
+    Emitter<ChildrenFormState> emit,
+  ) async {
+    event.map(
       addChild: (event) {
-        return _mapAddChildToState(event);
+        _mapAddChildToState(event, emit);
       },
       updateChild: (event) {
-        return _mapUpdateChildToState(event);
+        _mapUpdateChildToState(event, emit);
       },
       deleteChild: (event) {
-        return _mapDeleteChildToState(event);
+        _mapDeleteChildToState(event, emit);
       },
     );
   }
 
-  Stream<ChildrenFormState> _mapAddChildToState(AddChild event) async* {
+  FutureOr<void> _mapAddChildToState(
+    AddChild event,
+    Emitter<ChildrenFormState> emit,
+  ) async {
     try {
-      yield const ChildrenFormState.addChildInProgress();
+      emit(const ChildrenFormState.addChildInProgress());
       final User user = event.user;
       await _familyRepository.addUpdateChild(
         familyId: user.familyId!,
@@ -75,15 +82,18 @@ class ChildrenFormBloc extends Bloc<ChildrenFormEvent, ChildrenFormState> {
           ),
         );
       }
-      yield const ChildrenFormState.addChildSuccess();
+      emit(const ChildrenFormState.addChildSuccess());
     } catch (_) {
-      yield const ChildrenFormState.addChildFailure();
+      emit(const ChildrenFormState.addChildFailure());
     }
   }
 
-  Stream<ChildrenFormState> _mapUpdateChildToState(UpdateChild event) async* {
+  FutureOr<void> _mapUpdateChildToState(
+    UpdateChild event,
+    Emitter<ChildrenFormState> emit,
+  ) async {
     try {
-      yield const ChildrenFormState.updateChildInProgress();
+      emit(const ChildrenFormState.updateChildInProgress());
       final User user = event.user;
       await _familyRepository.addUpdateChild(
         familyId: user.familyId!,
@@ -116,15 +126,18 @@ class ChildrenFormBloc extends Bloc<ChildrenFormEvent, ChildrenFormState> {
           ),
         );
       }
-      yield const ChildrenFormState.updateChildSuccess();
+      emit(const ChildrenFormState.updateChildSuccess());
     } catch (_) {
-      yield const ChildrenFormState.updateChildFailure();
+      emit(const ChildrenFormState.updateChildFailure());
     }
   }
 
-  Stream<ChildrenFormState> _mapDeleteChildToState(DeleteChild event) async* {
+  FutureOr<void> _mapDeleteChildToState(
+    DeleteChild event,
+    Emitter<ChildrenFormState> emit,
+  ) async {
     try {
-      yield const ChildrenFormState.deleteChildInProgress();
+      emit(const ChildrenFormState.deleteChildInProgress());
       final User user = event.user;
       await _familyRepository.deleteChild(
         familyId: user.familyId!,
@@ -158,9 +171,9 @@ class ChildrenFormBloc extends Bloc<ChildrenFormEvent, ChildrenFormState> {
           ),
         );
       }
-      yield const ChildrenFormState.deleteChildSuccess();
+      emit(const ChildrenFormState.deleteChildSuccess());
     } catch (_) {
-      yield const ChildrenFormState.deleteChildFailure();
+      emit(const ChildrenFormState.deleteChildFailure());
     }
   }
 }

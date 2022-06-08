@@ -70,8 +70,7 @@ class FirebaseAuthFacade implements IAuthFacade {
 
       return right(userCredential.user!.uid);
     } on FirebaseException catch (e) {
-      if (e.code == 'wrong-password' ||
-          e.code == 'user-not-found') {
+      if (e.code == 'wrong-password' || e.code == 'user-not-found') {
         return left(const AuthFailure.invalidEmailAndPasswordCombination());
       } else {
         return left(const AuthFailure.serverError());
@@ -119,7 +118,9 @@ class FirebaseAuthFacade implements IAuthFacade {
           //final userData = await _facebookAuth.getUserData();
           // Create a credential from the access token
           final fire.OAuthCredential facebookAuthCredential =
-              fire.FacebookAuthProvider.credential(loginResult.accessToken!.token);
+              fire.FacebookAuthProvider.credential(
+            loginResult.accessToken!.token,
+          );
 
           // Once signed in, return the UserCredential
           final fire.UserCredential userCredential =
@@ -133,11 +134,13 @@ class FirebaseAuthFacade implements IAuthFacade {
       }
     } on fire.FirebaseAuthException catch (e) {
       if (e.code == 'account-exists-with-different-credential') {
-
         final String email = e.email!;
-        final List<String> userSignInMethods = await _firebaseAuth.fetchSignInMethodsForEmail(email);
+        final List<String> userSignInMethods =
+            await _firebaseAuth.fetchSignInMethodsForEmail(email);
 
-        return left(AuthFailure.alreadySignWithAnotherMethod(userSignInMethods.first));
+        return left(
+          AuthFailure.alreadySignWithAnotherMethod(userSignInMethods.first),
+        );
         /*
 
         // The account already exists with a different credential
@@ -208,21 +211,26 @@ class FirebaseAuthFacade implements IAuthFacade {
           fire.FacebookAuthProvider.PROVIDER_ID) {
         final email = user.providerData.first.email;
         //final AccessToken accessToken = await _facebookAuth.isLogged;
-        final userData =
-            await _facebookAuth.getUserData();
+        final userData = await _facebookAuth.getUserData();
         //final graphResponse = await http.get(
         //    'https://graph.facebook.com/v2.12/me?fields=name,picture.width(800).height(800),first_name,last_name,email&access_token=${accessToken.token}');
         final photoUrl = userData["picture"]["data"]["url"] as String;
 
-        return some(MyUserInfo(
+        return some(
+          MyUserInfo(
             email: email,
             photoUrl: photoUrl,
-            displayName: user.providerData.first.displayName));
+            displayName: user.providerData.first.displayName,
+          ),
+        );
       } else {
-        return some(MyUserInfo(
+        return some(
+          MyUserInfo(
             email: user.email,
             photoUrl: user.photoURL,
-            displayName: user.displayName));
+            displayName: user.displayName,
+          ),
+        );
       }
     } else {
       return none();

@@ -2,11 +2,10 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:familytrusts/generated/locale_keys.g.dart';
 import 'package:familytrusts/src/application/location/bloc.dart';
 import 'package:familytrusts/src/presentation/core/my_apps_bars.dart';
+import 'package:familytrusts/src/presentation/profile/locations/location_form/search/widgets/search_address_form.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-
-import 'widgets/search_address_form.dart';
 
 typedef OnSelectAddressCallback = Function(SelectAddressParams params);
 
@@ -25,7 +24,7 @@ class SelectAddressParams {
 class SearchAddressPage extends StatelessWidget {
   final OnSelectAddressCallback onSelectAddressCallback;
 
-  const SearchAddressPage({Key? key,required this.onSelectAddressCallback})
+  const SearchAddressPage({Key? key, required this.onSelectAddressCallback})
       : super(key: key);
 
   @override
@@ -39,7 +38,8 @@ class SearchAddressPage extends StatelessWidget {
         child: BlocProvider<SearchLocationBloc>(
           create: (context) => SearchLocationBloc(),
           child: SearchAddressForm(
-              onSelectAddressCallback: onSelectAddressCallback),
+            onSelectAddressCallback: onSelectAddressCallback,
+          ),
         ),
       ),
     );

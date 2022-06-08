@@ -6,14 +6,13 @@ part of 'trusted_user_entity.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-_$_TrustedUserEntity _$_$_TrustedUserEntityFromJson(Map<String, dynamic> json) {
-  return _$_TrustedUserEntity(
-    id: json['id'] as String,
-    since: json['since'] as int,
-  );
-}
+_$_TrustedUserEntity _$$_TrustedUserEntityFromJson(Map<String, dynamic> json) =>
+    _$_TrustedUserEntity(
+      id: json['id'] as String,
+      since: json['since'] as int,
+    );
 
-Map<String, dynamic> _$_$_TrustedUserEntityToJson(
+Map<String, dynamic> _$$_TrustedUserEntityToJson(
         _$_TrustedUserEntity instance) =>
     <String, dynamic>{
       'id': instance.id,

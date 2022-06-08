@@ -73,8 +73,9 @@ class FirebaseChildrenLookupRepository
   }
 
   @override
-  Future<Either<ChildrenLookupFailure, Unit>> addUpdateChildrenLookup(
-      {required ChildrenLookup childrenLookup}) async {
+  Future<Either<ChildrenLookupFailure, Unit>> addUpdateChildrenLookup({
+    required ChildrenLookup childrenLookup,
+  }) async {
     try {
       final ChildrenLookupEntity childrenLookupEntity =
           ChildrenLookupEntity.fromDomain(childrenLookup);
@@ -110,8 +111,10 @@ class FirebaseChildrenLookupRepository
               .map((doc) => ChildrenLookupEntity.fromFirestore(doc))
               .toList();
         },
-      ).handleError((err, stacktrace) =>
-              log('_getChildrenLookupsByFamilyId handleError: $err')),
+      ).handleError(
+        (err, stacktrace) =>
+            log('_getChildrenLookupsByFamilyId handleError: $err'),
+      ),
     );
   }
 
@@ -130,14 +133,17 @@ class FirebaseChildrenLookupRepository
               .map((doc) => ChildrenLookupEntity.fromFirestore(doc))
               .toList();
         },
-      ).handleError((err, stacktrace) =>
-              log('_getChidrenLookupsByTrustedId handleError: $err')),
+      ).handleError(
+        (err, stacktrace) =>
+            log('_getChidrenLookupsByTrustedId handleError: $err'),
+      ),
     );
   }
 
   Stream<List<Either<ChildrenLookupFailure, ChildrenLookup>>>
       transformChildrenLookup(
-          Stream<List<ChildrenLookupEntity>> childrenLookupEntities) async* {
+    Stream<List<ChildrenLookupEntity>> childrenLookupEntities,
+  ) async* {
     await for (final entities in childrenLookupEntities) {
       final List<Future<Either<ChildrenLookupFailure, ChildrenLookup>>>
           futures = entities
@@ -150,7 +156,8 @@ class FirebaseChildrenLookupRepository
 
   Future<Either<ChildrenLookupFailure, ChildrenLookup>>
       childrenLookupEntityToChildrenLookup(
-          ChildrenLookupEntity? childrenLookupEntity) async {
+    ChildrenLookupEntity? childrenLookupEntity,
+  ) async {
     if (childrenLookupEntity == null) {
       return left(const ChildrenLookupFailure.serverError());
     } else {
@@ -163,8 +170,11 @@ class FirebaseChildrenLookupRepository
                 .getUser(childrenLookupEntity.personInChargeId!);
 
         if (eitherPersonInCharge.isLeft()) {
-          return left(ChildrenLookupFailure.invalidPersonInCharge(
-              childrenLookupEntity.personInChargeId));
+          return left(
+            ChildrenLookupFailure.invalidPersonInCharge(
+              childrenLookupEntity.personInChargeId,
+            ),
+          );
         }
 
         personInCharge = eitherPersonInCharge.toOption().toNullable();
@@ -179,8 +189,11 @@ class FirebaseChildrenLookupRepository
             await _userRepository.getUser(childrenLookupEntity.issuerId!);
 
         if (eitherIssuer.isLeft()) {
-          return left(ChildrenLookupFailure.invalidIssuer(
-              childrenLookupEntity.issuerId));
+          return left(
+            ChildrenLookupFailure.invalidIssuer(
+              childrenLookupEntity.issuerId,
+            ),
+          );
         }
 
         issuer = eitherIssuer.toOption().toNullable();
@@ -193,12 +206,16 @@ class FirebaseChildrenLookupRepository
       } else {
         final Either<LocationFailure, Location> eitherLocation =
             await _familyRepository.getLocationById(
-                familyId: childrenLookupEntity.familyId!,
-                locationId: childrenLookupEntity.locationId!);
+          familyId: childrenLookupEntity.familyId!,
+          locationId: childrenLookupEntity.locationId!,
+        );
 
         if (eitherLocation.isLeft()) {
-          return left(ChildrenLookupFailure.invalidLocation(
-              childrenLookupEntity.locationId));
+          return left(
+            ChildrenLookupFailure.invalidLocation(
+              childrenLookupEntity.locationId,
+            ),
+          );
         }
         location = eitherLocation.toOption().toNullable();
       }
@@ -209,11 +226,13 @@ class FirebaseChildrenLookupRepository
       } else {
         final Either<ChildrenFailure, Child> eitherChild =
             await _familyRepository.getChildById(
-                familyId: childrenLookupEntity.familyId!,
-                childId: childrenLookupEntity.childId!);
+          familyId: childrenLookupEntity.familyId!,
+          childId: childrenLookupEntity.childId!,
+        );
         if (eitherChild.isLeft()) {
           return left(
-              ChildrenLookupFailure.invalidChild(childrenLookupEntity.childId));
+            ChildrenLookupFailure.invalidChild(childrenLookupEntity.childId),
+          );
         }
         child = eitherChild.toOption().toNullable();
       }
@@ -252,20 +271,24 @@ class FirebaseChildrenLookupRepository
               .map((doc) => ChildrenLookupHistoryEntity.fromFirestore(doc))
               .toList();
         },
-      ).handleError((err, stacktrace) =>
-              log('_getChildrenLookupHistories handleError: $err')),
+      ).handleError(
+        (err, stacktrace) =>
+            log('_getChildrenLookupHistories handleError: $err'),
+      ),
     );
   }
 
   Stream<List<Either<ChildrenLookupFailure, ChildrenLookupHistory>>>
       transformChildrenLookupHistories(
-          Stream<List<ChildrenLookupHistoryEntity>>
-              childrenLookupHistoryEntities) async* {
+    Stream<List<ChildrenLookupHistoryEntity>> childrenLookupHistoryEntities,
+  ) async* {
     await for (final entities in childrenLookupHistoryEntities) {
       final List<Future<Either<ChildrenLookupFailure, ChildrenLookupHistory>>>
           futures = entities
-              .map((entity) =>
-                  childrenLookupHistoryEntityToChildrenLookupHistory(entity))
+              .map(
+                (entity) =>
+                    childrenLookupHistoryEntityToChildrenLookupHistory(entity),
+              )
               .toList();
 
       yield await Future.wait(futures);
@@ -274,13 +297,17 @@ class FirebaseChildrenLookupRepository
 
   Future<Either<ChildrenLookupFailure, ChildrenLookupHistory>>
       childrenLookupHistoryEntityToChildrenLookupHistory(
-          ChildrenLookupHistoryEntity childrenLookupHistoryEntity) async {
+    ChildrenLookupHistoryEntity childrenLookupHistoryEntity,
+  ) async {
     final Either<UserFailure, User> eitherSubject =
         await _userRepository.getUser(childrenLookupHistoryEntity.subjectId);
 
     return eitherSubject.fold(
-      (userFailure) => left(ChildrenLookupFailure.invalidIssuer(
-          childrenLookupHistoryEntity.subjectId)),
+      (userFailure) => left(
+        ChildrenLookupFailure.invalidIssuer(
+          childrenLookupHistoryEntity.subjectId,
+        ),
+      ),
       (subject) => right(
         ChildrenLookupHistory(
           id: childrenLookupHistoryEntity.id,
@@ -288,7 +315,8 @@ class FirebaseChildrenLookupRepository
           eventType:
               MissionEventType.fromValue(childrenLookupHistoryEntity.type),
           creationDate: TimestampVo.fromTimestamp(
-              childrenLookupHistoryEntity.creationDate),
+            childrenLookupHistoryEntity.creationDate,
+          ),
           subject: subject,
         ),
       ),
@@ -296,8 +324,9 @@ class FirebaseChildrenLookupRepository
   }
 
   @override
-  Stream<Either<ChildrenLookupFailure, ChildrenLookup>> watchChildrenLookup(
-      {required String childrenLookupId}) async* {
+  Stream<Either<ChildrenLookupFailure, ChildrenLookup>> watchChildrenLookup({
+    required String childrenLookupId,
+  }) async* {
     final childrenlookupDoc =
         _firebaseFirestore.childrenLookup(childrenLookupId: childrenLookupId);
 
@@ -319,8 +348,9 @@ class FirebaseChildrenLookupRepository
   }
 
   Stream<Either<ChildrenLookupFailure, ChildrenLookup>> transformChild(
-      Stream<Either<ChildrenLookupFailure, ChildrenLookupEntity>>
-          childrenLookupEntity) async* {
+    Stream<Either<ChildrenLookupFailure, ChildrenLookupEntity>>
+        childrenLookupEntity,
+  ) async* {
     await for (final entity in childrenLookupEntity) {
       final Future<Either<ChildrenLookupFailure, ChildrenLookup>> futures =
           childrenLookupEntityToChildrenLookup(entity.toOption().toNullable());
@@ -330,18 +360,23 @@ class FirebaseChildrenLookupRepository
   }
 
   @override
-  Stream<Either<PlanningFailure, Planning>> getPlanning(
-      {required String userId}) {
+  Stream<Either<PlanningFailure, Planning>> getPlanning({
+    required String userId,
+  }) {
     return transformChildrenLookup(
       _firebaseFirestore
           .childrenLookups()
           .where("trustedUsers", arrayContains: userId)
-          .where("rendezVous",
-              isGreaterThanOrEqualTo: Timestamp.fromDate(DateTime.utc(
+          .where(
+            "rendezVous",
+            isGreaterThanOrEqualTo: Timestamp.fromDate(
+              DateTime.utc(
                 DateTime.now().year,
                 DateTime.now().month,
                 DateTime.now().day,
-              )))
+              ),
+            ),
+          )
           .snapshots()
           .map(
         (snapshot) {
@@ -352,8 +387,10 @@ class FirebaseChildrenLookupRepository
       ).handleError((err, stacktrace) => log('getPlanning handleError: $err')),
     )
         .map(
-      (List<Either<ChildrenLookupFailure, ChildrenLookup>>
-              eitherChildrenLookups) =>
+      (
+        List<Either<ChildrenLookupFailure, ChildrenLookup>>
+            eitherChildrenLookups,
+      ) =>
           eitherChildrenLookups
               .where((element) => element.isRight())
               .map((e) => e.toOption().toNullable()!)
@@ -378,7 +415,9 @@ class FirebaseChildrenLookupRepository
             }).toList();
 
             return PlanningEntry(
-                day: date, childrenLookups: filteredChildrenLookup);
+              day: date,
+              childrenLookups: filteredChildrenLookup,
+            );
           },
         );
         return right(Planning(entries: entries));

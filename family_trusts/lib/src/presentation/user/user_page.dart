@@ -15,7 +15,6 @@ import 'package:familytrusts/src/presentation/core/my_button.dart';
 import 'package:familytrusts/src/presentation/core/my_image.dart';
 import 'package:familytrusts/src/presentation/core/separator.dart';
 import 'package:familytrusts/src/presentation/profile/widgets/profile_image.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -202,7 +201,7 @@ class _UserPageState extends State<UserPage> {
                           TextFormField(
                             initialValue: widget.userToEdit.name.getOrCrash(),
                             autofocus: !state.submitUserEnable!,
-                            enabled: state.submitUserEnable!,
+                            enabled: state.submitUserEnable,
                             style: textTheme.headline5,
                             decoration: InputDecoration(
                               labelText: LocaleKeys.form_name_label.tr(),
@@ -221,7 +220,8 @@ class _UserPageState extends State<UserPage> {
                             enabled: false,
                             style: textTheme.headline5,
                             decoration: InputDecoration(
-                                labelText: LocaleKeys.form_email_label.tr()),
+                              labelText: LocaleKeys.form_email_label.tr(),
+                            ),
                             validator: (val) {
                               return !Validators().isValidEmail(val)
                                   ? LocaleKeys.form_email_error.tr()
@@ -247,9 +247,10 @@ class _UserPageState extends State<UserPage> {
                                   //widget.onSaveCallback(updatedUser, _imagePath);
                                   context.read<UserFormBloc>().add(
                                         UserFormEvent.userSubmitted(
-                                            user: updatedUser,
-                                            connectedUser: widget.connectedUser,
-                                            pickedFilePath: _imagePath),
+                                          user: updatedUser,
+                                          connectedUser: widget.connectedUser,
+                                          pickedFilePath: _imagePath,
+                                        ),
                                       );
                                   //Navigator.pop(context);
                                 }
@@ -267,7 +268,8 @@ class _UserPageState extends State<UserPage> {
                                 AlertHelper().confirm(
                                   context,
                                   LocaleKeys.user_disconnect_confirm.tr(
-                                      args: [widget.userToEdit.displayName]),
+                                    args: [widget.userToEdit.displayName],
+                                  ),
                                   onConfirmCallback: () {
                                     context.read<SetupFamilyBloc>().add(
                                           SetupFamilyEvent
@@ -294,12 +296,12 @@ class _UserPageState extends State<UserPage> {
                                   context,
                                   "Voulez vous retirer ${widget.userToEdit.displayName} de votre cercle de confiance ?",
                                   onConfirmCallback: () {
-                                    context
-                                        .read<UserFormBloc>()
-                                        .add(UserFormEvent.userUntrusted(
-                                          user: widget.userToEdit,
-                                          connectedUser: widget.connectedUser,
-                                        ));
+                                    context.read<UserFormBloc>().add(
+                                          UserFormEvent.userUntrusted(
+                                            user: widget.userToEdit,
+                                            connectedUser: widget.connectedUser,
+                                          ),
+                                        );
                                   },
                                 );
                               },

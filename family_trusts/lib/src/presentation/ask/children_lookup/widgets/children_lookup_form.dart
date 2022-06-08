@@ -41,7 +41,7 @@ class _ChildrenLookupFormState extends State<ChildrenLookupForm> with LogMixin {
     super.initState();
     dateCtl = TextEditingController();
 
-    Intl.defaultLocale = DateHelper.FR;
+    Intl.defaultLocale = fr;
   }
 
   @override
@@ -77,17 +77,26 @@ class _ChildrenLookupFormState extends State<ChildrenLookupForm> with LogMixin {
                */
             },
             (_) {
-              showSuccessMessage(LocaleKeys.ask_childlookup_success.tr(), bc, onDismissed: () {
-                AutoRouter.of(context).popUntilRoot();
-                AutoRouter.of(context).replace(HomePageRoute(
-                    currentTab: AppTab.myDemands,
-                    connectedUserId: widget.connectedUserId));
-              });
+              showSuccessMessage(
+                LocaleKeys.ask_childlookup_success.tr(),
+                bc,
+                onDismissed: () {
+                  AutoRouter.of(context).popUntilRoot();
+                  AutoRouter.of(context).replace(
+                    HomePageRoute(
+                      currentTab: AppTab.myDemands,
+                      connectedUserId: widget.connectedUserId,
+                    ),
+                  );
+                },
+              );
             },
           ),
         );
 
-        dateCtl?.text = DateHelper.parseRdvDateTimeFromDateTime(state.rendezVousStep.rendezVous.getOrCrash());
+        dateCtl?.text = parseRdvDateTimeFromDateTime(
+          state.rendezVousStep.rendezVous.getOrCrash(),
+        );
       },
       child: BlocBuilder<ChildrenLookupBloc, ChildrenLookupState>(
         builder: (context, state) {
@@ -134,18 +143,20 @@ class _ChildrenLookupFormState extends State<ChildrenLookupForm> with LogMixin {
         onStepCancel: () => BlocProvider.of<ChildrenLookupBloc>(context).add(
           const ChildrenLookupEvent.cancel(),
         ),
-        controlsBuilder: (BuildContext context,
-            {VoidCallback? onStepContinue, VoidCallback? onStepCancel}) {
+        controlsBuilder: (
+          BuildContext context,
+          ControlsDetails controls,
+        ) {
           return Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: <Widget>[
               MyButton(
-                onPressed: onStepContinue!,
+                onPressed: controls.onStepContinue!,
                 message: LocaleKeys.ask_childlookup_stepper_next.tr(),
               ),
               const MyHorizontalSeparator(),
               MyButton(
-                onPressed: onStepCancel!,
+                onPressed: controls.onStepCancel!,
                 message: LocaleKeys.ask_childlookup_stepper_previous.tr(),
               ),
             ],
@@ -197,36 +208,42 @@ class _ChildrenLookupFormState extends State<ChildrenLookupForm> with LogMixin {
 
   Step buildStepRendezVous(ChildrenLookupState state, BuildContext context) {
     return Step(
+      isActive: state.rendezVousStep.isActive,
+      state: getCurrentStepState(
         isActive: state.rendezVousStep.isActive,
-        state: getCurrentStepState(
-          isActive: state.rendezVousStep.isActive,
-          isValid: state.rendezVousStep.rendezVous.isValid(),
-        ),
-        title: MyText(LocaleKeys.ask_childlookup_stepper_date_selection.tr()),
-        content: DateTimePicker(
-          type: DateTimePickerType.dateTimeSeparate,
-          controller: dateCtl,
-          firstDate: DateTime.now(),
-          lastDate: DateTime.now().add(const Duration(days: 300)),
-          //locale: const Locale(DateHelper.FR),
-          icon: const Icon(Icons.event),
-          onSaved: (date) {
-            final DateTime dateTime = DateHelper.rendezVousConverterWithDateTimePickerToDate(date).toNullable()!;
-            context
-                .read<ChildrenLookupBloc>()
-                .add(ChildrenLookupEvent.rendezVousChanged(dateTime));
-          },
-          onChanged: (val) {
-            final DateTime dateTime = DateHelper.rendezVousConverterWithDateTimePickerToDate(val).toNullable()!;
-            context
-                .read<ChildrenLookupBloc>()
-                .add(ChildrenLookupEvent.rendezVousChanged(dateTime));
-          },
-        ));
+        isValid: state.rendezVousStep.rendezVous.isValid(),
+      ),
+      title: MyText(LocaleKeys.ask_childlookup_stepper_date_selection.tr()),
+      content: DateTimePicker(
+        type: DateTimePickerType.dateTimeSeparate,
+        controller: dateCtl,
+        firstDate: DateTime.now(),
+        lastDate: DateTime.now().add(const Duration(days: 300)),
+        //locale: const Locale(FR),
+        icon: const Icon(Icons.event),
+        onSaved: (date) {
+          final DateTime dateTime =
+              rendezVousConverterWithDateTimePickerToDate(date).toNullable()!;
+          context
+              .read<ChildrenLookupBloc>()
+              .add(ChildrenLookupEvent.rendezVousChanged(dateTime));
+        },
+        onChanged: (val) {
+          final DateTime dateTime =
+              rendezVousConverterWithDateTimePickerToDate(val).toNullable()!;
+          context
+              .read<ChildrenLookupBloc>()
+              .add(ChildrenLookupEvent.rendezVousChanged(dateTime));
+        },
+      ),
+    );
   }
 
   Step buildStepLocationsSelection(
-      ChildrenLookupState state, double radius, BuildContext context) {
+    ChildrenLookupState state,
+    double radius,
+    BuildContext context,
+  ) {
     return Step(
       isActive: state.locationsStep.isActive,
       state: getCurrentStepState(
@@ -239,58 +256,68 @@ class _ChildrenLookupFormState extends State<ChildrenLookupForm> with LogMixin {
         (eitherLocations) => eitherLocations.fold(
           (failure) => const ErrorContent(),
           (locations) => Column(
-              children: locations.map(
-            (eitherLocation) {
-              return eitherLocation.fold(
-                (failure) => Container(
-                  color: Colors.red,
-                  child: const MyVerticalSeparator(),
-                ),
-                (location) => Column(
-                  children: [
-                    Row(
-                      //mainAxisAlignment: MainAxisAlignment.start,
-                      children: <Widget>[
-                        MyAvatar(
-                          imageTag: "TAG_LOCATION_${location.id}",
-                          photoUrl: location.photoUrl,
-                          radius: radius / 2,
-                          onTapCallback: () =>
-                              BlocProvider.of<ChildrenLookupBloc>(context).add(
-                                  ChildrenLookupEvent.locationSelected(
-                                      location)),
-                          defaultImage: defaultLocationImages,
-                        ),
-                        const MyHorizontalSeparator(),
-                        InkWell(
-                          onTap: () =>
-                              BlocProvider.of<ChildrenLookupBloc>(context).add(
-                                  ChildrenLookupEvent.locationSelected(
-                                      location)),
-                          child: MyText(
-                            location.title.getOrCrash(),
-                            alignment: TextAlign.start,
-                            maxLines: 5,
+            children: locations.map(
+              (eitherLocation) {
+                return eitherLocation.fold(
+                  (failure) => Container(
+                    color: Colors.red,
+                    child: const MyVerticalSeparator(),
+                  ),
+                  (location) => Column(
+                    children: [
+                      Row(
+                        //mainAxisAlignment: MainAxisAlignment.start,
+                        children: <Widget>[
+                          MyAvatar(
+                            imageTag: "TAG_LOCATION_${location.id}",
+                            photoUrl: location.photoUrl,
+                            radius: radius / 2,
+                            onTapCallback: () =>
+                                BlocProvider.of<ChildrenLookupBloc>(context)
+                                    .add(
+                              ChildrenLookupEvent.locationSelected(
+                                location,
+                              ),
+                            ),
+                            defaultImage: defaultLocationImages,
                           ),
-                        ),
+                          const MyHorizontalSeparator(),
+                          InkWell(
+                            onTap: () =>
+                                BlocProvider.of<ChildrenLookupBloc>(context)
+                                    .add(
+                              ChildrenLookupEvent.locationSelected(
+                                location,
+                              ),
+                            ),
+                            child: MyText(
+                              location.title.getOrCrash(),
+                              alignment: TextAlign.start,
+                              maxLines: 5,
+                            ),
+                          ),
+                        ],
+                      ),
+                      if (location.id ==
+                          state.locationsStep.selectedLocation?.id) ...[
+                        buildDivider(context),
                       ],
-                    ),
-                    if (location.id ==
-                        state.locationsStep.selectedLocation?.id) ...[
-                      buildDivider(context),
                     ],
-                  ],
-                ),
-              );
-            },
-          ).toList()),
+                  ),
+                );
+              },
+            ).toList(),
+          ),
         ),
       ),
     );
   }
 
   Step buildStepChildrenSelection(
-      ChildrenLookupState state, double radius, BuildContext context) {
+    ChildrenLookupState state,
+    double radius,
+    BuildContext context,
+  ) {
     return Step(
       title: MyText(LocaleKeys.ask_childlookup_stepper_child_selection.tr()),
       isActive: state.childrenStep.isActive,
@@ -303,48 +330,53 @@ class _ChildrenLookupFormState extends State<ChildrenLookupForm> with LogMixin {
         (eitherChildren) => eitherChildren.fold(
           (failure) => const ErrorContent(),
           (children) => Column(
-              children: children.map(
-            (eitherChild) {
-              return eitherChild.fold(
-                (failure) => Container(
-                  color: Colors.red,
-                  child: const MyVerticalSeparator(),
-                ),
-                (child) => Column(
-                  children: [
-                    Row(
-                      //mainAxisAlignment: MainAxisAlignment.start,
-                      children: <Widget>[
-                        MyAvatar(
-                          imageTag: "TAG_CHILD_${child.id}",
-                          photoUrl: child.photoUrl,
-                          radius: radius / 2,
-                          onTapCallback: () =>
-                              BlocProvider.of<ChildrenLookupBloc>(context).add(
-                                  ChildrenLookupEvent.childSelected(child)),
-                          defaultImage: defaultUserImages,
-                        ),
-                        const MyHorizontalSeparator(),
-                        InkWell(
-                          onTap: () =>
-                              BlocProvider.of<ChildrenLookupBloc>(context).add(
-                                  ChildrenLookupEvent.childSelected(child)),
-                          child: MyText(
-                            child.displayName,
-                            alignment: TextAlign.start,
-                            maxLines: 3,
+            children: children.map(
+              (eitherChild) {
+                return eitherChild.fold(
+                  (failure) => Container(
+                    color: Colors.red,
+                    child: const MyVerticalSeparator(),
+                  ),
+                  (child) => Column(
+                    children: [
+                      Row(
+                        //mainAxisAlignment: MainAxisAlignment.start,
+                        children: <Widget>[
+                          MyAvatar(
+                            imageTag: "TAG_CHILD_${child.id}",
+                            photoUrl: child.photoUrl,
+                            radius: radius / 2,
+                            onTapCallback: () =>
+                                BlocProvider.of<ChildrenLookupBloc>(context)
+                                    .add(
+                              ChildrenLookupEvent.childSelected(child),
+                            ),
+                            defaultImage: defaultUserImages,
                           ),
-                        ),
+                          const MyHorizontalSeparator(),
+                          InkWell(
+                            onTap: () =>
+                                BlocProvider.of<ChildrenLookupBloc>(context)
+                                    .add(
+                              ChildrenLookupEvent.childSelected(child),
+                            ),
+                            child: MyText(
+                              child.displayName,
+                              alignment: TextAlign.start,
+                              maxLines: 3,
+                            ),
+                          ),
+                        ],
+                      ),
+                      if (child.id == state.childrenStep.selectedChild?.id) ...[
+                        buildDivider(context),
                       ],
-                    ),
-                    if (child.id == state.childrenStep.selectedChild?.id) ...[
-                      buildDivider(context),
                     ],
-                  ],
-                ),
-              );
-            },
-          ).toList()),
+                  ),
+                );
+              },
+            ).toList(),
+          ),
         ),
       ),
     );
@@ -380,8 +412,10 @@ class _ChildrenLookupFormState extends State<ChildrenLookupForm> with LogMixin {
     );
   }
 
-  StepState getCurrentStepState(
-      {required bool isActive, required bool isValid}) {
+  StepState getCurrentStepState({
+    required bool isActive,
+    required bool isValid,
+  }) {
     if (isActive) {
       return StepState.editing;
     } else {

@@ -1,7 +1,6 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:familytrusts/generated/locale_keys.g.dart';
-import 'package:familytrusts/src/application/family/trusted/bloc.dart';
 import 'package:familytrusts/src/application/search_user/bloc.dart';
 import 'package:familytrusts/src/domain/user/user.dart';
 import 'package:familytrusts/src/helper/alert_helper.dart';
@@ -42,19 +41,20 @@ class SearchUserForm extends StatelessWidget {
         );
       },
       child: BlocBuilder<SearchUserBloc, SearchUserState>(
-          builder: (context, state) {
-        return Padding(
-          padding: const EdgeInsets.all(20),
-          child: Column(
-            children: <Widget>[
-              const SizedBox(height: 8),
-              userLookupText(context),
-              const SizedBox(height: 8),
-              buildResult(state, context),
-            ],
-          ),
-        );
-      }),
+        builder: (context, state) {
+          return Padding(
+            padding: const EdgeInsets.all(20),
+            child: Column(
+              children: <Widget>[
+                const SizedBox(height: 8),
+                userLookupText(context),
+                const SizedBox(height: 8),
+                buildResult(state, context),
+              ],
+            ),
+          );
+        },
+      ),
     );
   }
 

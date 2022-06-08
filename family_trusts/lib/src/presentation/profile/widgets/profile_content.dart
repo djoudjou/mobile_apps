@@ -297,7 +297,9 @@ class _ProfileContentState extends State<ProfileContent>
                               title: Name(""),
                               photoUrl: "",
                               gpsPosition: GpsPosition.fromPosition(
-                                  latitude: 0, longitude: 0),
+                                latitude: 0,
+                                longitude: 0,
+                              ),
                             ),
                             widget.user,
                           );
@@ -328,11 +330,12 @@ void gotoEditUserScreen({
   );
 }
 
-void gotoEditChild(
-    {required BuildContext context,
-    required User currentUser,
-    required bool editing,
-    required Child child}) {
+void gotoEditChild({
+  required BuildContext context,
+  required User currentUser,
+  required bool editing,
+  required Child child,
+}) {
   AutoRouter.of(context).navigate(
     ChildPageRoute(
       child: child,

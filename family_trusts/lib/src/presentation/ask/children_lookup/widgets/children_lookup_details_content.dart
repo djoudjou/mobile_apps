@@ -67,8 +67,8 @@ class ChildrenLookupDetailsContent extends StatelessWidget {
                               LocaleKeys.global_confirm.tr(),
                               onConfirmCallback: () {
                                 BlocProvider.of<ChildrenLookupDetailsBloc>(
-                                        context)
-                                    .add(
+                                  context,
+                                ).add(
                                   const ChildrenLookupDetailsEvent.accept(),
                                 );
                               },
@@ -86,8 +86,8 @@ class ChildrenLookupDetailsContent extends StatelessWidget {
                               LocaleKeys.global_confirm.tr(),
                               onConfirmCallback: () {
                                 BlocProvider.of<ChildrenLookupDetailsBloc>(
-                                        context)
-                                    .add(
+                                  context,
+                                ).add(
                                   const ChildrenLookupDetailsEvent.cancel(),
                                 );
                               },
@@ -104,8 +104,8 @@ class ChildrenLookupDetailsContent extends StatelessWidget {
                               LocaleKeys.global_confirm.tr(),
                               onConfirmCallback: () {
                                 BlocProvider.of<ChildrenLookupDetailsBloc>(
-                                        context)
-                                    .add(
+                                  context,
+                                ).add(
                                   const ChildrenLookupDetailsEvent.ended(),
                                 );
                               },
@@ -123,8 +123,8 @@ class ChildrenLookupDetailsContent extends StatelessWidget {
                               LocaleKeys.global_confirm.tr(),
                               onConfirmCallback: () {
                                 BlocProvider.of<ChildrenLookupDetailsBloc>(
-                                        context)
-                                    .add(
+                                  context,
+                                ).add(
                                   const ChildrenLookupDetailsEvent.decline(),
                                 );
                               },
@@ -161,15 +161,19 @@ class ChildrenLookupDetailsContent extends StatelessWidget {
                               alignment: TimelineAlign.manual,
                               lineXY: 0.35,
                               beforeLineStyle: LineStyle(
-                                  color: Theme.of(context).primaryColorLight),
+                                color: Theme.of(context).primaryColorLight,
+                              ),
                               indicatorStyle: IndicatorStyle(
-                                  color: isFirst
-                                      ? Theme.of(context).primaryColorDark
-                                      : Theme.of(context).primaryColorLight),
+                                color: isFirst
+                                    ? Theme.of(context).primaryColorDark
+                                    : Theme.of(context).primaryColorLight,
+                              ),
                               isFirst: isFirst,
                               isLast: idx == 0,
-                              startChild: MyText(childrenLookupHistory
-                                  .creationDate.toPrintableDate),
+                              startChild: MyText(
+                                childrenLookupHistory
+                                    .creationDate.toPrintableDate,
+                              ),
                               endChild: Container(
                                 //color: Colors.teal,
                                 constraints: const BoxConstraints(
@@ -206,8 +210,10 @@ class ChildrenLookupDetailsContent extends StatelessWidget {
     );
   }
 
-  Widget buildTimeLine(ChildrenLookup childrenLookup,
-      ChildrenLookupHistory childrenLookupHistory) {
+  Widget buildTimeLine(
+    ChildrenLookup childrenLookup,
+    ChildrenLookupHistory childrenLookupHistory,
+  ) {
     switch (childrenLookupHistory.eventType.getOrCrash()) {
       case MissionEventTypeEnum.created:
         return MyText(

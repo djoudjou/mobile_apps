@@ -1,13 +1,13 @@
 import 'dart:async';
 
 import 'package:bloc/bloc.dart';
+import 'package:bloc_concurrency/bloc_concurrency.dart';
 import 'package:dartz/dartz.dart';
+import 'package:familytrusts/src/application/notifications/notifications_events/notifications_events_update_event.dart';
+import 'package:familytrusts/src/application/notifications/notifications_events/notifications_events_update_state.dart';
 import 'package:familytrusts/src/domain/notification/i_notification_repository.dart';
 import 'package:familytrusts/src/domain/notification/notifications_failure.dart';
 import 'package:injectable/injectable.dart';
-
-import 'notifications_events_update_event.dart';
-import 'notifications_events_update_state.dart';
 
 @injectable
 class NotificationsEventsUpdateBloc extends Bloc<NotificationsEventsUpdateEvent,
@@ -15,58 +15,76 @@ class NotificationsEventsUpdateBloc extends Bloc<NotificationsEventsUpdateEvent,
   final INotificationRepository _notificationRepository;
 
   NotificationsEventsUpdateBloc(this._notificationRepository)
-      : super(NotificationsEventsUpdateState.initial());
+      : super(NotificationsEventsUpdateState.initial()) {
+    on<NotificationsEventsUpdateEvent>(
+      (event, emit) => mapEventToState(event, emit),
+      transformer: sequential(),
+    );
+  }
 
-  @override
-  Stream<NotificationsEventsUpdateState> mapEventToState(
-      NotificationsEventsUpdateEvent event) async* {
-    yield* event.map(
+  void mapEventToState(
+    NotificationsEventsUpdateEvent event,
+    Emitter<NotificationsEventsUpdateState> emit,
+  ) {
+    event.map(
       markAsRead: (event) {
-        return _mapMarkAsReadToState(event);
+        _mapMarkAsReadToState(event, emit);
       },
       deleteEvent: (DeleteEvent event) {
-        return _mapDeleteNotificationToState(event);
+        _mapDeleteNotificationToState(event, emit);
       },
     );
   }
 
-  Stream<NotificationsEventsUpdateState> _mapMarkAsReadToState(
-      MarkAsRead event) async* {
+  FutureOr<void> _mapMarkAsReadToState(
+    MarkAsRead event,
+    Emitter<NotificationsEventsUpdateState> emit,
+  ) async {
     try {
-      yield state.copyWith(
-        markAsReadInProgress: true,
-        markAsReadfailureOrSuccessOption: none(),
+      emit(
+        state.copyWith(
+          markAsReadInProgress: true,
+          markAsReadfailureOrSuccessOption: none(),
+        ),
       );
       final Either<NotificationsFailure, Unit> result =
           await _notificationRepository.updateEvent(
         event.currentUser.id!,
         event.notification.copyWith(seen: true),
       );
-      yield result.fold(
-        (l) => state.copyWith(
-          markAsReadInProgress: false,
-          markAsReadfailureOrSuccessOption: some(left(l)),
-        ),
-        (r) => state.copyWith(
-          markAsReadInProgress: false,
-          markAsReadfailureOrSuccessOption: some(right(unit)),
+      emit(
+        result.fold(
+          (l) => state.copyWith(
+            markAsReadInProgress: false,
+            markAsReadfailureOrSuccessOption: some(left(l)),
+          ),
+          (r) => state.copyWith(
+            markAsReadInProgress: false,
+            markAsReadfailureOrSuccessOption: some(right(unit)),
+          ),
         ),
       );
     } catch (execption) {
-      yield state.copyWith(
-        markAsReadInProgress: false,
-        markAsReadfailureOrSuccessOption:
-            some(left(const NotificationsFailure.unexpected())),
+      emit(
+        state.copyWith(
+          markAsReadInProgress: false,
+          markAsReadfailureOrSuccessOption:
+              some(left(const NotificationsFailure.unexpected())),
+        ),
       );
     }
   }
 
-  Stream<NotificationsEventsUpdateState> _mapDeleteNotificationToState(
-      DeleteEvent event) async* {
+  FutureOr<void> _mapDeleteNotificationToState(
+    DeleteEvent event,
+    Emitter<NotificationsEventsUpdateState> emit,
+  ) async {
     try {
-      yield state.copyWith(
-        isDeleting: true,
-        deletefailureOrSuccessOption: none(),
+      emit(
+        state.copyWith(
+          isDeleting: true,
+          deletefailureOrSuccessOption: none(),
+        ),
       );
       final Either<NotificationsFailure, Unit> result =
           await _notificationRepository.deleteEvent(
@@ -74,21 +92,25 @@ class NotificationsEventsUpdateBloc extends Bloc<NotificationsEventsUpdateEvent,
         event.notification,
       );
 
-      yield result.fold(
-        (l) => state.copyWith(
-          isDeleting: false,
-          deletefailureOrSuccessOption: some(left(l)),
-        ),
-        (r) => state.copyWith(
-          isDeleting: false,
-          deletefailureOrSuccessOption: some(right(unit)),
+      emit(
+        result.fold(
+          (l) => state.copyWith(
+            isDeleting: false,
+            deletefailureOrSuccessOption: some(left(l)),
+          ),
+          (r) => state.copyWith(
+            isDeleting: false,
+            deletefailureOrSuccessOption: some(right(unit)),
+          ),
         ),
       );
     } catch (execption) {
-      yield state.copyWith(
-        isDeleting: false,
-        deletefailureOrSuccessOption:
-            some(left(const NotificationsFailure.unexpected())),
+      emit(
+        state.copyWith(
+          isDeleting: false,
+          deletefailureOrSuccessOption:
+              some(left(const NotificationsFailure.unexpected())),
+        ),
       );
     }
   }

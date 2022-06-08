@@ -6,13 +6,13 @@ import 'package:familytrusts/src/domain/family/children_failure.dart';
 import 'package:familytrusts/src/domain/family/locations/location.dart';
 import 'package:familytrusts/src/domain/family/locations/location_failure.dart';
 import 'package:familytrusts/src/domain/family/trusted_user/trusted.dart';
-import 'package:familytrusts/src/domain/user/disconnect_user_failure.dart';
-import 'package:familytrusts/src/domain/user/user.dart';
 import 'package:familytrusts/src/domain/user/user_failure.dart';
 
 abstract class IFamilyRepository {
-  Future<Either<ChildrenFailure, Child>> getChildById(
-      {required String familyId, required String childId});
+  Future<Either<ChildrenFailure, Child>> getChildById({
+    required String familyId,
+    required String childId,
+  });
 
   Stream<Either<ChildrenFailure, List<Either<ChildrenFailure, Child>>>>
       getChildren(String familyId);
@@ -29,10 +29,12 @@ abstract class IFamilyRepository {
   });
 
   Stream<Either<UserFailure, List<TrustedUser>>> getTrustedUsers(
-      String familyId);
+    String familyId,
+  );
 
   Future<Either<UserFailure, List<TrustedUser>>> getFutureTrustedUsers(
-      String familyId);
+    String familyId,
+  );
 
   Future<Either<UserFailure, Unit>> addTrustedUser({
     required String familyId,
@@ -44,8 +46,10 @@ abstract class IFamilyRepository {
     required String trustedUserId,
   });
 
-  Future<Either<LocationFailure, Location>> getLocationById(
-      {required String familyId, required String locationId});
+  Future<Either<LocationFailure, Location>> getLocationById({
+    required String familyId,
+    required String locationId,
+  });
 
   Stream<Either<LocationFailure, List<Either<LocationFailure, Location>>>>
       getLocations(String familyId);

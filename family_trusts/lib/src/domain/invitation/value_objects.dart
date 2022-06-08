@@ -32,7 +32,8 @@ class InvitationType extends ValueObject<InvitationTypeEnum> {
 
     return (val == null)
         ? InvitationType._(
-            left(ValueFailure.invalidEnumValue(failedValue: text)))
+            left(ValueFailure.invalidEnumValue(failedValue: text)),
+          )
         : InvitationType._(right(val));
   }
 

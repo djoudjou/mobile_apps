@@ -2,10 +2,10 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:familytrusts/src/domain/family/child.dart';
 import 'package:familytrusts/src/domain/family/value_objects.dart';
 import 'package:familytrusts/src/domain/user/value_objects.dart';
-import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:flutter/foundation.dart';
-part 'child_entity.freezed.dart';
+import 'package:freezed_annotation/freezed_annotation.dart';
 
+part 'child_entity.freezed.dart';
 part 'child_entity.g.dart';
 
 @freezed

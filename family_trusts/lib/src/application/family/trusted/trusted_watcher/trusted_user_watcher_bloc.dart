@@ -1,12 +1,11 @@
 import 'dart:async';
 
 import 'package:bloc/bloc.dart';
+import 'package:bloc_concurrency/bloc_concurrency.dart';
+import 'package:familytrusts/src/application/family/trusted/bloc.dart';
 import 'package:familytrusts/src/domain/family/i_family_repository.dart';
 import 'package:injectable/injectable.dart';
 import 'package:quiver/strings.dart' as quiver;
-
-import '../bloc.dart';
-import 'trusted_user_watcher_state.dart';
 
 @injectable
 class TrustedUserWatcherBloc
@@ -16,43 +15,61 @@ class TrustedUserWatcherBloc
 
   TrustedUserWatcherBloc(
     this._familyRepository,
-  ) : super(const TrustedUserWatcherState.trustedUsersLoading());
+  ) : super(const TrustedUserWatcherState.trustedUsersLoading()) {
+    on<TrustedUserWatcherEvent>(
+      (event, emit) => mapEventToState(event, emit),
+      transformer: sequential(),
+    );
+  }
 
-  @override
-  Stream<TrustedUserWatcherState> mapEventToState(
+  void mapEventToState(
     TrustedUserWatcherEvent event,
-  ) async* {
-    yield* event.map(
+    Emitter<TrustedUserWatcherState> emit,
+  ) {
+    event.map(
       loadTrustedUsers: (event) {
-        return _mapLoadTrustedUsersToState(event);
+        _mapLoadTrustedUsersToState(event, emit);
       },
       trustedUsersUpdated: (event) {
-        return _mapTrustedUsersUpdatedToState(event);
+        _mapTrustedUsersUpdatedToState(event, emit);
       },
     );
   }
 
-  Stream<TrustedUserWatcherState> _mapLoadTrustedUsersToState(
-      LoadTrustedUsers event) async* {
+  void _mapLoadTrustedUsersToState(
+    LoadTrustedUsers event,
+    Emitter<TrustedUserWatcherState> emit,
+  ) {
     if (quiver.isNotBlank(event.familyId)) {
-      yield const TrustedUserWatcherState.trustedUsersLoading();
+      emit(const TrustedUserWatcherState.trustedUsersLoading());
       _trustedUsersSubscription?.cancel();
       _trustedUsersSubscription =
-          _familyRepository.getTrustedUsers(event.familyId!).listen((event) {
-        add(TrustedUserWatcherEvent.trustedUsersUpdated(
-            eitherTrustedUsers: event));
-      }, onError: (_) {
-        _trustedUsersSubscription?.cancel();
-      });
+          _familyRepository.getTrustedUsers(event.familyId!).listen(
+        (event) {
+          add(
+            TrustedUserWatcherEvent.trustedUsersUpdated(
+              eitherTrustedUsers: event,
+            ),
+          );
+        },
+        onError: (_) {
+          _trustedUsersSubscription?.cancel();
+        },
+      );
     } else {
-      yield const TrustedUserWatcherState.trustedUsersNotLoaded();
+      emit(const TrustedUserWatcherState.trustedUsersNotLoaded());
     }
   }
 
-  Stream<TrustedUserWatcherState> _mapTrustedUsersUpdatedToState(
-      TrustedUsersUpdated event) async* {
-    yield TrustedUserWatcherState.trustedUsersLoaded(
-        eitherTrustedUsers: event.eitherTrustedUsers);
+  void _mapTrustedUsersUpdatedToState(
+    TrustedUsersUpdated event,
+    Emitter<TrustedUserWatcherState> emit,
+  ) {
+    emit(
+      TrustedUserWatcherState.trustedUsersLoaded(
+        eitherTrustedUsers: event.eitherTrustedUsers,
+      ),
+    );
   }
 
   @override

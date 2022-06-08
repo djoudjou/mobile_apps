@@ -1,7 +1,11 @@
 import 'dart:async';
 
 import 'package:bloc/bloc.dart';
+import 'package:bloc_concurrency/bloc_concurrency.dart';
 import 'package:dartz/dartz.dart';
+import 'package:easy_localization/easy_localization.dart';
+import 'package:familytrusts/generated/locale_keys.g.dart';
+import 'package:familytrusts/src/application/children_lookup/details/bloc.dart';
 import 'package:familytrusts/src/domain/auth/i_auth_facade.dart';
 import 'package:familytrusts/src/domain/children_lookup/children_lookup.dart';
 import 'package:familytrusts/src/domain/children_lookup/children_lookup_failure.dart';
@@ -9,8 +13,6 @@ import 'package:familytrusts/src/domain/children_lookup/children_lookup_history.
 import 'package:familytrusts/src/domain/children_lookup/i_children_lookup_repository.dart';
 import 'package:familytrusts/src/domain/children_lookup/value_objects.dart';
 import 'package:familytrusts/src/domain/core/value_objects.dart';
-import 'package:easy_localization/easy_localization.dart';
-import 'package:familytrusts/generated/locale_keys.g.dart';
 import 'package:familytrusts/src/domain/notification/event.dart';
 import 'package:familytrusts/src/domain/notification/i_notification_repository.dart';
 import 'package:familytrusts/src/domain/notification/value_objects.dart';
@@ -18,8 +20,6 @@ import 'package:familytrusts/src/domain/user/i_user_repository.dart';
 import 'package:familytrusts/src/domain/user/user.dart';
 import 'package:familytrusts/src/domain/user/user_failure.dart';
 import 'package:injectable/injectable.dart';
-
-import 'bloc.dart';
 
 @injectable
 class ChildrenLookupDetailsBloc
@@ -37,62 +37,79 @@ class ChildrenLookupDetailsBloc
     this._userRepository,
     this._childrenLookupRepository,
     this._notificationRepository,
-  ) : super(ChildrenLookupDetailsState.initial());
+  ) : super(ChildrenLookupDetailsState.initial()) {
+    on<ChildrenLookupDetailsEvent>(
+      (event, emit) => mapEventToState(event, emit),
+      transformer: restartable(),
+    );
+  }
 
-  @override
-  Stream<ChildrenLookupDetailsState> mapEventToState(
-      ChildrenLookupDetailsEvent event) async* {
-    yield* event.map(
-      childrenLookupUpdated: (ChildrenLookupUpdated value) async* {
+  Future<void> mapEventToState(
+    ChildrenLookupDetailsEvent event,
+    Emitter<ChildrenLookupDetailsState> emit,
+  ) async {
+    event.map(
+      childrenLookupUpdated: (ChildrenLookupUpdated value) async {
         final ChildrenLookup childrenLookup =
             value.eitherChildrenLookup.toOption().toNullable()!;
 
         final User? connectedUser = await getConnectedUser();
 
         if (connectedUser != null) {
-          yield state.copyWith(
-            childrenLookup: childrenLookup,
-            isTrustedUser: isTrustedUser(connectedUser, childrenLookup),
-            displayDeclineButton:
-                isDeclineButtonEnable(connectedUser, childrenLookup),
-            displayAcceptButton:
-                isAcceptButtonEnable(connectedUser, childrenLookup),
-            displayEndedButton: isEndedButtonEnable(
+          emit(
+            state.copyWith(
+              childrenLookup: childrenLookup,
+              isTrustedUser: isTrustedUser(connectedUser, childrenLookup),
+              displayDeclineButton:
+                  isDeclineButtonEnable(connectedUser, childrenLookup),
+              displayAcceptButton:
+                  isAcceptButtonEnable(connectedUser, childrenLookup),
+              displayEndedButton: isEndedButtonEnable(
                 connectedUser,
                 childrenLookup.rendezVous.value.toOption().toNullable()!,
-                childrenLookup),
-            displayCancelButton:
-                isCancelButtonEnable(connectedUser, childrenLookup),
-            isIssuer: connectedUser.id == childrenLookup.issuer?.id,
-            failureOrSuccessOption: none(),
+                childrenLookup,
+              ),
+              displayCancelButton:
+                  isCancelButtonEnable(connectedUser, childrenLookup),
+              isIssuer: connectedUser.id == childrenLookup.issuer?.id,
+              failureOrSuccessOption: none(),
+            ),
           );
         }
       },
-      init: (ChildrenLookupDetailsInit value) async* {
+      init: (ChildrenLookupDetailsInit value) async {
         final User? connectedUser = await getConnectedUser();
 
         if (connectedUser == null) {
-          yield state.copyWith(
-            isInitializing: false,
-            failureOrSuccessOption: some(
-              left(
-                const ChildrenLookupFailure.userNotConnected(),
+          emit(
+            state.copyWith(
+              isInitializing: false,
+              failureOrSuccessOption: some(
+                left(
+                  const ChildrenLookupFailure.userNotConnected(),
+                ),
               ),
             ),
           );
         } else {
-          yield state.copyWith(
-            isInitializing: true,
+          emit(
+            state.copyWith(
+              isInitializing: true,
+            ),
           );
 
           _childrenLookupHistorySubscription?.cancel();
           _childrenLookupHistorySubscription = _childrenLookupRepository
               .getChildrenLookupHistories(
-                  childrenLookupId: value.childrenLookup.id!)
+            childrenLookupId: value.childrenLookup.id!,
+          )
               .listen(
             (event) {
-              add(ChildrenLookupDetailsEvent.childrenLookupHistoriesUpdated(
-                  eitherChildrenHistory: event));
+              add(
+                ChildrenLookupDetailsEvent.childrenLookupHistoriesUpdated(
+                  eitherChildrenHistory: event,
+                ),
+              );
             },
             onError: (_) => _childrenLookupHistorySubscription?.cancel(),
           );
@@ -100,51 +117,64 @@ class ChildrenLookupDetailsBloc
           _childrenLookupSubscription?.cancel();
           _childrenLookupSubscription = _childrenLookupRepository
               .watchChildrenLookup(childrenLookupId: value.childrenLookup.id!)
-              .listen((e) {
-            add(ChildrenLookupDetailsEvent.childrenLookupUpdated(
-                eitherChildrenLookup: e));
-          }, onError: (_) => _childrenLookupSubscription?.cancel());
+              .listen(
+            (e) {
+              add(
+                ChildrenLookupDetailsEvent.childrenLookupUpdated(
+                  eitherChildrenLookup: e,
+                ),
+              );
+            },
+            onError: (_) => _childrenLookupSubscription?.cancel(),
+          );
 
-          yield state.copyWith(
-            childrenLookup: value.childrenLookup,
-            isTrustedUser: isTrustedUser(connectedUser, value.childrenLookup),
-            displayDeclineButton:
-                isDeclineButtonEnable(connectedUser, value.childrenLookup),
-            displayAcceptButton:
-                isAcceptButtonEnable(connectedUser, value.childrenLookup),
-            displayEndedButton: isEndedButtonEnable(
+          emit(
+            state.copyWith(
+              childrenLookup: value.childrenLookup,
+              isTrustedUser: isTrustedUser(connectedUser, value.childrenLookup),
+              displayDeclineButton:
+                  isDeclineButtonEnable(connectedUser, value.childrenLookup),
+              displayAcceptButton:
+                  isAcceptButtonEnable(connectedUser, value.childrenLookup),
+              displayEndedButton: isEndedButtonEnable(
                 connectedUser,
                 value.childrenLookup.rendezVous.value.toOption().toNullable()!,
-                value.childrenLookup),
-            displayCancelButton:
-                isCancelButtonEnable(connectedUser, value.childrenLookup),
-            isIssuer: connectedUser.id == value.childrenLookup.issuer?.id,
-            failureOrSuccessOption: none(),
-            isInitializing: false,
+                value.childrenLookup,
+              ),
+              displayCancelButton:
+                  isCancelButtonEnable(connectedUser, value.childrenLookup),
+              isIssuer: connectedUser.id == value.childrenLookup.issuer?.id,
+              failureOrSuccessOption: none(),
+              isInitializing: false,
+            ),
           );
         }
       },
-      childrenLookupHistoriesUpdated:
-          (ChildrenLookupHistoryUpdated value) async* {
+      childrenLookupHistoriesUpdated: (ChildrenLookupHistoryUpdated value) {
         final List<ChildrenLookupHistory> childrenlookupHistory = value
             .eitherChildrenHistory
             .where((e) => e.isRight())
             .map((e) => e.toOption().toNullable()!)
             .toList();
-        yield state.copyWith(
-          optionEitherChildrenLookupHistory: some(right(childrenlookupHistory)),
-          failureOrSuccessOption: none(),
+        emit(
+          state.copyWith(
+            optionEitherChildrenLookupHistory:
+                some(right(childrenlookupHistory)),
+            failureOrSuccessOption: none(),
+          ),
         );
       },
-      decline: (ChildrenLookupDetailsDecline value) async* {
+      decline: (ChildrenLookupDetailsDecline value) async {
         final User? connectedUser = await getConnectedUser();
         if (state.childrenLookup != null &&
             state.isTrustedUser &&
             state.displayDeclineButton &&
             connectedUser != null) {
-          yield state.copyWith(
-            isSubmitting: true,
-            failureOrSuccessOption: none(),
+          emit(
+            state.copyWith(
+              isSubmitting: true,
+              failureOrSuccessOption: none(),
+            ),
           );
 
           await _childrenLookupRepository.addChildrenLookupHistory(
@@ -184,21 +214,25 @@ class ChildrenLookupDetailsBloc
             ),
           );
 
-          yield state.copyWith(
-            isSubmitting: false,
-            failureOrSuccessOption: some(right(unit)),
+          emit(
+            state.copyWith(
+              isSubmitting: false,
+              failureOrSuccessOption: some(right(unit)),
+            ),
           );
         }
       },
-      accept: (ChildrenLookupDetailsAccept value) async* {
+      accept: (ChildrenLookupDetailsAccept value) async {
         final User? connectedUser = await getConnectedUser();
         if (state.childrenLookup != null &&
             state.isTrustedUser &&
             state.displayAcceptButton &&
             connectedUser != null) {
-          yield state.copyWith(
-            isSubmitting: true,
-            failureOrSuccessOption: none(),
+          emit(
+            state.copyWith(
+              isSubmitting: true,
+              failureOrSuccessOption: none(),
+            ),
           );
 
           await _childrenLookupRepository.addChildrenLookupHistory(
@@ -238,21 +272,25 @@ class ChildrenLookupDetailsBloc
             ),
           );
 
-          yield state.copyWith(
-            isSubmitting: false,
-            failureOrSuccessOption: some(right(unit)),
+          emit(
+            state.copyWith(
+              isSubmitting: false,
+              failureOrSuccessOption: some(right(unit)),
+            ),
           );
         }
       },
-      cancel: (ChildrenLookupDetailsCancel value) async* {
+      cancel: (ChildrenLookupDetailsCancel value) async {
         final User? connectedUser = await getConnectedUser();
         if (state.childrenLookup != null &&
             state.isTrustedUser &&
             state.displayCancelButton &&
             connectedUser != null) {
-          yield state.copyWith(
-            isSubmitting: true,
-            failureOrSuccessOption: none(),
+          emit(
+            state.copyWith(
+              isSubmitting: true,
+              failureOrSuccessOption: none(),
+            ),
           );
 
           await _childrenLookupRepository.addChildrenLookupHistory(
@@ -291,21 +329,25 @@ class ChildrenLookupDetailsBloc
             ),
           );
 
-          yield state.copyWith(
-            isSubmitting: false,
-            failureOrSuccessOption: some(right(unit)),
+          emit(
+            state.copyWith(
+              isSubmitting: false,
+              failureOrSuccessOption: some(right(unit)),
+            ),
           );
         }
       },
-      ended: (ChildrenLookupDetailsEnded value) async* {
+      ended: (ChildrenLookupDetailsEnded value) async {
         final User? connectedUser = await getConnectedUser();
         if (state.childrenLookup != null &&
             state.isTrustedUser &&
             state.displayEndedButton &&
             connectedUser != null) {
-          yield state.copyWith(
-            isSubmitting: true,
-            failureOrSuccessOption: none(),
+          emit(
+            state.copyWith(
+              isSubmitting: true,
+              failureOrSuccessOption: none(),
+            ),
           );
 
           await _childrenLookupRepository.addChildrenLookupHistory(
@@ -344,9 +386,11 @@ class ChildrenLookupDetailsBloc
             ),
           );
 
-          yield state.copyWith(
-            isSubmitting: false,
-            failureOrSuccessOption: some(right(unit)),
+          emit(
+            state.copyWith(
+              isSubmitting: false,
+              failureOrSuccessOption: some(right(unit)),
+            ),
           );
         }
       },
@@ -364,35 +408,46 @@ class ChildrenLookupDetailsBloc
   }
 
   String childrenLookupMsg(ChildrenLookup childrenLookup) {
-    return LocaleKeys.ask_childlookup_notification_template.tr(args: [
-      childrenLookup.child!.displayName,
-      childrenLookup.location!.title.getOrCrash(),
-      childrenLookup.rendezVous.toText,
-    ]);
+    return LocaleKeys.ask_childlookup_notification_template.tr(
+      args: [
+        childrenLookup.child!.displayName,
+        childrenLookup.location!.title.getOrCrash(),
+        childrenLookup.rendezVous.toText,
+      ],
+    );
   }
 
   bool isTrustedUser(User connectedUser, ChildrenLookup childrenLookup) =>
       childrenLookup.trustedUsers.contains(connectedUser.id);
 
   bool isDeclineButtonEnable(
-          User connectedUser, ChildrenLookup childrenLookup) =>
+    User connectedUser,
+    ChildrenLookup childrenLookup,
+  ) =>
       childrenLookup.state == MissionState.accepted() &&
       childrenLookup.personInCharge != null &&
       childrenLookup.personInCharge?.id == connectedUser.id;
 
   bool isCancelButtonEnable(
-          User connectedUser, ChildrenLookup childrenLookup) =>
+    User connectedUser,
+    ChildrenLookup childrenLookup,
+  ) =>
       childrenLookup.state == MissionState.waiting() &&
       childrenLookup.issuer?.id == connectedUser.id;
 
   bool isAcceptButtonEnable(
-          User connectedUser, ChildrenLookup childrenLookup) =>
+    User connectedUser,
+    ChildrenLookup childrenLookup,
+  ) =>
       childrenLookup.state == MissionState.waiting() &&
       childrenLookup.personInCharge?.id == null &&
       childrenLookup.issuer?.id != connectedUser.id;
 
-  bool isEndedButtonEnable(User connectedUser, DateTime rendezVous,
-          ChildrenLookup childrenLookup) =>
+  bool isEndedButtonEnable(
+    User connectedUser,
+    DateTime rendezVous,
+    ChildrenLookup childrenLookup,
+  ) =>
       childrenLookup.state == MissionState.accepted() &&
       childrenLookup.personInCharge != null &&
       childrenLookup.personInCharge?.id == connectedUser.id &&

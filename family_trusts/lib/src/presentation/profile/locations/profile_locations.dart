@@ -101,7 +101,10 @@ class ProfileLocations extends StatelessWidget {
                                         photoUrl: location.photoUrl,
                                         radius: radius / 2,
                                         onTapCallback: () => gotoEditLocation(
-                                            context, location, connectedUser),
+                                          context,
+                                          location,
+                                          connectedUser,
+                                        ),
                                         defaultImage: defaultLocationImages,
                                       ),
                                     ),
@@ -132,7 +135,11 @@ class ProfileLocations extends StatelessWidget {
 }
 
 void gotoEditLocation(
-    BuildContext context, Location location, User currentUser) {
+  BuildContext context,
+  Location location,
+  User currentUser,
+) {
   AutoRouter.of(context).push(
-      LocationPageRoute(locationToEdit: location, currentUser: currentUser));
+    LocationPageRoute(locationToEdit: location, currentUser: currentUser),
+  );
 }

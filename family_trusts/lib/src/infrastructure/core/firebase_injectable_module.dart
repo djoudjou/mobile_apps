@@ -27,7 +27,7 @@ abstract class FirebaseInjectableModule {
   firebase_storage.Reference get storageReference => firebase_storage.FirebaseStorage.instance.ref();
 
   @lazySingleton
-  FirebaseAnalytics get firebaseAnalytics => FirebaseAnalytics();
+  FirebaseAnalytics get firebaseAnalytics => FirebaseAnalytics.instance;
 
   @lazySingleton
   Geoflutterfire get geoflutterfire => Geoflutterfire();

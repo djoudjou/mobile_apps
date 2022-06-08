@@ -1,8 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:familytrusts/src/domain/invitation/invitation.dart';
 import 'package:familytrusts/src/infrastructure/invitation/invitation_entity.dart';
-import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:flutter/foundation.dart';
+import 'package:freezed_annotation/freezed_annotation.dart';
+
 part 'spouse_proposal_entity.freezed.dart';
 
 part 'spouse_proposal_entity.g.dart';
@@ -26,7 +27,9 @@ abstract class SpouseProposalEntity implements _$SpouseProposalEntity {
   factory SpouseProposalEntity.fromJson(Map<String, dynamic> json) =>
       _$SpouseProposalEntityFromJson(json);
 
-  factory SpouseProposalEntity.fromFirestore(DocumentSnapshot<Map<String, dynamic>>doc) {
+  factory SpouseProposalEntity.fromFirestore(
+    DocumentSnapshot<Map<String, dynamic>> doc,
+  ) {
     return SpouseProposalEntity.fromJson(doc.data()!).copyWith(id: doc.id);
   }
 }

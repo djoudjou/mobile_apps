@@ -25,7 +25,8 @@ extension FirebaseFirestoreX on FirebaseFirestore {
   }
 
   DocumentReference<Map<String, dynamic>> spouseProposalByUserId(
-      String userId) {
+    String userId,
+  ) {
     return FirebaseFirestore.instance
         .collection(spouseProposalsCollectionName)
         .doc(userId);
@@ -47,13 +48,15 @@ extension FirebaseFirestoreX on FirebaseFirestore {
     return FirebaseFirestore.instance.collection(childrenLookupsCollectionName);
   }
 
-  DocumentReference<Map<String, dynamic>> childrenLookup(
-      {required String childrenLookupId}) {
+  DocumentReference<Map<String, dynamic>> childrenLookup({
+    required String childrenLookupId,
+  }) {
     return childrenLookups().doc(childrenLookupId);
   }
 
-  CollectionReference<Map<String, dynamic>> childrenLookupHistories(
-      {required String childrenLookupId}) {
+  CollectionReference<Map<String, dynamic>> childrenLookupHistories({
+    required String childrenLookupId,
+  }) {
     return childrenLookups()
         .doc(childrenLookupId)
         .collection(historiesCollectionName);

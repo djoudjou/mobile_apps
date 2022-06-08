@@ -6,18 +6,17 @@ part of 'children_lookup_history_entity.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-_$_ChildrenLookupHistoryEntity _$_$_ChildrenLookupHistoryEntityFromJson(
-    Map<String, dynamic> json) {
-  return _$_ChildrenLookupHistoryEntity(
-    creationDate: json['creationDate'] as int,
-    id: json['id'] as String,
-    subjectId: json['subjectId'] as String,
-    type: json['type'] as String,
-    message: json['message'] as String,
-  );
-}
+_$_ChildrenLookupHistoryEntity _$$_ChildrenLookupHistoryEntityFromJson(
+        Map<String, dynamic> json) =>
+    _$_ChildrenLookupHistoryEntity(
+      creationDate: json['creationDate'] as int,
+      id: json['id'] as String,
+      subjectId: json['subjectId'] as String,
+      type: json['type'] as String,
+      message: json['message'] as String,
+    );
 
-Map<String, dynamic> _$_$_ChildrenLookupHistoryEntityToJson(
+Map<String, dynamic> _$$_ChildrenLookupHistoryEntityToJson(
         _$_ChildrenLookupHistoryEntity instance) =>
     <String, dynamic>{
       'creationDate': instance.creationDate,

@@ -4,7 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 
 typedef OnUpdatePhotoUrlCallback = Function(
-    BuildContext context, String downloadUrl);
+  BuildContext context,
+  String downloadUrl,
+);
 typedef OnClickOnPhotoCallback = Function(BuildContext context);
 
 class ProfileImage extends StatelessWidget {
@@ -52,46 +54,49 @@ class ProfileImage extends StatelessWidget {
 
   void modifyProfilPicture(BuildContext context) {
     showModalBottomSheet(
-        context: context,
-        builder: (BuildContext ctx) {
-          return Container(
-            color: Colors.transparent,
-            child: Card(
-              elevation: 5.0,
-              margin: const EdgeInsets.all(7.5),
-              child: Container(
-                color: Colors.white70,
-                padding: const EdgeInsets.all(10.0),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: <Widget>[
-                    const MyText(
-                      "Modification de la photo",
-                      color: Colors.blue,
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: <Widget>[
-                        IconButton(
-                            icon: camIcon,
-                            onPressed: () {
-                              takePicture(context, ImageSource.camera);
-                              Navigator.pop(ctx);
-                            }),
-                        IconButton(
-                            icon: libIcon,
-                            onPressed: () {
-                              takePicture(context, ImageSource.gallery);
-                              Navigator.pop(ctx);
-                            }),
-                      ],
-                    )
-                  ],
-                ),
+      context: context,
+      builder: (BuildContext ctx) {
+        return Container(
+          color: Colors.transparent,
+          child: Card(
+            elevation: 5.0,
+            margin: const EdgeInsets.all(7.5),
+            child: Container(
+              color: Colors.white70,
+              padding: const EdgeInsets.all(10.0),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: <Widget>[
+                  const MyText(
+                    "Modification de la photo",
+                    color: Colors.blue,
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: <Widget>[
+                      IconButton(
+                        icon: camIcon,
+                        onPressed: () {
+                          takePicture(context, ImageSource.camera);
+                          Navigator.pop(ctx);
+                        },
+                      ),
+                      IconButton(
+                        icon: libIcon,
+                        onPressed: () {
+                          takePicture(context, ImageSource.gallery);
+                          Navigator.pop(ctx);
+                        },
+                      ),
+                    ],
+                  )
+                ],
               ),
             ),
-          );
-        });
+          ),
+        );
+      },
+    );
   }
 
   Future<void> takePicture(BuildContext context, ImageSource source) async {

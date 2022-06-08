@@ -1,11 +1,11 @@
 import 'dart:async';
 
 import 'package:bloc/bloc.dart';
+import 'package:bloc_concurrency/bloc_concurrency.dart';
+import 'package:familytrusts/src/application/family/location/watcher/bloc.dart';
 import 'package:familytrusts/src/domain/family/i_family_repository.dart';
 import 'package:injectable/injectable.dart';
 import 'package:quiver/strings.dart' as quiver;
-
-import 'bloc.dart';
 
 @injectable
 class LocationsBloc extends Bloc<LocationsEvent, LocationsState> {
@@ -14,41 +14,54 @@ class LocationsBloc extends Bloc<LocationsEvent, LocationsState> {
 
   LocationsBloc(
     this._familyRepository,
-  ) : super(const LocationsState.loading());
+  ) : super(const LocationsState.loading()) {
+    on<LocationsEvent>(
+      (event, emit) => mapEventToState(event, emit),
+      transformer: restartable(),
+    );
+  }
 
-  @override
-  Stream<LocationsState> mapEventToState(
+  void mapEventToState(
     LocationsEvent event,
-  ) async* {
-    yield* event.map(
+    Emitter<LocationsState> emit,
+  ) {
+    event.map(
       loadLocations: (event) {
-        return _mapLoadLocationsToState(event);
+        _mapLoadLocationsToState(event, emit);
       },
       locationsUpdated: (event) {
-        return _mapLocationsUpdatedToState(event);
+        _mapLocationsUpdatedToState(event, emit);
       },
     );
   }
 
-  Stream<LocationsState> _mapLoadLocationsToState(LoadLocations event) async* {
+  void _mapLoadLocationsToState(
+    LoadLocations event,
+    Emitter<LocationsState> emit,
+  ) {
     if (quiver.isNotBlank(event.familyId)) {
-      yield const LocationsState.loading();
+      emit(const LocationsState.loading());
       //await Future.delayed(const Duration(seconds: 10));
       _locationsSubscription?.cancel();
       _locationsSubscription =
-          _familyRepository.getLocations(event.familyId!).listen((event) {
-        add(LocationsUpdated(locations: event));
-      }, onError: (_) {
-        _locationsSubscription?.cancel();
-      });
+          _familyRepository.getLocations(event.familyId!).listen(
+        (event) {
+          add(LocationsUpdated(locations: event));
+        },
+        onError: (_) {
+          _locationsSubscription?.cancel();
+        },
+      );
     } else {
-      yield const LocationsState.locationsNotLoaded();
+      emit(const LocationsState.locationsNotLoaded());
     }
   }
 
-  Stream<LocationsState> _mapLocationsUpdatedToState(
-      LocationsUpdated event) async* {
-    yield LocationsState.locationsLoaded(locations: event.locations);
+  void _mapLocationsUpdatedToState(
+    LocationsUpdated event,
+    Emitter<LocationsState> emit,
+  ) {
+    emit(LocationsState.locationsLoaded(locations: event.locations));
   }
 
   @override

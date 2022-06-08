@@ -48,8 +48,9 @@ class HomePage extends StatelessWidget with LogMixin {
           create: (context) => getIt<MessagesBloc>(),
         ),
         BlocProvider(
-            create: (context) => getIt<TabBloc>()
-              ..add(TabEvent.init(currentTab, connectedUserId))),
+          create: (context) =>
+              getIt<TabBloc>()..add(TabEvent.init(currentTab, connectedUserId)),
+        ),
         BlocProvider(
           create: (context) =>
               getIt<UserBloc>()..add(UserEvent.init(connectedUserId)),
@@ -72,31 +73,35 @@ class HomePage extends StatelessWidget with LogMixin {
               );
             },
           ),
-          BlocListener<MessagesBloc, MessagesState>(listener: (context, state) {
-            state.map(
-              initial: (_) => null,
-              tokenSaved: (tokenSaved) =>
-                  log(" token >> ${tokenSaved.token} <<"),
-              messageReceived: (MessageReceived value) {
-                log(" message >> $value <<");
-                Flushbar(
-                  title: value.message.title,
-                  //ignored since titleText != null
-                  message: value.message.body,
-                  backgroundGradient: LinearGradient(colors: [
-                    Theme.of(context).primaryColor,
-                    Theme.of(context).primaryColorLight
-                  ]),
-                  backgroundColor: Theme.of(context).primaryColor,
-                  duration: const Duration(seconds: 5),
-                ).show(context);
-                //showSuccessMessage(value.message.body, context);
-              },
-              errorReceived: (ErrorReceived value) {
-                log(" error >> $value <<");
-              },
-            );
-          }),
+          BlocListener<MessagesBloc, MessagesState>(
+            listener: (context, state) {
+              state.map(
+                initial: (_) => null,
+                tokenSaved: (tokenSaved) =>
+                    log(" token >> ${tokenSaved.token} <<"),
+                messageReceived: (MessageReceived value) {
+                  log(" message >> $value <<");
+                  Flushbar(
+                    title: value.message.title,
+                    //ignored since titleText != null
+                    message: value.message.body,
+                    backgroundGradient: LinearGradient(
+                      colors: [
+                        Theme.of(context).primaryColor,
+                        Theme.of(context).primaryColorLight
+                      ],
+                    ),
+                    backgroundColor: Theme.of(context).primaryColor,
+                    duration: const Duration(seconds: 5),
+                  ).show(context);
+                  //showSuccessMessage(value.message.body, context);
+                },
+                errorReceived: (ErrorReceived value) {
+                  log(" error >> $value <<");
+                },
+              );
+            },
+          ),
           BlocListener<UserBloc, UserState>(
             listener: (userBloc, state) {
               state.maybeMap(

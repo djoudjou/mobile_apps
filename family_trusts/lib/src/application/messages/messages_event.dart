@@ -1,6 +1,7 @@
 import 'package:familytrusts/src/domain/messages/message.dart';
-import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:flutter/foundation.dart';
+import 'package:freezed_annotation/freezed_annotation.dart';
+
 part 'messages_event.freezed.dart';
 
 @freezed

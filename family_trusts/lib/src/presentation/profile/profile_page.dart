@@ -1,8 +1,7 @@
 import 'package:familytrusts/src/domain/invitation/invitation.dart';
 import 'package:familytrusts/src/domain/user/user.dart';
+import 'package:familytrusts/src/presentation/profile/widgets/profile_content.dart';
 import 'package:flutter/material.dart';
-
-import 'widgets/profile_content.dart';
 
 class ProfilePage extends StatelessWidget {
   final User connectedUser;

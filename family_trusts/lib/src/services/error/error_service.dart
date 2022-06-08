@@ -15,7 +15,10 @@ class SentryErrorService with IErrorService, LogMixin {
   SentryErrorService();
 
   Future<void> logEvent(
-      String message, SentryLevel severity, Map<String, dynamic>? data) async {
+    String message,
+    SentryLevel severity,
+    Map<String, dynamic>? data,
+  ) async {
     final PackageInfo info = await PackageInfo.fromPlatform();
     final SentryEvent event = SentryEvent(
       message: SentryMessage(message),
@@ -44,12 +47,15 @@ class SentryErrorService with IErrorService, LogMixin {
       logEvent(message, SentryLevel.error, data);
 
   @override
-  Future<void> logException(Object error,
-      {String? message, StackTrace? stackTrace}) async {
+  Future<void> logException(
+    Object error, {
+    String? message,
+    StackTrace? stackTrace,
+  }) async {
     log('Caught error: $error\n$stackTrace');
 
     if (_isInDebugMode) {
-      log(message??"Unexpected error", stackTrace:stackTrace);
+      log(message ?? "Unexpected error", stackTrace: stackTrace);
       log('In dev mode. Not sending report to Sentry.io.');
       return;
     }
@@ -69,7 +75,7 @@ class SentryErrorService with IErrorService, LogMixin {
     final String mode = _isInDebugMode ? 'checked' : 'release';
 
     final Map<String, String> tags = {};
-    tags['message'] = message??"";
+    tags['message'] = message ?? "";
     tags['platform'] =
         defaultTargetPlatform.toString().substring('TargetPlatform.'.length);
     tags['package_name'] = info.packageName;
@@ -116,10 +122,12 @@ class SentryErrorService with IErrorService, LogMixin {
     extra['dart_version'] = Platform.version;
 
     final SentryEvent event = SentryEvent(
-      exception: SentryException(
-        value: message,
-        type: '',
-      ),
+      exceptions: [
+        SentryException(
+          value: message,
+          type: '',
+        )
+      ],
       release: '${info.version}_${info.buildNumber}',
       environment: 'qa',
       tags: tags,

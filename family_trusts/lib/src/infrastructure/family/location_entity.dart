@@ -2,11 +2,12 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:familytrusts/src/domain/family/locations/location.dart';
 import 'package:familytrusts/src/domain/family/value_objects.dart';
 import 'package:familytrusts/src/domain/user/value_objects.dart';
+import 'package:flutter/foundation.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:flutter/foundation.dart';
 
 part 'location_entity.freezed.dart';
+
 part 'location_entity.g.dart';
 
 @freezed
@@ -17,8 +18,7 @@ class LocationEntity with _$LocationEntity {
     required String title,
     required String address,
     required String note,
-    @JsonKey(ignore: true)
-    GeoPoint? position,
+    @JsonKey(ignore: true) GeoPoint? position,
     String? photoUrl,
   }) = _LocationEntity;
 
@@ -54,7 +54,9 @@ class LocationEntity with _$LocationEntity {
   factory LocationEntity.fromJson(Map<String, dynamic> json) =>
       _$LocationEntityFromJson(json);
 
-  factory LocationEntity.fromFirestore(DocumentSnapshot<Map<String, dynamic>>doc) {
+  factory LocationEntity.fromFirestore(
+    DocumentSnapshot<Map<String, dynamic>> doc,
+  ) {
     return LocationEntity.fromJson(doc.data()!).copyWith(
       id: doc.id,
     );

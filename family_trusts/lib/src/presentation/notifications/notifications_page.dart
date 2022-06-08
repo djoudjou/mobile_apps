@@ -6,7 +6,6 @@ import 'package:familytrusts/src/domain/notification/notification_tab.dart';
 import 'package:familytrusts/src/domain/user/user.dart';
 import 'package:familytrusts/src/presentation/core/my_apps_bars.dart';
 import 'package:familytrusts/src/presentation/core/my_drawer.dart';
-import 'package:familytrusts/src/presentation/notifications/widgets/demands_tab.dart';
 import 'package:familytrusts/src/presentation/notifications/widgets/events_tab.dart';
 import 'package:familytrusts/src/presentation/notifications/widgets/invitations_tab.dart';
 import 'package:familytrusts/src/presentation/notifications/widgets/planning_tab.dart';
@@ -136,9 +135,15 @@ class _NotificationsPageState extends State<NotificationsPage>
                 controller: _tabController,
                 children: <Widget>[
                   //DemandsTab(connectedUser: widget.user,),
-                  PlanningTab(connectedUser: widget.user,),
-                  InvitationsTab(connectedUser: widget.user,),
-                  EventsTab(connectedUser: widget.user,),
+                  PlanningTab(
+                    connectedUser: widget.user,
+                  ),
+                  InvitationsTab(
+                    connectedUser: widget.user,
+                  ),
+                  EventsTab(
+                    connectedUser: widget.user,
+                  ),
                 ],
               ),
             ),

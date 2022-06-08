@@ -10,6 +10,7 @@ abstract class TrustedUserWatcherEvent with _$TrustedUserWatcherEvent {
   const factory TrustedUserWatcherEvent.loadTrustedUsers(String? familyId) =
       LoadTrustedUsers;
 
-  const factory TrustedUserWatcherEvent.trustedUsersUpdated(
-          {required Either<UserFailure,List<TrustedUser>> eitherTrustedUsers}) = TrustedUsersUpdated;
+  const factory TrustedUserWatcherEvent.trustedUsersUpdated({
+    required Either<UserFailure, List<TrustedUser>> eitherTrustedUsers,
+  }) = TrustedUsersUpdated;
 }

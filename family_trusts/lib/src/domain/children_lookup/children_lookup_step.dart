@@ -5,8 +5,9 @@ import 'package:familytrusts/src/domain/family/children_failure.dart';
 import 'package:familytrusts/src/domain/family/locations/location.dart';
 import 'package:familytrusts/src/domain/family/locations/location_failure.dart';
 import 'package:familytrusts/src/domain/family/value_objects.dart';
-import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:flutter/foundation.dart';
+import 'package:freezed_annotation/freezed_annotation.dart';
+
 part 'children_lookup_step.freezed.dart';
 
 enum ChildrenLookupStepTypes {

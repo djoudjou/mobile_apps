@@ -23,10 +23,12 @@ class MyButton extends StatelessWidget {
 
     if (backgroundColor != null) {
       themeData = themeData.copyWith(
-          elevatedButtonTheme: ElevatedButtonThemeData(
-              style: themeData.elevatedButtonTheme.style!.copyWith(
-                  backgroundColor:
-                      MaterialStateProperty.all(backgroundColor))));
+        elevatedButtonTheme: ElevatedButtonThemeData(
+          style: themeData.elevatedButtonTheme.style!.copyWith(
+            backgroundColor: MaterialStateProperty.all(backgroundColor),
+          ),
+        ),
+      );
     }
     return Theme(
       data: themeData,

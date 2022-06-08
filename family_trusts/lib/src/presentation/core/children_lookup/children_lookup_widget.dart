@@ -46,8 +46,9 @@ class ChildrenLookupWidget extends StatelessWidget {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      MyText(LocaleKeys.ask_childlookup_confirm_msgLookupChild
-                          .tr()),
+                      MyText(
+                        LocaleKeys.ask_childlookup_confirm_msgLookupChild.tr(),
+                      ),
                       const MyHorizontalSeparator(),
                       MyText(
                         childrenLookup.child!.displayName,
@@ -59,9 +60,10 @@ class ChildrenLookupWidget extends StatelessWidget {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      MyText(LocaleKeys
-                          .ask_childlookup_confirm_msgLookupLocation
-                          .tr()),
+                      MyText(
+                        LocaleKeys.ask_childlookup_confirm_msgLookupLocation
+                            .tr(),
+                      ),
                       const MyHorizontalSeparator(),
                       MyText(
                         childrenLookup.location!.title.getOrCrash(),
@@ -73,8 +75,9 @@ class ChildrenLookupWidget extends StatelessWidget {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      MyText(LocaleKeys.ask_childlookup_confirm_msgLookupDate
-                          .tr()),
+                      MyText(
+                        LocaleKeys.ask_childlookup_confirm_msgLookupDate.tr(),
+                      ),
                       const MyHorizontalSeparator(),
                       MyText(
                         childrenLookup.rendezVous.toText,
@@ -86,8 +89,9 @@ class ChildrenLookupWidget extends StatelessWidget {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      MyText(LocaleKeys.ask_childlookup_stepper_note_selection
-                          .tr()),
+                      MyText(
+                        LocaleKeys.ask_childlookup_stepper_note_selection.tr(),
+                      ),
                     ],
                   ),
                   Row(
@@ -168,11 +172,12 @@ class ChildrenLookupWidget extends StatelessWidget {
           //animationType: BadgeAnimationType.slide,
           badgeColor: badgeColor,
           badgeContent: Container(
-              child: MyText(
-            message,
-            color: Colors.white,
-            maxLines: 2,
-          )),
+            child: MyText(
+              message,
+              color: Colors.white,
+              maxLines: 2,
+            ),
+          ),
           child: Card(
             margin: const EdgeInsets.all(10),
             child: Column(
@@ -199,9 +204,11 @@ class ChildrenLookupWidget extends StatelessWidget {
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              MyText(LocaleKeys
-                                  .ask_childlookup_confirm_msgLookupChild
-                                  .tr()),
+                              MyText(
+                                LocaleKeys
+                                    .ask_childlookup_confirm_msgLookupChild
+                                    .tr(),
+                              ),
                               const MyHorizontalSeparator(),
                               MyText(
                                 childrenLookup.child!.displayName,
@@ -213,9 +220,11 @@ class ChildrenLookupWidget extends StatelessWidget {
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              MyText(LocaleKeys
-                                  .ask_childlookup_confirm_msgLookupLocation
-                                  .tr()),
+                              MyText(
+                                LocaleKeys
+                                    .ask_childlookup_confirm_msgLookupLocation
+                                    .tr(),
+                              ),
                               const MyHorizontalSeparator(),
                               MyText(
                                 childrenLookup.location!.title.getOrCrash(),
@@ -227,9 +236,10 @@ class ChildrenLookupWidget extends StatelessWidget {
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              MyText(LocaleKeys
-                                  .ask_childlookup_confirm_msgLookupDate
-                                  .tr()),
+                              MyText(
+                                LocaleKeys.ask_childlookup_confirm_msgLookupDate
+                                    .tr(),
+                              ),
                               const MyHorizontalSeparator(),
                               MyText(
                                 childrenLookup.rendezVous.toText,
@@ -241,9 +251,10 @@ class ChildrenLookupWidget extends StatelessWidget {
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              MyText(LocaleKeys
-                                  .ask_childlookup_confirm_msgLookupNote
-                                  .tr()),
+                              MyText(
+                                LocaleKeys.ask_childlookup_confirm_msgLookupNote
+                                    .tr(),
+                              ),
                             ],
                           ),
                           Row(
@@ -267,7 +278,8 @@ class ChildrenLookupWidget extends StatelessWidget {
                 ),
                 if (childrenLookup.personInCharge != null) ...[
                   MyAvatar(
-                    imageTag: "TAG_LOOKUP_PROFILE_${childrenLookup.id}_${childrenLookup.personInCharge?.id}",
+                    imageTag:
+                        "TAG_LOOKUP_PROFILE_${childrenLookup.id}_${childrenLookup.personInCharge?.id}",
                     photoUrl: childrenLookup.personInCharge?.photoUrl,
                     radius: 60,
                     onTapCallback: () {},

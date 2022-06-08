@@ -9,9 +9,10 @@ part 'children_state.freezed.dart';
 class ChildrenState with _$ChildrenState {
   const factory ChildrenState.childrenLoading() = ChildrenLoading;
 
-  const factory ChildrenState.childrenLoaded(
-      {required Either<ChildrenFailure, List<Either<ChildrenFailure, Child>>>
-          eitherChildren}) = ChildrenLoaded;
+  const factory ChildrenState.childrenLoaded({
+    required Either<ChildrenFailure, List<Either<ChildrenFailure, Child>>>
+        eitherChildren,
+  }) = ChildrenLoaded;
 
   const factory ChildrenState.childrenNotLoaded() = ChildrenNotLoaded;
 }

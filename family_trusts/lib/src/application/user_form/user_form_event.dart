@@ -1,12 +1,15 @@
 import 'package:familytrusts/src/domain/user/user.dart';
-import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:flutter/foundation.dart';
+import 'package:freezed_annotation/freezed_annotation.dart';
 
 part 'user_form_event.freezed.dart';
 
 @freezed
 class UserFormEvent with _$UserFormEvent {
-  const factory UserFormEvent.init({required User userToEdit,required User connectedUser}) = Init;
+  const factory UserFormEvent.init({
+    required User userToEdit,
+    required User connectedUser,
+  }) = Init;
 
   const factory UserFormEvent.nameChanged(String name) = NameChanged;
 

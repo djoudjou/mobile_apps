@@ -25,8 +25,8 @@ import 'package:familytrusts/src/infrastructure/invitation/invitation_entity.dar
 import 'package:familytrusts/src/infrastructure/notification/event_entity.dart';
 import 'package:flutter/services.dart';
 import 'package:injectable/injectable.dart';
-import 'package:rxdart/rxdart.dart';
 import 'package:quiver/strings.dart' as quiver;
+import 'package:rxdart/rxdart.dart';
 
 @LazySingleton(as: INotificationRepository)
 class FirebaseNotificationRepository
@@ -46,7 +46,9 @@ class FirebaseNotificationRepository
 
   @override
   Future<Either<NotificationsFailure, Unit>> createEvent(
-      String userId, Event event) async {
+    String userId,
+    Event event,
+  ) async {
     try {
       final EventEntity eventEntity = EventEntity.fromDomain(event);
       await _firebaseFirestore
@@ -66,10 +68,11 @@ class FirebaseNotificationRepository
     }
   }
 
-
   @override
   Future<Either<NotificationsFailure, Unit>> deleteEvent(
-      String userId, Event event) async {
+    String userId,
+    Event event,
+  ) async {
     try {
       await _firebaseFirestore
           .notificationsByUserId(userId)
@@ -90,7 +93,9 @@ class FirebaseNotificationRepository
 
   @override
   Future<Either<NotificationsFailure, Unit>> updateEvent(
-      String userId, Event event) async {
+    String userId,
+    Event event,
+  ) async {
     try {
       final EventEntity eventEntity = EventEntity.fromDomain(event);
       await _firebaseFirestore
@@ -112,7 +117,8 @@ class FirebaseNotificationRepository
 
   @override
   Future<Either<NotificationsFailure, Unit>> createInvitation(
-      Invitation invitation) async {
+    Invitation invitation,
+  ) async {
     try {
       final InvitationEntity invitationEntity =
           InvitationEntity.fromDomain(invitation);
@@ -135,8 +141,10 @@ class FirebaseNotificationRepository
   }
 
   @override
-  Future<Either<NotificationsFailure, Unit>> deleteInvitation(
-      {required User from, required User to}) async {
+  Future<Either<NotificationsFailure, Unit>> deleteInvitation({
+    required User from,
+    required User to,
+  }) async {
     try {
       await _firebaseFirestore
           .notificationsByUserId(to.id!)
@@ -157,7 +165,8 @@ class FirebaseNotificationRepository
 
   @override
   Stream<List<Either<InvitationFailure, Invitation>>> getInvitations(
-      String userId) {
+    String userId,
+  ) {
     return transformInvitations(
       _firebaseFirestore
           .notificationsByUserId(userId)
@@ -171,17 +180,21 @@ class FirebaseNotificationRepository
               .toList();
         },
       ).handleError(
-              (err, stacktrace) => log('_getInvitations handleError: $err')),
+        (err, stacktrace) => log('_getInvitations handleError: $err'),
+      ),
     );
   }
 
   Stream<List<Either<InvitationFailure, Invitation>>> transformInvitations(
-      Stream<List<InvitationEntity>> invitationEntities) async* {
+    Stream<List<InvitationEntity>> invitationEntities,
+  ) async* {
     await for (final entities in invitationEntities) {
       final List<Future<Either<InvitationFailure, Invitation>>> futures =
           entities
-              .map((invitationEntity) =>
-                  invitationEntityToInvitation(invitationEntity))
+              .map(
+                (invitationEntity) =>
+                    invitationEntityToInvitation(invitationEntity),
+              )
               .toList();
 
       yield await Future.wait(futures);
@@ -189,7 +202,8 @@ class FirebaseNotificationRepository
   }
 
   Future<Either<InvitationFailure, Invitation>> invitationEntityToInvitation(
-      InvitationEntity invitationEntity) async {
+    InvitationEntity invitationEntity,
+  ) async {
     final Either<UserFailure, User> eitherFromUser =
         await _userRepository.getUser(invitationEntity.from);
     final Either<UserFailure, User> eitherToUser =
@@ -216,7 +230,8 @@ class FirebaseNotificationRepository
   Stream<List<Either<ChildrenLookupFailure, ChildrenLookup>>>
       _getChildrenLookups(String userId) {
     return _childrenLookupRepository.getChildrenLookupsByTrustedId(
-        trustedUserId: userId);
+      trustedUserId: userId,
+    );
   }
 
   @override
@@ -235,20 +250,26 @@ class FirebaseNotificationRepository
           .where(fieldDate, isGreaterThan: notificationLimit)
           .orderBy(fieldDate, descending: true)
           .snapshots()
-          .map((snapshot) => snapshot.docs
-              .map((doc) => EventEntity.fromFirestore(doc))
-              .toList())
+          .map(
+            (snapshot) => snapshot.docs
+                .map((doc) => EventEntity.fromFirestore(doc))
+                .toList(),
+          )
           .handleError(
-              (err, stacktrace) => log('_getEvents handleError: $err')),
+            (err, stacktrace) => log('_getEvents handleError: $err'),
+          ),
     );
   }
 
   Stream<List<Either<EventFailure, Event>>> transformEvents(
-      String connectedUserId, Stream<List<EventEntity>> eventEntities) async* {
+    String connectedUserId,
+    Stream<List<EventEntity>> eventEntities,
+  ) async* {
     await for (final entities in eventEntities) {
       final List<Future<Either<EventFailure, Event>>> futures = entities
           .map(
-              (eventEntity) => eventEntityToEvent(connectedUserId, eventEntity))
+            (eventEntity) => eventEntityToEvent(connectedUserId, eventEntity),
+          )
           .toList();
 
       yield await Future.wait(futures);
@@ -256,7 +277,9 @@ class FirebaseNotificationRepository
   }
 
   Future<Either<EventFailure, Event>> eventEntityToEvent(
-      String connectedUserId, EventEntity eventEntity) async {
+    String connectedUserId,
+    EventEntity eventEntity,
+  ) async {
     final Either<UserFailure, User> eitherFromUser =
         await _userRepository.getUser(eventEntity.from);
     final Either<UserFailure, User> eitherToUser =
@@ -286,7 +309,9 @@ class FirebaseNotificationRepository
 
   @override
   Future<Either<NotificationsFailure, Unit>> createEventForChildrenLookup(
-      ChildrenLookup childrenLookup, Event event) async {
+    ChildrenLookup childrenLookup,
+    Event event,
+  ) async {
     try {
       final users = [
         ...childrenLookup.trustedUsers,
@@ -316,18 +341,21 @@ class FirebaseNotificationRepository
 
   @override
   Stream<Either<NotificationsFailure, int>> getUnRedCount(
-      String userId) async* {
+    String userId,
+  ) async* {
     final doc = _firebaseFirestore.notificationsByUserId(userId);
 
     yield* doc.snapshots().map(
       (snapshot) {
         if (!snapshot.exists) {
           return left<NotificationsFailure, int>(
-              const NotificationsFailure.unexpected());
+            const NotificationsFailure.unexpected(),
+          );
         }
 
         return right<NotificationsFailure, int>(
-            snapshot.data()?['unReadCount'] as int);
+          snapshot.data()?['unReadCount'] as int,
+        );
       },
     ).onErrorReturnWith(
       (e, stacktrace) {

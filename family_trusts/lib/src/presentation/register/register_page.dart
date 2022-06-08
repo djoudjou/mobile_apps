@@ -4,11 +4,10 @@ import 'package:familytrusts/generated/locale_keys.g.dart';
 import 'package:familytrusts/src/application/auth/bloc.dart';
 import 'package:familytrusts/src/application/register/bloc.dart';
 import 'package:familytrusts/src/presentation/core/my_apps_bars.dart';
+import 'package:familytrusts/src/presentation/register/widgets/register_form.dart';
 import 'package:familytrusts/src/presentation/routes/router.gr.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-
-import 'widgets/register_form.dart';
 
 class RegisterPage extends StatelessWidget {
   @override

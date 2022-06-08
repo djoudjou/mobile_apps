@@ -16,7 +16,9 @@ extension StorageReferenceX on firebase_storage.Reference {
   }
 
   firebase_storage.Reference locationPhotoStorage(
-      String familyId, String locationId) {
+    String familyId,
+    String locationId,
+  ) {
     return firebase_storage.FirebaseStorage.instance
         .ref()
         .child("locations")

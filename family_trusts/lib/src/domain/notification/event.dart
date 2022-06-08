@@ -1,8 +1,8 @@
 import 'package:familytrusts/src/domain/core/value_objects.dart';
+import 'package:familytrusts/src/domain/notification/value_objects.dart';
 import 'package:familytrusts/src/domain/user/user.dart';
-import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:flutter/foundation.dart';
-import 'value_objects.dart';
+import 'package:freezed_annotation/freezed_annotation.dart';
 
 part 'event.freezed.dart';
 

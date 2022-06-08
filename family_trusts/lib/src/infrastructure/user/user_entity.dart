@@ -1,13 +1,15 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:familytrusts/src/domain/user/user.dart';
 import 'package:familytrusts/src/domain/user/value_objects.dart';
-import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:flutter/foundation.dart';
+import 'package:freezed_annotation/freezed_annotation.dart';
+
 part 'user_entity.freezed.dart';
+
 part 'user_entity.g.dart';
 
 @freezed
- class UserEntity with _$UserEntity {
+class UserEntity with _$UserEntity {
   const UserEntity._(); // Added constructor
 
   const factory UserEntity({
@@ -48,7 +50,7 @@ part 'user_entity.g.dart';
   factory UserEntity.fromJson(Map<String, dynamic> json) =>
       _$UserEntityFromJson(json);
 
-  factory UserEntity.fromFirestore(DocumentSnapshot<Map<String, dynamic>>doc) {
+  factory UserEntity.fromFirestore(DocumentSnapshot<Map<String, dynamic>> doc) {
     return UserEntity.fromJson(doc.data()!).copyWith(id: doc.id);
   }
 }

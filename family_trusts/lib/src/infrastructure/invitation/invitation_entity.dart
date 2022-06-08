@@ -1,11 +1,11 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:familytrusts/src/domain/invitation/invitation.dart';
-import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:flutter/foundation.dart';
+import 'package:freezed_annotation/freezed_annotation.dart';
+
 part 'invitation_entity.freezed.dart';
 
 part 'invitation_entity.g.dart';
-
 
 @freezed
 class InvitationEntity with _$InvitationEntity {
@@ -30,7 +30,9 @@ class InvitationEntity with _$InvitationEntity {
   factory InvitationEntity.fromJson(Map<String, dynamic> json) =>
       _$InvitationEntityFromJson(json);
 
-  factory InvitationEntity.fromFirestore(DocumentSnapshot<Map<String, dynamic>>doc) {
+  factory InvitationEntity.fromFirestore(
+    DocumentSnapshot<Map<String, dynamic>> doc,
+  ) {
     return InvitationEntity.fromJson(doc.data()!);
   }
 }

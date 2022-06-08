@@ -4,7 +4,7 @@ import 'package:familytrusts/generated/locale_keys.g.dart';
 import 'package:familytrusts/src/application/auth/authentication_bloc.dart';
 import 'package:familytrusts/src/application/auth/authentication_event.dart';
 import 'package:familytrusts/src/application/register/bloc.dart';
-import 'package:familytrusts/src/application/register/register_event.dart';
+import 'package:familytrusts/src/domain/home/app_tab.dart';
 import 'package:familytrusts/src/helper/constants.dart';
 import 'package:familytrusts/src/helper/snackbar_helper.dart';
 import 'package:familytrusts/src/presentation/core/my_button.dart';
@@ -14,7 +14,6 @@ import 'package:familytrusts/src/presentation/profile/widgets/profile_image.dart
 import 'package:familytrusts/src/presentation/routes/router.gr.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:familytrusts/src/domain/home/app_tab.dart';
 
 class RegisterForm extends StatelessWidget {
   //static const parisLocation = ;
@@ -91,8 +90,10 @@ class RegisterForm extends StatelessWidget {
                         onUpdatePictureFilePathCallback:
                             (context, pickedFilePath) {
                           context.read<RegisterBloc>().add(
-                              RegisterEvent.registerPictureChanged(
-                                  pickedFilePath));
+                                RegisterEvent.registerPictureChanged(
+                                  pickedFilePath,
+                                ),
+                              );
                         },
                       ),
                     ),

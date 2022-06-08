@@ -1,7 +1,9 @@
 import 'dart:async';
 
 import 'package:bloc/bloc.dart';
+import 'package:bloc_concurrency/bloc_concurrency.dart';
 import 'package:dartz/dartz.dart';
+import 'package:familytrusts/src/application/home/user/bloc.dart';
 import 'package:familytrusts/src/domain/invitation/i_spouse_proposal_repository.dart';
 import 'package:familytrusts/src/domain/invitation/invitation.dart';
 import 'package:familytrusts/src/domain/invitation/invitation_failure.dart';
@@ -10,8 +12,6 @@ import 'package:familytrusts/src/domain/user/user.dart';
 import 'package:familytrusts/src/domain/user/user_failure.dart';
 import 'package:injectable/injectable.dart';
 import 'package:quiver/strings.dart' as quiver;
-
-import 'bloc.dart';
 
 @injectable
 class UserBloc extends Bloc<UserEvent, UserState> {
@@ -25,7 +25,12 @@ class UserBloc extends Bloc<UserEvent, UserState> {
   UserBloc(
     this._userRepository,
     this._spouseProposalRepository,
-  ) : super(const UserState.userInitial());
+  ) : super(const UserState.userInitial()) {
+    on<UserEvent>(
+      (event, emit) => mapEventToState(event, emit),
+      transformer: sequential(),
+    );
+  }
 
   @override
   Future<void> close() {
@@ -33,28 +38,37 @@ class UserBloc extends Bloc<UserEvent, UserState> {
     return super.close();
   }
 
-  @override
-  Stream<UserState> mapEventToState(UserEvent event) async* {
-    yield* event.map(
-      init: (event) async* {
+  void mapEventToState(
+    UserEvent event,
+    Emitter<UserState> emit,
+  ) {
+    event.map(
+      init: (event) {
         add(UserEvent.userStarted(event.connectedUserId));
       },
-      userStarted: (event) => _mapLoadUserToState(event),
-      userReceived: (event) => _mapUserReceivedToState(event),
-      userSubmitted: (event) => _mapUserSubmittedToState(event),
+      userStarted: (event) => _mapLoadUserToState(event, emit),
+      userReceived: (event) => _mapUserReceivedToState(event, emit),
+      userSubmitted: (event) => _mapUserSubmittedToState(event, emit),
     );
   }
 
-  Stream<UserState> _mapLoadUserToState(UserStarted event) async* {
-    yield UserState.userLoadInProgress(event.userId);
+  void _mapLoadUserToState(
+    UserStarted event,
+    Emitter<UserState> emit,
+  ) {
+    emit(UserState.userLoadInProgress(event.userId));
 
     _userSubscription?.cancel();
     _userSubscription = _userRepository.watchUser(event.userId).listen(
-        (failureOrUser) => add(UserEvent.userReceived(failureOrUser)),
-        onError: (_) => _userSubscription?.cancel());
+          (failureOrUser) => add(UserEvent.userReceived(failureOrUser)),
+          onError: (_) => _userSubscription?.cancel(),
+        );
   }
 
-  Stream<UserState> _mapUserReceivedToState(UserReceived event) async* {
+  FutureOr<void> _mapUserReceivedToState(
+    UserReceived event,
+    Emitter<UserState> emit,
+  ) async {
     if (event.failureOrUser.isLeft()) {
       final bool userNotFound = event.failureOrUser.fold(
         (userFailure) => userFailure.maybeMap(
@@ -65,12 +79,14 @@ class UserBloc extends Bloc<UserEvent, UserState> {
       );
 
       if (userNotFound) {
-        yield const UserState.userNotFound();
+        emit(const UserState.userNotFound());
       } else {
-        yield UserState.userLoadFailure(
-          event.failureOrUser.fold(
-            (l) => l.toString(),
-            (r) => 'Cas impossible',
+        emit(
+          UserState.userLoadFailure(
+            event.failureOrUser.fold(
+              (l) => l.toString(),
+              (r) => 'Cas impossible',
+            ),
           ),
         );
       }
@@ -87,14 +103,18 @@ class UserBloc extends Bloc<UserEvent, UserState> {
           await _spouseProposalRepository.getSpouseProposal(user.id!);
 
       eitherSpouseProposal.fold(
-        (invitationFailure) async* {
-          yield invitationFailure.map(
-            unexpected: (error) => UserState.userLoadFailure(error.toString()),
-            insufficientPermission: (error) =>
-                UserState.userLoadFailure(error.toString()),
-            unableToUpdate: (error) =>
-                UserState.userLoadFailure(error.toString()),
-            unknownUser: (error) => UserState.userLoadFailure(error.toString()),
+        (invitationFailure) {
+          emit(
+            invitationFailure.map(
+              unexpected: (error) =>
+                  UserState.userLoadFailure(error.toString()),
+              insufficientPermission: (error) =>
+                  UserState.userLoadFailure(error.toString()),
+              unableToUpdate: (error) =>
+                  UserState.userLoadFailure(error.toString()),
+              unknownUser: (error) =>
+                  UserState.userLoadFailure(error.toString()),
+            ),
           );
         },
         (invitation) {
@@ -109,16 +129,18 @@ class UserBloc extends Bloc<UserEvent, UserState> {
         eitherSpouse = await _userRepository.getUser(user.spouse!);
 
         eitherSpouse.fold(
-          (userFailure) async* {
-            yield userFailure.map(
-              unexpected: (error) =>
-                  UserState.userLoadFailure(error.toString()),
-              insufficientPermission: (error) =>
-                  UserState.userLoadFailure(error.toString()),
-              unknownUser: (error) =>
-                  UserState.userLoadFailure(error.toString()),
-              unableToUpdate: (error) =>
-                  UserState.userLoadFailure(error.toString()),
+          (userFailure) {
+            emit(
+              userFailure.map(
+                unexpected: (error) =>
+                    UserState.userLoadFailure(error.toString()),
+                insufficientPermission: (error) =>
+                    UserState.userLoadFailure(error.toString()),
+                unknownUser: (error) =>
+                    UserState.userLoadFailure(error.toString()),
+                unableToUpdate: (error) =>
+                    UserState.userLoadFailure(error.toString()),
+              ),
             );
           },
           (user) => spouse = user,
@@ -128,25 +150,30 @@ class UserBloc extends Bloc<UserEvent, UserState> {
       }
 
       if (eitherSpouseProposal.isRight() && eitherSpouse.isRight()) {
-        yield UserState.userLoadSuccess(
-          user: user,
-          spouseProposal: spouseProposal,
-          spouse: spouse,
+        emit(
+          UserState.userLoadSuccess(
+            user: user,
+            spouseProposal: spouseProposal,
+            spouse: spouse,
+          ),
         );
       }
     }
   }
 
-  Stream<UserState> _mapUserSubmittedToState(UserSubmitted event) async* {
-    yield UserLoadInProgress(event.user.id!);
+  FutureOr<void> _mapUserSubmittedToState(
+    UserSubmitted event,
+    Emitter<UserState> emit,
+  ) async {
+    emit(UserLoadInProgress(event.user.id!));
     final Either<UserFailure, Unit> result = await _userRepository.update(
       event.user,
       pickedFilePath: event.pickedFilePath,
     );
 
     result.fold(
-      (userFailure) async* {
-        yield UserState.userLoadFailure(userFailure.toString());
+      (userFailure) {
+        emit(UserState.userLoadFailure(userFailure.toString()));
       },
       (_) {
         add(UserEvent.userStarted(event.user.id!));

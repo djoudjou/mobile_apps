@@ -5,8 +5,8 @@ import 'package:familytrusts/src/application/family/setup/bloc.dart';
 import 'package:familytrusts/src/domain/invitation/invitation.dart';
 import 'package:familytrusts/src/domain/user/user.dart';
 import 'package:familytrusts/src/helper/alert_helper.dart';
-import 'package:familytrusts/src/presentation/routes/router.gr.dart';
 import 'package:familytrusts/src/presentation/core/my_text.dart';
+import 'package:familytrusts/src/presentation/routes/router.gr.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -14,9 +14,11 @@ class ProfileMissingFamilyContent extends StatelessWidget {
   final Invitation? spouseProposal;
   final User user;
 
-  const ProfileMissingFamilyContent(
-      {Key? key, required this.spouseProposal, required this.user})
-      : super(key: key);
+  const ProfileMissingFamilyContent({
+    Key? key,
+    required this.spouseProposal,
+    required this.user,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -154,10 +156,11 @@ class ProfileMissingFamilyContent extends StatelessWidget {
                       context,
                       "Annuler l'invitation à ${spouseProposal.to.displayName} ?",
                       onConfirmCallback: () {
-                        BlocProvider.of<SetupFamilyBloc>(context)
-                            .add(SetupFamilyEvent.joinFamilyCancelTriggered(
-                          invitation: spouseProposal,
-                        ));
+                        BlocProvider.of<SetupFamilyBloc>(context).add(
+                          SetupFamilyEvent.joinFamilyCancelTriggered(
+                            invitation: spouseProposal,
+                          ),
+                        );
                       },
                     );
                   },

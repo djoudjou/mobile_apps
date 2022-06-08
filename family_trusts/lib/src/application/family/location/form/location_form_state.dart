@@ -4,8 +4,8 @@ import 'package:familytrusts/src/domain/family/locations/location_success.dart';
 import 'package:familytrusts/src/domain/family/locations/value_objects.dart';
 import 'package:familytrusts/src/domain/family/value_objects.dart';
 import 'package:familytrusts/src/domain/user/value_objects.dart';
-import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:flutter/foundation.dart';
+import 'package:freezed_annotation/freezed_annotation.dart';
 
 part 'location_form_state.freezed.dart';
 
@@ -24,7 +24,8 @@ class LocationFormState with _$LocationFormState {
     String? photoUrl,
     String? imagePath,
     String? familyId,
-    required Option<Either<LocationFailure, LocationSuccess>> failureOrSuccessOption,
+    required Option<Either<LocationFailure, LocationSuccess>>
+        failureOrSuccessOption,
   }) = _LocationFormState;
 
   factory LocationFormState.initial() => LocationFormState(

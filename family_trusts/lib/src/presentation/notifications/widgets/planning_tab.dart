@@ -11,14 +11,12 @@ import 'package:familytrusts/src/helper/constants.dart';
 import 'package:familytrusts/src/helper/date_helper.dart';
 import 'package:familytrusts/src/helper/log_mixin.dart';
 import 'package:familytrusts/src/presentation/core/avatar_widget.dart';
-import 'package:familytrusts/src/presentation/core/loading_content.dart';
 import 'package:familytrusts/src/presentation/core/error_content.dart';
+import 'package:familytrusts/src/presentation/core/loading_content.dart';
 import 'package:familytrusts/src/presentation/core/my_text.dart';
 import 'package:familytrusts/src/presentation/core/separator.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:easy_localization/easy_localization.dart';
-import 'package:familytrusts/generated/locale_keys.g.dart';
 
 class PlanningTab extends StatelessWidget with LogMixin {
   final User connectedUser;
@@ -62,7 +60,7 @@ class PlanningTab extends StatelessWidget with LogMixin {
   }
 
   Widget buildPlanning(Planning planning, BuildContext context) {
-    final cardWidth = MediaQuery.of(context).size.width * (3/4/2);
+    final cardWidth = MediaQuery.of(context).size.width * (3 / 4 / 2);
     return ListView.separated(
       key: _key,
       padding: const EdgeInsets.all(8),
@@ -85,18 +83,17 @@ class PlanningTab extends StatelessWidget with LogMixin {
                   Container(
                     alignment: Alignment.center,
                     //color: Colors.blueAccent,
-                    child: MyText(DateHelper.getDateToString(entry.day)),
+                    child: MyText(getDateToString(entry.day)),
                   ),
                   MyVerticalSeparator(),
                   //MyText(entry.childrenLookups.length.toString()),
                   Column(
                     children: entry.childrenLookups.map((e) {
                       return Container(
-                        width: MediaQuery.of(context).size.width * (3/4),
+                        width: MediaQuery.of(context).size.width * (3 / 4),
                         //color: Colors.brown,
                         child: Row(
-                          mainAxisAlignment:
-                          MainAxisAlignment.start,
+                          mainAxisAlignment: MainAxisAlignment.start,
                           children: [
                             Container(
                               //color:Colors.green,
@@ -114,9 +111,9 @@ class PlanningTab extends StatelessWidget with LogMixin {
                               child: Column(
                                 children: [
                                   Row(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.start,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    mainAxisAlignment: MainAxisAlignment.start,
                                     children: [
                                       MyText(
                                         e.child!.displayName,
@@ -127,8 +124,7 @@ class PlanningTab extends StatelessWidget with LogMixin {
                                     ],
                                   ),
                                   Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.start,
+                                    mainAxisAlignment: MainAxisAlignment.start,
                                     children: [
                                       SizedBox(
                                         width: cardWidth,
@@ -142,8 +138,7 @@ class PlanningTab extends StatelessWidget with LogMixin {
                                     ],
                                   ),
                                   Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.start,
+                                    mainAxisAlignment: MainAxisAlignment.start,
                                     children: [
                                       MyText(
                                         e.rendezVous.toHourText,

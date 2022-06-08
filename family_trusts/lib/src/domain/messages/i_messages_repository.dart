@@ -2,8 +2,8 @@ import 'dart:async';
 
 import 'package:dartz/dartz.dart';
 
-import 'message.dart';
-import 'messages_failure.dart';
+import 'package:familytrusts/src/domain/messages/message.dart';
+import 'package:familytrusts/src/domain/messages/messages_failure.dart';
 
 abstract class IMessagesRepository {
   Future<Either<MessagesFailure, Unit>> init();

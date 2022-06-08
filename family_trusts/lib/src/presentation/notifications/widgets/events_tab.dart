@@ -83,19 +83,23 @@ class EventsTab extends StatelessWidget with LogMixin {
       case EventTypeEnum.childAdded:
         msg = (event.fromConnectedUser)
             ? LocaleKeys.events_childAdded_fromConnectedUser.tr(args: [subject])
-            : LocaleKeys.events_childAdded_notFromConnectedUser.tr(args: [
-                event.from.displayName,
-                subject,
-              ]);
+            : LocaleKeys.events_childAdded_notFromConnectedUser.tr(
+                args: [
+                  event.from.displayName,
+                  subject,
+                ],
+              );
         break;
       case EventTypeEnum.childRemoved:
         msg = (event.fromConnectedUser)
             ? LocaleKeys.events_childRemoved_fromConnectedUser
                 .tr(args: [subject])
-            : LocaleKeys.events_childRemoved_notFromConnectedUser.tr(args: [
-                event.from.displayName,
-                subject,
-              ]);
+            : LocaleKeys.events_childRemoved_notFromConnectedUser.tr(
+                args: [
+                  event.from.displayName,
+                  subject,
+                ],
+              );
         break;
       case EventTypeEnum.childUpdated:
         msg = (event.fromConnectedUser)
@@ -198,31 +202,37 @@ class EventsTab extends StatelessWidget with LogMixin {
     return BlocProvider<NotificationsEventsUpdateBloc>(
       create: (context) => getIt<NotificationsEventsUpdateBloc>(),
       child: BlocProvider<NotificationsEventsBloc>(
-          create: (context) => getIt<NotificationsEventsBloc>()
-            ..add(SimpleLoaderEvent.startLoading(connectedUser.id)),
-          child: BlocListener<NotificationsEventsUpdateBloc,
-              NotificationsEventsUpdateState>(
-            listener: (context, state) {
-              state.markAsReadfailureOrSuccessOption.fold(
-                  () => null,
-                  (result) => result.fold(
-                        (l) => showErrorMessage(
-                            LocaleKeys.global_unexpected.tr(), context),
-                        (r) => null,
-                      ));
-              state.deletefailureOrSuccessOption.fold(
-                  () => null,
-                  (result) => result.fold(
-                        (l) => showErrorMessage(
-                            LocaleKeys.global_unexpected.tr(), context),
-                        (r) => null,
-                      ));
-            },
-            child: BlocConsumer<NotificationsEventsBloc, SimpleLoaderState>(
-              listener: (context, state) {},
-              builder: (context, state) {
-                return state.maybeMap(
-                    simpleSuccessEventState: (simpleSuccessEventState) {
+        create: (context) => getIt<NotificationsEventsBloc>()
+          ..add(SimpleLoaderEvent.startLoading(connectedUser.id)),
+        child: BlocListener<NotificationsEventsUpdateBloc,
+            NotificationsEventsUpdateState>(
+          listener: (context, state) {
+            state.markAsReadfailureOrSuccessOption.fold(
+              () => null,
+              (result) => result.fold(
+                (l) => showErrorMessage(
+                  LocaleKeys.global_unexpected.tr(),
+                  context,
+                ),
+                (r) => null,
+              ),
+            );
+            state.deletefailureOrSuccessOption.fold(
+              () => null,
+              (result) => result.fold(
+                (l) => showErrorMessage(
+                  LocaleKeys.global_unexpected.tr(),
+                  context,
+                ),
+                (r) => null,
+              ),
+            );
+          },
+          child: BlocConsumer<NotificationsEventsBloc, SimpleLoaderState>(
+            listener: (context, state) {},
+            builder: (context, state) {
+              return state.maybeMap(
+                simpleSuccessEventState: (simpleSuccessEventState) {
                   final List<Either<EventFailure, Event>> eventsResult =
                       simpleSuccessEventState.items
                           as List<Either<EventFailure, Event>>;
@@ -294,7 +304,8 @@ class EventsTab extends StatelessWidget with LogMixin {
                           const Divider(),
                     );
                   }
-                }, simpleErrorEventState: (simpleErrorEventState) {
+                },
+                simpleErrorEventState: (simpleErrorEventState) {
                   return Center(
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
@@ -303,7 +314,8 @@ class EventsTab extends StatelessWidget with LogMixin {
                       ],
                     ),
                   );
-                }, orElse: () {
+                },
+                orElse: () {
                   return Center(
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
@@ -312,10 +324,12 @@ class EventsTab extends StatelessWidget with LogMixin {
                       ],
                     ),
                   );
-                });
-              },
-            ),
-          )),
+                },
+              );
+            },
+          ),
+        ),
+      ),
     );
   }
 }

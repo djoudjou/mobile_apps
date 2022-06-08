@@ -26,9 +26,10 @@ class FirebaseSpouseProposalRepository extends ISpouseProposalRepository {
 
   @override
   Future<Either<InvitationFailure, Invitation?>> getSpouseProposal(
-      String userId) async {
+    String userId,
+  ) async {
     try {
-      final DocumentSnapshot<Map<String, dynamic>>snapshot =
+      final DocumentSnapshot<Map<String, dynamic>> snapshot =
           await _firebaseFirestore.userDocumentByUserId(userId).get();
 
       if (!snapshot.exists) {
@@ -78,7 +79,9 @@ class FirebaseSpouseProposalRepository extends ISpouseProposalRepository {
 
   @override
   Future<Either<InvitationFailure, Unit>> createSpouseProposal(
-      User user, Invitation invitation) async {
+    User user,
+    Invitation invitation,
+  ) async {
     try {
       final SpouseProposalEntity spouseProposalEntity =
           SpouseProposalEntity.fromDomain(invitation);
@@ -102,7 +105,8 @@ class FirebaseSpouseProposalRepository extends ISpouseProposalRepository {
 
   @override
   Future<Either<InvitationFailure, Unit>> deleteSpouseProposal(
-      User user) async {
+    User user,
+  ) async {
     try {
       await _firebaseFirestore
           .userDocumentByUserId(user.id!)

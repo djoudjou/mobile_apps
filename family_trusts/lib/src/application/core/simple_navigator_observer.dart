@@ -1,10 +1,8 @@
-
-
 import 'package:familytrusts/src/helper/log_mixin.dart';
 import 'package:flutter/material.dart';
 
-class LoggerNavigatorObserver extends RouteObserver<PageRoute<dynamic>> with LogMixin {
-
+class LoggerNavigatorObserver extends RouteObserver<PageRoute<dynamic>>
+    with LogMixin {
   @override
   void didPush(Route<dynamic> route, Route<dynamic>? previousRoute) {
     super.didPush(route, previousRoute);

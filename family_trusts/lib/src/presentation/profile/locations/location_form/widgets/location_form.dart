@@ -148,18 +148,23 @@ class _LocationFormState extends State<LocationForm> with LogMixin {
 
                         context.pushRoute(
                           SearchAddressPageRoute(
-                              onSelectAddressCallback: (complexAddress) {
-                            _addressController.text = complexAddress.address!;
-                            context.read<LocationFormBloc>().add(
-                                LocationFormEvent.addressChanged(
-                                    complexAddress.address!));
-                            context.read<LocationFormBloc>().add(
-                                LocationFormEvent.latLngChanged(
-                                    complexAddress.position!));
+                            onSelectAddressCallback: (complexAddress) {
+                              _addressController.text = complexAddress.address!;
+                              context.read<LocationFormBloc>().add(
+                                    LocationFormEvent.addressChanged(
+                                      complexAddress.address!,
+                                    ),
+                                  );
+                              context.read<LocationFormBloc>().add(
+                                    LocationFormEvent.latLngChanged(
+                                      complexAddress.position!,
+                                    ),
+                                  );
 
-                            context.popRoute();
-                            //ExtendedNavigator.of(context).pop();
-                          }),
+                              context.popRoute();
+                              //ExtendedNavigator.of(context).pop();
+                            },
+                          ),
                         );
                       },
                       validator: (_) => context
@@ -300,12 +305,12 @@ class _LocationFormState extends State<LocationForm> with LogMixin {
         elevation: 10,
         child: GoogleMap(
           initialCameraPosition: CameraPosition(
-              target: state.gpsPosition.value.fold(
-                (failure) =>
-                    state.currentPosition.value.toOption().toNullable()!,
-                (position) => position,
-              ),
-              zoom: 16),
+            target: state.gpsPosition.value.fold(
+              (failure) => state.currentPosition.value.toOption().toNullable()!,
+              (position) => position,
+            ),
+            zoom: 16,
+          ),
           onMapCreated: _onMapCreated,
           compassEnabled: false,
           buildingsEnabled: false,
@@ -333,8 +338,12 @@ class _LocationFormState extends State<LocationForm> with LogMixin {
     );
   }
 
-  void onSaveCallback(BuildContext context, Location updatedlocation,
-      String? pickedFilePath, User connectedUser) {
+  void onSaveCallback(
+    BuildContext context,
+    Location updatedlocation,
+    String? pickedFilePath,
+    User connectedUser,
+  ) {
     final LocationFormBloc locationFormBloc = context.read<LocationFormBloc>();
     log(" update location $updatedlocation > $pickedFilePath");
 
@@ -347,8 +356,11 @@ class _LocationFormState extends State<LocationForm> with LogMixin {
     );
   }
 
-  Future<void> onDeleteCallback(BuildContext context, Location locationToDelete,
-      User connectedUser) async {
+  Future<void> onDeleteCallback(
+    BuildContext context,
+    Location locationToDelete,
+    User connectedUser,
+  ) async {
     await AlertHelper().confirm(
       context,
       LocaleKeys.profile_deleteLocationConfirm

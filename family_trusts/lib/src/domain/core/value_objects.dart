@@ -79,6 +79,5 @@ class TimestampVo extends ValueObject<int> {
 
   const TimestampVo._(this.value);
 
-  String get toPrintableDate =>
-      DateHelper.getPrintableDateFromTimestamp(getOrCrash());
+  String get toPrintableDate => getPrintableDateFromTimestamp(getOrCrash());
 }

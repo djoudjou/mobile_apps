@@ -143,7 +143,8 @@ class FirebaseUserRepository implements IUserRepository {
           return left<UserFailure, User>(UserFailure.unknownUser(userId));
         }
         return right<UserFailure, User>(
-            UserEntity.fromFirestore(snapshot).toDomain());
+          UserEntity.fromFirestore(snapshot).toDomain(),
+        );
       },
     ).onErrorReturnWith(
       (e, stacktrace) {
@@ -167,14 +168,23 @@ class FirebaseUserRepository implements IUserRepository {
     try {
       final Stream<List<User>> streamUsers = _firebaseFirestore
           .collection(FirebaseFirestoreX.usersCollectionName)
-          .where("keywords",
-              arrayContains: removeDiacritics(userLookupText.toLowerCase()))
+          .where(
+            "keywords",
+            arrayContains: removeDiacritics(userLookupText.toLowerCase()),
+          )
           .snapshots()
-          .map((querySnapshot) => querySnapshot.docs
-              .map((snapshot) => UserEntity.fromFirestore(snapshot).toDomain())
-              .where((element) =>
-                  excludedUsers == null || !excludedUsers.contains(element.id))
-              .toList());
+          .map(
+            (querySnapshot) => querySnapshot.docs
+                .map(
+                  (snapshot) => UserEntity.fromFirestore(snapshot).toDomain(),
+                )
+                .where(
+                  (element) =>
+                      excludedUsers == null ||
+                      !excludedUsers.contains(element.id),
+                )
+                .toList(),
+          );
       return right(streamUsers);
     } on Exception {
       return left(const SearchUserFailure.serverError());
@@ -189,7 +199,9 @@ class FirebaseUserRepository implements IUserRepository {
 
   @override
   Future<Either<UserFailure, Unit>> saveToken(
-      String userId, String token) async {
+    String userId,
+    String token,
+  ) async {
     try {
       await _firebaseFirestore
           .userDocumentByUserId(userId)

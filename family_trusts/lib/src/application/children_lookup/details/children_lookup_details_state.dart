@@ -2,8 +2,8 @@ import 'package:dartz/dartz.dart';
 import 'package:familytrusts/src/domain/children_lookup/children_lookup.dart';
 import 'package:familytrusts/src/domain/children_lookup/children_lookup_failure.dart';
 import 'package:familytrusts/src/domain/children_lookup/children_lookup_history.dart';
-import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:flutter/foundation.dart';
+import 'package:freezed_annotation/freezed_annotation.dart';
 part 'children_lookup_details_state.freezed.dart';
 
 @freezed
@@ -19,11 +19,9 @@ class ChildrenLookupDetailsState with _$ChildrenLookupDetailsState {
     required bool displayEndedButton,
     required bool displayCancelButton,
     ChildrenLookup? childrenLookup,
-    required
-        Option<Either<ChildrenLookupFailure, List<ChildrenLookupHistory>>>
-            optionEitherChildrenLookupHistory,
-    required
-        Option<Either<ChildrenLookupFailure, Unit>> failureOrSuccessOption,
+    required Option<Either<ChildrenLookupFailure, List<ChildrenLookupHistory>>>
+        optionEitherChildrenLookupHistory,
+    required Option<Either<ChildrenLookupFailure, Unit>> failureOrSuccessOption,
   }) = _ChildrenLookupDetailsState;
 
   factory ChildrenLookupDetailsState.initial() => ChildrenLookupDetailsState(

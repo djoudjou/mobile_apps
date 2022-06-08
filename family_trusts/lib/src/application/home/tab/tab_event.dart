@@ -1,7 +1,6 @@
 import 'package:familytrusts/src/domain/home/app_tab.dart';
-import 'package:freezed_annotation/freezed_annotation.dart';
-import 'package:meta/meta.dart';
 import 'package:flutter/foundation.dart';
+import 'package:freezed_annotation/freezed_annotation.dart';
 
 part 'tab_event.freezed.dart';
 

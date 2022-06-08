@@ -11,7 +11,7 @@ class Birthday extends ValueObject<DateTime> {
 
   factory Birthday.fromValue(String? text) {
     assert(text != null);
-    final DateTime? val = DateHelper.birthdayConverterToDate(text).toNullable();
+    final DateTime? val = birthdayConverterToDate(text).toNullable();
 
     return (val == null || val.isAfter(DateTime.now()))
         ? Birthday._(left(ValueFailure.invalidBirthdayValue(failedValue: DateTime.now())))
@@ -22,7 +22,7 @@ class Birthday extends ValueObject<DateTime> {
 
   const Birthday._(this.value);
 
-  String get toText => DateHelper.birthdayConverterToString(getOrCrash());
+  String get toText => birthdayConverterToString(getOrCrash());
 }
 
 class GpsPosition extends ValueObject<LatLng> {
