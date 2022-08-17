@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+// Env
+const String baseUrlEnvVar = "API_URL";
 
 //Images
 const String logoImagesPath = "images/400PngdpiLogo.png";

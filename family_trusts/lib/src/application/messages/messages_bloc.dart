@@ -1,23 +1,26 @@
 import 'dart:async';
 
-import 'package:bloc_concurrency/bloc_concurrency.dart';
 import 'package:familytrusts/src/application/messages/bloc.dart';
 import 'package:familytrusts/src/domain/error/i_error_service.dart';
 import 'package:familytrusts/src/domain/messages/i_messages_repository.dart';
+import 'package:familytrusts/src/helper/bloc_helper.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:injectable/injectable.dart';
 
 @injectable
 class MessagesBloc extends Bloc<MessagesEvent, MessagesState> {
+  static const Duration duration = Duration(milliseconds: 500);
   final IMessagesRepository _messagesRepository;
   final IErrorService _errorService;
   StreamSubscription? _messagesSubscription;
 
-  MessagesBloc(this._messagesRepository, this._errorService)
-      : super(const MessagesState.initial()) {
+  MessagesBloc(
+    this._messagesRepository,
+    this._errorService,
+  ) : super(const MessagesState.initial()) {
     on<MessagesEvent>(
       (event, emit) => mapEventToState(event, emit),
-      transformer: sequential(),
+      transformer: debounce(duration),
     );
   }
 

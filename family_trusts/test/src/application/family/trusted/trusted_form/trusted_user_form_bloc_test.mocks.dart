@@ -386,25 +386,30 @@ class MockMockAnalyticsSvc extends _i1.Mock implements _i3.MockAnalyticsSvc {
   }
 
   @override
-  void loginWithGoogle(String? userId) =>
-      super.noSuchMethod(Invocation.method(#loginWithGoogle, [userId]),
-          returnValueForMissingStub: null);
+  _i4.Future<void> loginWithGoogle(String? userId) =>
+      (super.noSuchMethod(Invocation.method(#loginWithGoogle, [userId]),
+          returnValue: Future<void>.value(),
+          returnValueForMissingStub: Future<void>.value()) as _i4.Future<void>);
   @override
-  void loginWithLoginPwd(String? userId) =>
-      super.noSuchMethod(Invocation.method(#loginWithLoginPwd, [userId]),
-          returnValueForMissingStub: null);
+  _i4.Future<void> loginWithLoginPwd(String? userId) =>
+      (super.noSuchMethod(Invocation.method(#loginWithLoginPwd, [userId]),
+          returnValue: Future<void>.value(),
+          returnValueForMissingStub: Future<void>.value()) as _i4.Future<void>);
   @override
-  void missingUser(String? userId) =>
-      super.noSuchMethod(Invocation.method(#missingUser, [userId]),
-          returnValueForMissingStub: null);
+  _i4.Future<void> missingUser(String? userId) =>
+      (super.noSuchMethod(Invocation.method(#missingUser, [userId]),
+          returnValue: Future<void>.value(),
+          returnValueForMissingStub: Future<void>.value()) as _i4.Future<void>);
   @override
-  void debug(String? msg) =>
-      super.noSuchMethod(Invocation.method(#debug, [msg]),
-          returnValueForMissingStub: null);
+  _i4.Future<void> debug(String? msg) =>
+      (super.noSuchMethod(Invocation.method(#debug, [msg]),
+          returnValue: Future<void>.value(),
+          returnValueForMissingStub: Future<void>.value()) as _i4.Future<void>);
   @override
-  void loginWithFacebook(String? userId) =>
-      super.noSuchMethod(Invocation.method(#loginWithFacebook, [userId]),
-          returnValueForMissingStub: null);
+  _i4.Future<void> loginWithFacebook(String? userId) =>
+      (super.noSuchMethod(Invocation.method(#loginWithFacebook, [userId]),
+          returnValue: Future<void>.value(),
+          returnValueForMissingStub: Future<void>.value()) as _i4.Future<void>);
   @override
   void log(String? message,
           {DateTime? time,

@@ -18,18 +18,18 @@ class AnalyticsSvc with LogMixin {
     //this._crashlytics,
   );
 
-  void loginWithGoogle(String userId) {
-    _firebaseAnalytics.setUserId(id: userId);
-    _firebaseAnalytics.logLogin(loginMethod: "LogWithGoogleSignIn");
+  Future<void> loginWithGoogle(String userId) async {
+    await _firebaseAnalytics.setUserId(id: userId);
+    await _firebaseAnalytics.logLogin(loginMethod: "LogWithGoogleSignIn");
   }
 
-  void loginWithLoginPwd(String userId) {
-    _firebaseAnalytics.setUserId(id: userId);
-    _firebaseAnalytics.logLogin(loginMethod: "LogWithLoginPwd");
+  Future<void> loginWithLoginPwd(String userId) async {
+    await _firebaseAnalytics.setUserId(id: userId);
+    await _firebaseAnalytics.logLogin(loginMethod: "LogWithLoginPwd");
   }
 
-  void missingUser(String userId) {
-    _firebaseAnalytics.logEvent(
+  Future<void> missingUser(String userId) async {
+    await _firebaseAnalytics.logEvent(
       name: 'getUserError',
       parameters: <String, dynamic>{
         "method": "getUser",
@@ -38,14 +38,14 @@ class AnalyticsSvc with LogMixin {
     );
   }
 
-  void debug(String msg) {
+  Future<void> debug(String msg) async {
     log(msg);
-    _errorService.logInfo(msg);
+    await _errorService.logInfo(msg);
     //_crashlytics.log(msg);
   }
 
-  void loginWithFacebook(String userId) {
-    _firebaseAnalytics.setUserId(id: userId);
-    _firebaseAnalytics.logLogin(loginMethod: "LogWithFacebookSignIn");
+  Future<void> loginWithFacebook(String userId) async {
+    await _firebaseAnalytics.setUserId(id: userId);
+    await _firebaseAnalytics.logLogin(loginMethod: "LogWithFacebookSignIn");
   }
 }

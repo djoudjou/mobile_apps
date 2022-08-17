@@ -97,6 +97,9 @@ dependencies:
 
   timeline_tile: ^2.0.0
 
+  dio: ^4.0.6
+  retrofit: '>=3.0.0 <4.0.0'
+
   # flutter_auth_buttons: ^0.10.0
   auth_buttons: ^2.0.4
 
@@ -105,11 +108,13 @@ dependencies:
   cupertino_icons: ^1.0.5
 
   flutter_launcher_icons: ^0.9.3
+  flutter_dotenv: ^5.0.2
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
   bloc_test: ^9.0.3
+  retrofit_generator: '>=4.0.0 <5.0.0'
   build_runner: ^2.1.11
   lint: ^1.8.2
   freezed: ^2.0.3+1
@@ -154,6 +159,7 @@ flutter:
     - images/recuperation_enfants.jpeg
     - images/location.png
     - resources/langs/
+    - .env
   #   - images/a_dot_ham.jpeg
 
   # An image asset can refer to one or more resolution-specific "variants", see

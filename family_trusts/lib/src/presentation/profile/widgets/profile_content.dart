@@ -220,16 +220,16 @@ class _ProfileContentState extends State<ProfileContent>
                       pageTitle: LocaleKeys.family_title.tr(),
                       bottom: TabBar(
                         onTap: (index) {
-                          final profilTabBloc =
+                          final profileTabBloc =
                               profileContext.read<ProfilTabBloc>();
                           if (index == 0) {
-                            profilTabBloc
+                            profileTabBloc
                                 .add(const ProfilTabEvent.gotoChildren());
                           } else if (index == 1) {
-                            profilTabBloc
+                            profileTabBloc
                                 .add(const ProfilTabEvent.gotoTrustedUsers());
                           } else if (index == 2) {
-                            profilTabBloc
+                            profileTabBloc
                                 .add(const ProfilTabEvent.gotoLocations());
                           }
                         },
@@ -246,7 +246,7 @@ class _ProfileContentState extends State<ProfileContent>
                           ),
                           Tab(
                             text: LocaleKeys.profile_tabs_locations_tab.tr(),
-                            icon: const Icon(FontAwesomeIcons.mapMarked),
+                            icon: const Icon(FontAwesomeIcons.mapLocation),
                           ),
                         ],
                       ),

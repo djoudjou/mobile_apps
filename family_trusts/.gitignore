@@ -53,4 +53,4 @@ familytrusts.jks
 google-services.txt
 googleservice-info.txt
 bundletool-all-1.2.0.jar
-
+*.env

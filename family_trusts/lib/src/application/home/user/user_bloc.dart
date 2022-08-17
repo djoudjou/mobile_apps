@@ -1,7 +1,6 @@
 import 'dart:async';
 
 import 'package:bloc/bloc.dart';
-import 'package:bloc_concurrency/bloc_concurrency.dart';
 import 'package:dartz/dartz.dart';
 import 'package:familytrusts/src/application/home/user/bloc.dart';
 import 'package:familytrusts/src/domain/invitation/i_spouse_proposal_repository.dart';
@@ -26,36 +25,29 @@ class UserBloc extends Bloc<UserEvent, UserState> {
     this._userRepository,
     this._spouseProposalRepository,
   ) : super(const UserState.userInitial()) {
-    on<UserEvent>(
-      (event, emit) => mapEventToState(event, emit),
-      transformer: sequential(),
+    on<Init>(_onInit);
+    on<UserStarted>(
+      _onUserStarted,
+    );
+    on<UserReceived>(
+      _onUserReceived,
+    );
+    on<UserSubmitted>(
+      _onUserSubmitted,
     );
   }
 
   @override
-  Future<void> close() {
+  Future<void> close() async {
     _userSubscription?.cancel();
-    return super.close();
+    await super.close();
   }
 
-  void mapEventToState(
-    UserEvent event,
-    Emitter<UserState> emit,
-  ) {
-    event.map(
-      init: (event) {
-        add(UserEvent.userStarted(event.connectedUserId));
-      },
-      userStarted: (event) => _mapLoadUserToState(event, emit),
-      userReceived: (event) => _mapUserReceivedToState(event, emit),
-      userSubmitted: (event) => _mapUserSubmittedToState(event, emit),
-    );
+  FutureOr<void> _onInit(Init event, Emitter<UserState> emit) {
+    add(UserEvent.userStarted(event.connectedUserId));
   }
 
-  void _mapLoadUserToState(
-    UserStarted event,
-    Emitter<UserState> emit,
-  ) {
+  FutureOr<void> _onUserStarted(UserStarted event, Emitter<UserState> emit) {
     emit(UserState.userLoadInProgress(event.userId));
 
     _userSubscription?.cancel();
@@ -65,7 +57,7 @@ class UserBloc extends Bloc<UserEvent, UserState> {
         );
   }
 
-  FutureOr<void> _mapUserReceivedToState(
+  Future<FutureOr<void>> _onUserReceived(
     UserReceived event,
     Emitter<UserState> emit,
   ) async {
@@ -161,7 +153,7 @@ class UserBloc extends Bloc<UserEvent, UserState> {
     }
   }
 
-  FutureOr<void> _mapUserSubmittedToState(
+  Future<FutureOr<void>> _onUserSubmitted(
     UserSubmitted event,
     Emitter<UserState> emit,
   ) async {

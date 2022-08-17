@@ -20,6 +20,7 @@ import 'package:injectable/injectable.dart';
 import 'package:quiver/strings.dart' as quiver;
 import 'package:rxdart/rxdart.dart';
 
+@Environment(Environment.dev)
 @LazySingleton(as: IUserRepository)
 class FirebaseUserRepository implements IUserRepository {
   final FirebaseFirestore _firebaseFirestore;
