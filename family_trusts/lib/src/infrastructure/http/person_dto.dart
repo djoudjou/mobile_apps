@@ -27,7 +27,7 @@ class PersonDTO {
   });
 
   factory PersonDTO.fromUser(User user) => PersonDTO(
-        email: user.email.toString(),
+        email: user.email.getOrCrash(),
         firstName: user.surname.getOrCrash(),
         lastName: user.name.getOrCrash(),
         personId: user.id,

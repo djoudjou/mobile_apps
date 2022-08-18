@@ -32,6 +32,7 @@ dependencies:
   firebase_core: ^1.17.1
   firebase_analytics: ^9.1.9
 
+
   google_sign_in: ^5.0.5
 
   #firebase_crashlytics: ^0.1.4+1
@@ -99,6 +100,7 @@ dependencies:
 
   dio: ^4.0.6
   retrofit: '>=3.0.0 <4.0.0'
+  curl_logger_dio_interceptor: ^0.0.3
 
   # flutter_auth_buttons: ^0.10.0
   auth_buttons: ^2.0.4

@@ -110,11 +110,11 @@ class HomePage extends StatelessWidget with LogMixin {
                     LocaleKeys.global_serverError.tr(),
                     userBloc,
                   );
-                  AutoRouter.of(context).popUntilRoot();
+                  //AutoRouter.of(context).popUntilRoot();
                   AutoRouter.of(context).replace(const SignInPageRoute());
                 },
                 userNotFound: (e) {
-                  AutoRouter.of(context).popUntilRoot();
+                  //AutoRouter.of(context).popUntilRoot();
                   context.replaceRoute(const RegisterPageRoute());
                 },
                 userLoadSuccess: (e) {

@@ -14,17 +14,17 @@ abstract class PersonRestClient {
   Future<List<PersonDTO>> findAll();
 
   @GET("/persons/{id}")
-  Future<PersonDTO> findPersonById(@Path() String personId);
+  Future<PersonDTO> findPersonById(@Path("id") String personId);
 
   @POST("/persons")
   Future<RegisterPersonResponseDTO> createPerson(@Body() PersonDTO person);
 
   @PUT("/persons/{id}")
-  Future<PersonDTO> update(@Path() String personId, @Body() PersonDTO person);
+  Future<PersonDTO> update(@Path("id") String personId, @Body() PersonDTO person);
 
   @PUT("/persons/{id}/login")
   Future<PersonDTO> login(
-    @Path() String personId,
+    @Path("id") String personId,
     @Body() LoginPersonDTO loginPersonDTO,
   );
 }

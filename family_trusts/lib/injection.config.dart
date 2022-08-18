@@ -16,60 +16,61 @@ import 'package:google_geocoding/google_geocoding.dart' as _i9;
 import 'package:google_sign_in/google_sign_in.dart' as _i10;
 import 'package:injectable/injectable.dart' as _i2;
 
-import 'src/application/auth/authentication_bloc.dart' as _i24;
-import 'src/application/auth/sign_in_form/sign_in_form_bloc.dart' as _i34;
-import 'src/application/children_lookup/children_lookup_bloc.dart' as _i52;
+import 'src/application/auth/authentication_bloc.dart' as _i25;
+import 'src/application/auth/sign_in_form/sign_in_form_bloc.dart' as _i35;
+import 'src/application/children_lookup/children_lookup_bloc.dart' as _i53;
 import 'src/application/children_lookup/details/children_lookup_details_bloc.dart'
-    as _i53;
-import 'src/application/demands/demands_bloc.dart' as _i54;
-import 'src/application/family/children/form/children_form_bloc.dart' as _i51;
-import 'src/application/family/children/watcher/children_bloc.dart' as _i38;
-import 'src/application/family/location/form/location_form_bloc.dart' as _i43;
-import 'src/application/family/location/watcher/locations_bloc.dart' as _i32;
-import 'src/application/family/setup/setup_family_bloc.dart' as _i49;
+    as _i54;
+import 'src/application/demands/demands_bloc.dart' as _i55;
+import 'src/application/family/children/form/children_form_bloc.dart' as _i52;
+import 'src/application/family/children/watcher/children_bloc.dart' as _i39;
+import 'src/application/family/location/form/location_form_bloc.dart' as _i44;
+import 'src/application/family/location/watcher/locations_bloc.dart' as _i33;
+import 'src/application/family/setup/setup_family_bloc.dart' as _i50;
 import 'src/application/family/trusted/trusted_form/trusted_user_form_bloc.dart'
-    as _i50;
+    as _i51;
 import 'src/application/family/trusted/trusted_watcher/trusted_user_watcher_bloc.dart'
-    as _i35;
-import 'src/application/home/tab/tab_bloc.dart' as _i22;
-import 'src/application/home/user/user_bloc.dart' as _i36;
-import 'src/application/messages/messages_bloc.dart' as _i33;
+    as _i36;
+import 'src/application/home/tab/tab_bloc.dart' as _i23;
+import 'src/application/home/user/user_bloc.dart' as _i37;
+import 'src/application/messages/messages_bloc.dart' as _i34;
 import 'src/application/notifications/notifications_events/notifications_events_bloc.dart'
-    as _i44;
-import 'src/application/notifications/notifications_events/notifications_events_update_bloc.dart'
     as _i45;
-import 'src/application/notifications/notifications_invitations/notifications_invitations_bloc.dart'
+import 'src/application/notifications/notifications_events/notifications_events_update_bloc.dart'
     as _i46;
+import 'src/application/notifications/notifications_invitations/notifications_invitations_bloc.dart'
+    as _i47;
 import 'src/application/notifications/tab/notification_tab_bloc.dart' as _i18;
 import 'src/application/notifications/unseen/notifications_unseen_bloc.dart'
-    as _i47;
-import 'src/application/planning/planning_bloc.dart' as _i48;
+    as _i48;
+import 'src/application/planning/planning_bloc.dart' as _i49;
 import 'src/application/profil/tab/profil_tab_bloc.dart' as _i19;
-import 'src/application/search_user/search_user_bloc.dart' as _i21;
-import 'src/application/user_form/user_form_bloc.dart' as _i37;
+import 'src/application/register/register_bloc.dart' as _i21;
+import 'src/application/search_user/search_user_bloc.dart' as _i22;
+import 'src/application/user_form/user_form_bloc.dart' as _i38;
 import 'src/domain/auth/i_auth_facade.dart' as _i11;
-import 'src/domain/children_lookup/i_children_lookup_repository.dart' as _i39;
+import 'src/domain/children_lookup/i_children_lookup_repository.dart' as _i40;
 import 'src/domain/error/i_error_service.dart' as _i13;
-import 'src/domain/family/i_family_repository.dart' as _i25;
-import 'src/domain/invitation/i_spouse_proposal_repository.dart' as _i29;
-import 'src/domain/messages/i_messages_repository.dart' as _i27;
-import 'src/domain/notification/i_notification_repository.dart' as _i41;
+import 'src/domain/family/i_family_repository.dart' as _i26;
+import 'src/domain/invitation/i_spouse_proposal_repository.dart' as _i30;
+import 'src/domain/messages/i_messages_repository.dart' as _i28;
+import 'src/domain/notification/i_notification_repository.dart' as _i42;
 import 'src/domain/user/i_user_repository.dart' as _i15;
-import 'src/helper/analytics_svc.dart' as _i23;
+import 'src/helper/analytics_svc.dart' as _i24;
 import 'src/infrastructure/auth/firebase_auth_facade.dart' as _i12;
 import 'src/infrastructure/children_lookup/firebase_children_lookup_repository.dart'
-    as _i40;
-import 'src/infrastructure/core/firebase_injectable_module.dart' as _i55;
-import 'src/infrastructure/core/geocoding_injectable_module.dart' as _i56;
-import 'src/infrastructure/family/firebase_family_repository.dart' as _i26;
+    as _i41;
+import 'src/infrastructure/core/firebase_injectable_module.dart' as _i56;
+import 'src/infrastructure/core/geocoding_injectable_module.dart' as _i57;
+import 'src/infrastructure/family/firebase_family_repository.dart' as _i27;
 import 'src/infrastructure/http/api_service.dart' as _i17;
 import 'src/infrastructure/invitation/firebase_spouse_proposal_repository.dart'
-    as _i30;
-import 'src/infrastructure/messages/firebase_messages_repository.dart' as _i28;
+    as _i31;
+import 'src/infrastructure/messages/firebase_messages_repository.dart' as _i29;
 import 'src/infrastructure/notification/firebase_notification_repository.dart'
-    as _i42;
+    as _i43;
 import 'src/infrastructure/user/api_user_repository.dart' as _i16;
-import 'src/infrastructure/user/firebase_user_repository.dart' as _i31;
+import 'src/infrastructure/user/firebase_user_repository.dart' as _i32;
 import 'src/services/error/error_service.dart' as _i14;
 
 const String _prod = 'prod';
@@ -109,101 +110,103 @@ _i1.GetIt $initGetIt(_i1.GetIt get,
   gh.factory<_i19.ProfilTabBloc>(() => _i19.ProfilTabBloc());
   gh.lazySingleton<_i20.Reference>(
       () => firebaseInjectableModule.storageReference);
-  gh.factory<_i21.SearchUserBloc>(() => _i21.SearchUserBloc(
+  gh.factory<_i21.RegisterBloc>(() =>
+      _i21.RegisterBloc(get<_i15.IUserRepository>(), get<_i11.IAuthFacade>()));
+  gh.factory<_i22.SearchUserBloc>(() => _i22.SearchUserBloc(
       get<_i15.IUserRepository>(), get<_i11.IAuthFacade>()));
-  gh.factory<_i22.TabBloc>(() => _i22.TabBloc());
-  gh.factory<_i23.AnalyticsSvc>(() => _i23.AnalyticsSvc(
+  gh.factory<_i23.TabBloc>(() => _i23.TabBloc());
+  gh.factory<_i24.AnalyticsSvc>(() => _i24.AnalyticsSvc(
       get<_i4.FirebaseAnalytics>(), get<_i13.IErrorService>()));
-  gh.factory<_i24.AuthenticationBloc>(
-      () => _i24.AuthenticationBloc(get<_i11.IAuthFacade>()));
-  gh.lazySingleton<_i25.IFamilyRepository>(() => _i26.FirebaseFamilyRepository(
+  gh.factory<_i25.AuthenticationBloc>(
+      () => _i25.AuthenticationBloc(get<_i11.IAuthFacade>()));
+  gh.lazySingleton<_i26.IFamilyRepository>(() => _i27.FirebaseFamilyRepository(
       get<_i15.IUserRepository>(),
       get<_i6.FirebaseFirestore>(),
       get<_i20.Reference>(),
       get<_i8.Geoflutterfire>(),
       get<_i13.IErrorService>()));
-  gh.lazySingleton<_i27.IMessagesRepository>(() =>
-      _i28.FirebaseMessagesRepository(get<_i7.FirebaseMessaging>(),
+  gh.lazySingleton<_i28.IMessagesRepository>(() =>
+      _i29.FirebaseMessagesRepository(get<_i7.FirebaseMessaging>(),
           get<_i13.IErrorService>(), get<_i15.IUserRepository>()));
-  gh.lazySingleton<_i29.ISpouseProposalRepository>(() =>
-      _i30.FirebaseSpouseProposalRepository(
+  gh.lazySingleton<_i30.ISpouseProposalRepository>(() =>
+      _i31.FirebaseSpouseProposalRepository(
           get<_i6.FirebaseFirestore>(), get<_i15.IUserRepository>()));
   gh.lazySingleton<_i15.IUserRepository>(
-      () => _i31.FirebaseUserRepository(get<_i6.FirebaseFirestore>(),
-          get<_i20.Reference>(), get<_i23.AnalyticsSvc>()),
+      () => _i32.FirebaseUserRepository(get<_i6.FirebaseFirestore>(),
+          get<_i20.Reference>(), get<_i24.AnalyticsSvc>()),
       registerFor: {_dev});
-  gh.factory<_i32.LocationsBloc>(
-      () => _i32.LocationsBloc(get<_i25.IFamilyRepository>()));
-  gh.factory<_i33.MessagesBloc>(() => _i33.MessagesBloc(
-      get<_i27.IMessagesRepository>(), get<_i13.IErrorService>()));
-  gh.factory<_i34.SignInFormBloc>(() =>
-      _i34.SignInFormBloc(get<_i11.IAuthFacade>(), get<_i23.AnalyticsSvc>()));
-  gh.factory<_i35.TrustedUserWatcherBloc>(
-      () => _i35.TrustedUserWatcherBloc(get<_i25.IFamilyRepository>()));
-  gh.factory<_i36.UserBloc>(() => _i36.UserBloc(
-      get<_i15.IUserRepository>(), get<_i29.ISpouseProposalRepository>()));
-  gh.factory<_i37.UserFormBloc>(() => _i37.UserFormBloc(
+  gh.factory<_i33.LocationsBloc>(
+      () => _i33.LocationsBloc(get<_i26.IFamilyRepository>()));
+  gh.factory<_i34.MessagesBloc>(() => _i34.MessagesBloc(
+      get<_i28.IMessagesRepository>(), get<_i13.IErrorService>()));
+  gh.factory<_i35.SignInFormBloc>(() =>
+      _i35.SignInFormBloc(get<_i11.IAuthFacade>(), get<_i24.AnalyticsSvc>()));
+  gh.factory<_i36.TrustedUserWatcherBloc>(
+      () => _i36.TrustedUserWatcherBloc(get<_i26.IFamilyRepository>()));
+  gh.factory<_i37.UserBloc>(() => _i37.UserBloc(
+      get<_i15.IUserRepository>(), get<_i30.ISpouseProposalRepository>()));
+  gh.factory<_i38.UserFormBloc>(() => _i38.UserFormBloc(
       get<_i15.IUserRepository>(),
-      get<_i23.AnalyticsSvc>(),
-      get<_i25.IFamilyRepository>()));
-  gh.factory<_i38.ChildrenBloc>(
-      () => _i38.ChildrenBloc(get<_i25.IFamilyRepository>()));
-  gh.lazySingleton<_i39.IChildrenLookupRepository>(() =>
-      _i40.FirebaseChildrenLookupRepository(
+      get<_i24.AnalyticsSvc>(),
+      get<_i26.IFamilyRepository>()));
+  gh.factory<_i39.ChildrenBloc>(
+      () => _i39.ChildrenBloc(get<_i26.IFamilyRepository>()));
+  gh.lazySingleton<_i40.IChildrenLookupRepository>(() =>
+      _i41.FirebaseChildrenLookupRepository(
           get<_i15.IUserRepository>(),
           get<_i6.FirebaseFirestore>(),
           get<_i13.IErrorService>(),
-          get<_i25.IFamilyRepository>()));
-  gh.lazySingleton<_i41.INotificationRepository>(() =>
-      _i42.FirebaseNotificationRepository(
+          get<_i26.IFamilyRepository>()));
+  gh.lazySingleton<_i42.INotificationRepository>(() =>
+      _i43.FirebaseNotificationRepository(
           get<_i15.IUserRepository>(),
           get<_i6.FirebaseFirestore>(),
-          get<_i39.IChildrenLookupRepository>(),
+          get<_i40.IChildrenLookupRepository>(),
           get<_i13.IErrorService>()));
-  gh.factory<_i43.LocationFormBloc>(() => _i43.LocationFormBloc(
-      get<_i25.IFamilyRepository>(),
-      get<_i41.INotificationRepository>(),
-      get<_i23.AnalyticsSvc>()));
-  gh.factory<_i44.NotificationsEventsBloc>(
-      () => _i44.NotificationsEventsBloc(get<_i41.INotificationRepository>()));
-  gh.factory<_i45.NotificationsEventsUpdateBloc>(() =>
-      _i45.NotificationsEventsUpdateBloc(get<_i41.INotificationRepository>()));
-  gh.factory<_i46.NotificationsInvitationsBloc>(() =>
-      _i46.NotificationsInvitationsBloc(get<_i41.INotificationRepository>()));
-  gh.factory<_i47.NotificationsUnseenBloc>(
-      () => _i47.NotificationsUnseenBloc(get<_i41.INotificationRepository>()));
-  gh.factory<_i48.PlanningBloc>(
-      () => _i48.PlanningBloc(get<_i39.IChildrenLookupRepository>()));
-  gh.factory<_i49.SetupFamilyBloc>(() => _i49.SetupFamilyBloc(
+  gh.factory<_i44.LocationFormBloc>(() => _i44.LocationFormBloc(
+      get<_i26.IFamilyRepository>(),
+      get<_i42.INotificationRepository>(),
+      get<_i24.AnalyticsSvc>()));
+  gh.factory<_i45.NotificationsEventsBloc>(
+      () => _i45.NotificationsEventsBloc(get<_i42.INotificationRepository>()));
+  gh.factory<_i46.NotificationsEventsUpdateBloc>(() =>
+      _i46.NotificationsEventsUpdateBloc(get<_i42.INotificationRepository>()));
+  gh.factory<_i47.NotificationsInvitationsBloc>(() =>
+      _i47.NotificationsInvitationsBloc(get<_i42.INotificationRepository>()));
+  gh.factory<_i48.NotificationsUnseenBloc>(
+      () => _i48.NotificationsUnseenBloc(get<_i42.INotificationRepository>()));
+  gh.factory<_i49.PlanningBloc>(
+      () => _i49.PlanningBloc(get<_i40.IChildrenLookupRepository>()));
+  gh.factory<_i50.SetupFamilyBloc>(() => _i50.SetupFamilyBloc(
       get<_i15.IUserRepository>(),
-      get<_i29.ISpouseProposalRepository>(),
-      get<_i41.INotificationRepository>(),
-      get<_i23.AnalyticsSvc>()));
-  gh.factory<_i50.TrustedUserFormBloc>(() => _i50.TrustedUserFormBloc(
-      get<_i25.IFamilyRepository>(),
-      get<_i41.INotificationRepository>(),
+      get<_i30.ISpouseProposalRepository>(),
+      get<_i42.INotificationRepository>(),
+      get<_i24.AnalyticsSvc>()));
+  gh.factory<_i51.TrustedUserFormBloc>(() => _i51.TrustedUserFormBloc(
+      get<_i26.IFamilyRepository>(),
+      get<_i42.INotificationRepository>(),
       get<_i11.IAuthFacade>(),
       get<_i15.IUserRepository>(),
-      get<_i23.AnalyticsSvc>()));
-  gh.factory<_i51.ChildrenFormBloc>(() => _i51.ChildrenFormBloc(
-      get<_i25.IFamilyRepository>(), get<_i41.INotificationRepository>()));
-  gh.factory<_i52.ChildrenLookupBloc>(() => _i52.ChildrenLookupBloc(
+      get<_i24.AnalyticsSvc>()));
+  gh.factory<_i52.ChildrenFormBloc>(() => _i52.ChildrenFormBloc(
+      get<_i26.IFamilyRepository>(), get<_i42.INotificationRepository>()));
+  gh.factory<_i53.ChildrenLookupBloc>(() => _i53.ChildrenLookupBloc(
       get<_i11.IAuthFacade>(),
       get<_i15.IUserRepository>(),
-      get<_i25.IFamilyRepository>(),
-      get<_i39.IChildrenLookupRepository>(),
-      get<_i41.INotificationRepository>()));
-  gh.factory<_i53.ChildrenLookupDetailsBloc>(() =>
-      _i53.ChildrenLookupDetailsBloc(
+      get<_i26.IFamilyRepository>(),
+      get<_i40.IChildrenLookupRepository>(),
+      get<_i42.INotificationRepository>()));
+  gh.factory<_i54.ChildrenLookupDetailsBloc>(() =>
+      _i54.ChildrenLookupDetailsBloc(
           get<_i11.IAuthFacade>(),
           get<_i15.IUserRepository>(),
-          get<_i39.IChildrenLookupRepository>(),
-          get<_i41.INotificationRepository>()));
-  gh.factory<_i54.DemandsBloc>(
-      () => _i54.DemandsBloc(get<_i39.IChildrenLookupRepository>()));
+          get<_i40.IChildrenLookupRepository>(),
+          get<_i42.INotificationRepository>()));
+  gh.factory<_i55.DemandsBloc>(
+      () => _i55.DemandsBloc(get<_i40.IChildrenLookupRepository>()));
   return get;
 }
 
-class _$FirebaseInjectableModule extends _i55.FirebaseInjectableModule {}
+class _$FirebaseInjectableModule extends _i56.FirebaseInjectableModule {}
 
-class _$GeocodingInjectableModule extends _i56.GeocodingInjectableModule {}
+class _$GeocodingInjectableModule extends _i57.GeocodingInjectableModule {}

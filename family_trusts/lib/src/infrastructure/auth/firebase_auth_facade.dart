@@ -16,6 +16,9 @@ class FirebaseAuthFacade implements IAuthFacade {
   final GoogleSignIn _googleSignIn;
   final FacebookAuth _facebookAuth;
 
+  bool _loggedWithGoogle = false;
+  bool _loggedWithFacebook = false;
+
   FirebaseAuthFacade(
     this._firebaseAuth,
     this._googleSignIn,
@@ -49,6 +52,14 @@ class FirebaseAuthFacade implements IAuthFacade {
       } else {
         return left(const AuthFailure.serverError());
       }
+    } on fire.FirebaseAuthException catch(e) {
+      if (e.code == 'email-already-in-use') {
+        return left(const AuthFailure.emailAlreadyInUse());
+      } else {
+        return left(const AuthFailure.serverError());
+      }
+    } catch(e) {
+      return left(const AuthFailure.serverError());
     }
   }
 
@@ -98,6 +109,7 @@ class FirebaseAuthFacade implements IAuthFacade {
 
       //await createUserIfNotExist(authResult);
 
+      _loggedWithGoogle = true;
       return right(userCredential.user!.uid);
     } on PlatformException catch (_) {
       return left(const AuthFailure.serverError());
@@ -125,6 +137,8 @@ class FirebaseAuthFacade implements IAuthFacade {
           // Once signed in, return the UserCredential
           final fire.UserCredential userCredential =
               await _firebaseAuth.signInWithCredential(facebookAuthCredential);
+
+          _loggedWithFacebook = true;
 
           return right(userCredential.user!.uid);
         case LoginStatus.cancelled:
@@ -196,16 +210,36 @@ class FirebaseAuthFacade implements IAuthFacade {
   }
 
   @override
-  Future<void> signOut() => Future.wait([
-        _googleSignIn.signOut(),
-        _facebookAuth.logOut(),
-        _firebaseAuth.signOut(),
-      ]);
+  Future<void> signOut() async {
+
+    await _firebaseAuth.signOut();
+
+    if(_loggedWithGoogle) {
+      await _googleSignIn.signOut();
+    }
+
+    if(_loggedWithFacebook) {
+      await _facebookAuth.logOut();
+    }
+  }
 
   @override
   Future<Option<MyUserInfo>> getSignedUserInfo() async {
     final fire.User? user = _firebaseAuth.currentUser;
 
+    final Option<MyUserInfo> optionUserInfo = await getUserInfo(user);
+
+    if (optionUserInfo.isSome()) {
+      final MyUserInfo? userInfo = optionUserInfo.toNullable();
+      if (userInfo!.displayName == null) {
+        await _firebaseAuth.signOut();
+        return none();
+      }
+    }
+    return optionUserInfo;
+  }
+
+  Future<Option<MyUserInfo>> getUserInfo(fire.User? user) async {
     if (user != null) {
       if (user.providerData.first.providerId ==
           fire.FacebookAuthProvider.PROVIDER_ID) {
@@ -234,6 +268,16 @@ class FirebaseAuthFacade implements IAuthFacade {
       }
     } else {
       return none();
+    }
+  }
+
+  @override
+  Future<String> getToken() async {
+    final fire.User? user = _firebaseAuth.currentUser;
+    if (user != null) {
+      return user.getIdToken();
+    } else {
+      return "";
     }
   }
 }

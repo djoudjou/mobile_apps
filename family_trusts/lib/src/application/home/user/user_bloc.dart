@@ -19,8 +19,6 @@ class UserBloc extends Bloc<UserEvent, UserState> {
 
   //final AnalyticsSvc _analyticsSvc;
 
-  StreamSubscription? _userSubscription;
-
   UserBloc(
     this._userRepository,
     this._spouseProposalRepository,
@@ -39,7 +37,6 @@ class UserBloc extends Bloc<UserEvent, UserState> {
 
   @override
   Future<void> close() async {
-    _userSubscription?.cancel();
     await super.close();
   }
 
@@ -47,14 +44,16 @@ class UserBloc extends Bloc<UserEvent, UserState> {
     add(UserEvent.userStarted(event.connectedUserId));
   }
 
-  FutureOr<void> _onUserStarted(UserStarted event, Emitter<UserState> emit) {
+  Future<FutureOr<void>> _onUserStarted(
+    UserStarted event,
+    Emitter<UserState> emit,
+  ) async {
     emit(UserState.userLoadInProgress(event.userId));
 
-    _userSubscription?.cancel();
-    _userSubscription = _userRepository.watchUser(event.userId).listen(
-          (failureOrUser) => add(UserEvent.userReceived(failureOrUser)),
-          onError: (_) => _userSubscription?.cancel(),
-        );
+    final Either<UserFailure, User> result =
+        await _userRepository.getUser(event.userId);
+
+    add(UserEvent.userReceived(result));
   }
 
   Future<FutureOr<void>> _onUserReceived(

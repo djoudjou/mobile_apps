@@ -42,6 +42,7 @@ class SearchUserBloc extends Bloc<SearchUserEvent, SearchUserState> {
 
           final String userId = _authFacade.getSignedInUserId().toNullable()!;
 
+          /* todo plus de stream
           final Either<SearchUserFailure, Stream<List<User>>> result =
               await _userRepository.searchUsers(
             e.userLookupText,
@@ -58,6 +59,8 @@ class SearchUserBloc extends Bloc<SearchUserEvent, SearchUserState> {
               isSubmitting: false,
             ),
           );
+
+           */
         }
       },
     );

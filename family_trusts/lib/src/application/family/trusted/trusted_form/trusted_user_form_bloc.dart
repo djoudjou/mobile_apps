@@ -85,6 +85,7 @@ class TrustedUserFormBloc
           (r) => r.map((e) => e.user.id!).toList(),
         );
 
+        /* todo no more stream
         final Either<SearchUserFailure, Stream<List<User>>> result =
             await _userRepository.searchUsers(
           event.userLookupText,
@@ -112,6 +113,8 @@ class TrustedUserFormBloc
             },
           ),
         );
+
+         */
       }
     } catch (_) {
       emit(

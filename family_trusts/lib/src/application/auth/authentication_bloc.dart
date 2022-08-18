@@ -14,30 +14,24 @@ class AuthenticationBloc
 
   AuthenticationBloc(this._authFacade)
       : super(const AuthenticationState.initial()) {
-    on<AuthenticationEvent>(
-      (event, emit) => mapEventToState(event, emit),
-      transformer: restartable(),
+    on<AuthCheckRequested>(_mapAuthCheckRequested, transformer: restartable());
+    on<SignedOut>(_mapSignedOut, transformer: sequential());
+  }
+
+  FutureOr<void> _mapAuthCheckRequested(
+      AuthCheckRequested event, Emitter<AuthenticationState> emit) async {
+    final userOption = _authFacade.getSignedInUserId();
+    emit(
+      userOption.fold(
+        () => const AuthenticationState.unauthenticated(),
+        (userId) => AuthenticationState.authenticated(userId),
+      ),
     );
   }
 
-  Future<void> mapEventToState(
-    AuthenticationEvent event,
-    Emitter<AuthenticationState> emit,
-  ) async {
-    event.map(
-      authCheckRequested: (e) {
-        final userOption = _authFacade.getSignedInUserId();
-        emit(
-          userOption.fold(
-            () => const AuthenticationState.unauthenticated(),
-            (userId) => AuthenticationState.authenticated(userId),
-          ),
-        );
-      },
-      signedOut: (e) async {
-        await _authFacade.signOut();
-        emit(const AuthenticationState.unauthenticated());
-      },
-    );
+  FutureOr<void> _mapSignedOut(
+      SignedOut event, Emitter<AuthenticationState> emit) async {
+    await _authFacade.signOut();
+    emit(const AuthenticationState.unauthenticated());
   }
 }

@@ -9,12 +9,15 @@ import 'package:familytrusts/src/presentation/routes/router.gr.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../../injection.dart';
+
 class RegisterPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: MyAppBar(
-        pageTitle: LocaleKeys.register_title.tr(), context: context,
+        pageTitle: LocaleKeys.register_title.tr(),
+        context: context,
       ),
       body: MultiBlocListener(
         listeners: [
@@ -23,8 +26,9 @@ class RegisterPage extends StatelessWidget {
               state.map(
                 initial: (_) {},
                 authenticated: (_) {},
-                unauthenticated: (_) => context.replaceRoute(const SignInPageRoute()),
-                    //ExtendedNavigator.of(context).replace(Routes.signInPage),
+                unauthenticated: (_) =>
+                    context.replaceRoute(const SignInPageRoute()),
+                //ExtendedNavigator.of(context).replace(Routes.signInPage),
               );
             },
           ),
@@ -32,7 +36,7 @@ class RegisterPage extends StatelessWidget {
         child: Center(
           child: BlocProvider<RegisterBloc>(
             create: (context) =>
-                RegisterBloc()..add(const RegisterEvent.init()),
+                getIt<RegisterBloc>()..add(const RegisterEvent.init()),
             child: RegisterForm(),
           ),
         ),

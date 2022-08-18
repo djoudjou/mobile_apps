@@ -42,7 +42,7 @@ class _PersonRestClient implements PersonRestClient {
     final _result = await _dio.fetch<Map<String, dynamic>>(
         _setStreamType<PersonDTO>(
             Options(method: 'GET', headers: _headers, extra: _extra)
-                .compose(_dio.options, '/persons/{id}',
+                .compose(_dio.options, '/persons/${personId}',
                     queryParameters: queryParameters, data: _data)
                 .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
     final value = PersonDTO.fromJson(_result.data!);
@@ -76,7 +76,7 @@ class _PersonRestClient implements PersonRestClient {
     final _result = await _dio.fetch<Map<String, dynamic>>(
         _setStreamType<PersonDTO>(
             Options(method: 'PUT', headers: _headers, extra: _extra)
-                .compose(_dio.options, '/persons/{id}',
+                .compose(_dio.options, '/persons/${personId}',
                     queryParameters: queryParameters, data: _data)
                 .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
     final value = PersonDTO.fromJson(_result.data!);
@@ -93,7 +93,7 @@ class _PersonRestClient implements PersonRestClient {
     final _result = await _dio.fetch<Map<String, dynamic>>(
         _setStreamType<PersonDTO>(
             Options(method: 'PUT', headers: _headers, extra: _extra)
-                .compose(_dio.options, '/persons/{id}/login',
+                .compose(_dio.options, '/persons/${personId}/login',
                     queryParameters: queryParameters, data: _data)
                 .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
     final value = PersonDTO.fromJson(_result.data!);

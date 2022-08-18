@@ -46,34 +46,6 @@ class SignInFormBloc extends Bloc<SignInFormEvent, SignInFormState> {
     );
   }
 
-  Future<void> mapEventToState(
-    SignInFormEvent event,
-    Emitter<SignInFormState> emit,
-  ) async {
-    await event.map(
-      emailChanged: (EmailChanged value) async {
-        _onEmailChanged(value,emit);
-      },
-      signInWithGooglePressed: (SignInWithGooglePressed value) async {
-        _onSignInWithGooglePressed(value,emit);
-      },
-      signInWithEmailAndPasswordPressed:
-          (SignInWithEmailAndPasswordPressed value) async {
-            _onSignInWithEmailAndPasswordPressed(value,emit);
-          },
-      registerWithEmailAndPasswordPressed:
-          (RegisterWithEmailAndPasswordPressed value) async {
-            _onRegisterWithEmailAndPasswordPressed(value,emit);
-          },
-      passwordChanged: (PasswordChanged value) async {
-        _onPasswordChanged(value,emit);
-      },
-      signInWithFacebookPressed: (SignInWithFacebookPressed value) async {
-        _onSignInWithFacebookPressed(value,emit);
-      },
-    );
-  }
-
   FutureOr<void> _performActionOnAuthFacadeWithEmailAndPassword(
     Future<Either<AuthFailure, String>> Function({
       required EmailAddress emailAddress,

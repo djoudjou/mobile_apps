@@ -26,4 +26,6 @@ abstract class IAuthFacade {
   Option<User> getSignedInUser();
 
   Future<Option<MyUserInfo>> getSignedUserInfo();
+
+  Future<String> getToken();
 }
