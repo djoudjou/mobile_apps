@@ -314,6 +314,7 @@ class CodegenLoader extends AssetLoader{
     "rejoinFamily": "Rejoindre une famille",
     "createNewFamily": "Créer une famille",
     "createNewFamilyConfirm": "Vous êtes sur le point ce créer une nouvelle famille ?",
+    "deleteFamilyConfirm": "Suppression de la famille '{}' ?",
     "deleteLocationConfirm": "Suppression du lieu '{}' ?",
     "deleteChildConfirm": "Suppression de l'enfant '{}' ?",
     "tabs": {
@@ -336,6 +337,16 @@ class CodegenLoader extends AssetLoader{
         "noPlaces": "Aucun lieux encore, merci d'en ajouter en cliquant sur le bouton ci-dessous"
       }
     },
+    "addFamilyInProgress": "Création de la famille '{}' en cours",
+    "addFamilySuccess": "Création de la famille '{}' réussie",
+    "addFamilyFailure": "Erreur lors de la création de la famille '{}'",
+    "updateFamilyInProgress": "Mise à jour de la famille en cours",
+    "updateFamilySuccess": "Mise à jour de la famille réussie",
+    "updateFamilyFailure": "Erreur lors de la mise à jour de la famille",
+    "deleteFamilyInProgress": "Suppression de la famille en cours",
+    "deleteFamilySuccess": "Suppression de la famille réussie",
+    "deleteFamilyFailure": "Erreur lors de la suppression de la famille",
+    "unknownFamily": "Famille inconnue",
     "childrenNotLoaded": "Erreur lors du chargement des enfants",
     "addChildInProgress": "Ajout de l'enfant en cours",
     "addChildSuccess": "Ajout de l'enfant réussi",
@@ -383,7 +394,13 @@ class CodegenLoader extends AssetLoader{
     "endedSpouseRelationSuccess": "Fin de la relation réussie"
   },
   "family": {
-    "title": "Famille"
+    "title": "Famille",
+    "form": {
+      "name": {
+        "label": "Nom",
+        "error": "Nom invalide"
+      }
+    }
   }
 };
 static const Map<String, Map<String,dynamic>> mapLocales = {"fr_FR": fr_FR};

@@ -42,6 +42,9 @@ class ChildrenBloc extends Bloc<ChildrenEvent, ChildrenState> {
     if (quiver.isNotBlank(event.familyId)) {
       emit(const ChildrenState.childrenLoading());
       //await Future.delayed(const Duration(seconds: 10));
+
+      /*
+      TODO ADJ no more stream
       _childrenSubscription?.cancel();
       _childrenSubscription =
           _familyRepository.getChildren(event.familyId!).listen(
@@ -52,6 +55,8 @@ class ChildrenBloc extends Bloc<ChildrenEvent, ChildrenState> {
           _childrenSubscription?.cancel();
         },
       );
+
+       */
     } else {
       emit(const ChildrenState.childrenNotLoaded());
     }

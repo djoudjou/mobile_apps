@@ -11,10 +11,6 @@ abstract class SetupFamilyEvent with _$SetupFamilyEvent {
     required User to,
   }) = EndedSpouseRelationTriggered;
 
-  const factory SetupFamilyEvent.newFamilyCreationTriggered({
-    required User user,
-  }) = NewFamilyCreationTriggered;
-
   const factory SetupFamilyEvent.askToJoinFamilyTriggered({
     required User from,
     required User to,

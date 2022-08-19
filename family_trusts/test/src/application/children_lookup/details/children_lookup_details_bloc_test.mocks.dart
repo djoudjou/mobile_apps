@@ -2,6 +2,7 @@
 // in familytrusts/test/src/application/children_lookup/details/children_lookup_details_bloc_test.dart.
 // Do not manually edit this file.
 
+// ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'dart:async' as _i4;
 
 import 'package:dartz/dartz.dart' as _i2;

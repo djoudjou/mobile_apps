@@ -7,6 +7,8 @@ import 'package:familytrusts/src/domain/core/value_objects.dart';
 import 'package:familytrusts/src/domain/error/i_error_service.dart';
 import 'package:familytrusts/src/domain/family/child.dart';
 import 'package:familytrusts/src/domain/family/children_failure.dart';
+import 'package:familytrusts/src/domain/family/family.dart';
+import 'package:familytrusts/src/domain/family/family_failure.dart';
 import 'package:familytrusts/src/domain/family/i_family_repository.dart';
 import 'package:familytrusts/src/domain/family/locations/location.dart';
 import 'package:familytrusts/src/domain/family/locations/location_failure.dart';
@@ -28,6 +30,7 @@ import 'package:injectable/injectable.dart';
 import 'package:quiver/strings.dart' as quiver;
 import 'package:rxdart/rxdart.dart';
 
+@Environment(Environment.dev)
 @LazySingleton(as: IFamilyRepository)
 class FirebaseFamilyRepository implements IFamilyRepository {
   final FirebaseFirestore _firebaseFirestore;
@@ -469,5 +472,17 @@ class FirebaseFamilyRepository implements IFamilyRepository {
     } catch (_) {
       return left(const LocationFailure.unexpected());
     }
+  }
+
+  @override
+  Future<Either<FamilyFailure, Unit>> create({required String userId, required Family family}) {
+    // TODO: implement create
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<Either<FamilyFailure, Unit>> deleteFamily({required String familyId}) {
+    // TODO: implement deleteFamily
+    throw UnimplementedError();
   }
 }

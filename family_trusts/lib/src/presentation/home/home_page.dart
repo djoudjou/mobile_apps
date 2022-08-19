@@ -103,12 +103,12 @@ class HomePage extends StatelessWidget with LogMixin {
             },
           ),
           BlocListener<UserBloc, UserState>(
-            listener: (userBloc, state) {
+            listener: (userBlocCtx, state) {
               state.maybeMap(
                 userLoadFailure: (e) {
                   showErrorMessage(
                     LocaleKeys.global_serverError.tr(),
-                    userBloc,
+                    userBlocCtx,
                   );
                   //AutoRouter.of(context).popUntilRoot();
                   AutoRouter.of(context).replace(const SignInPageRoute());
@@ -118,9 +118,16 @@ class HomePage extends StatelessWidget with LogMixin {
                   context.replaceRoute(const RegisterPageRoute());
                 },
                 userLoadSuccess: (e) {
-                  userBloc
+                  userBlocCtx
                       .read<MessagesBloc>()
                       .add(MessagesEvent.saveToken(e.user.id!));
+
+                  // si pas de famille -> redirige vers l'écran de création/rejoint de famille
+                  if(e.user.notInFamily()) {
+                    userBlocCtx.read<TabBloc>().add(const TabEvent.gotoMe());
+                    context.popRoute();
+                  }
+
                 },
                 orElse: () {},
               );

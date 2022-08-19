@@ -5,6 +5,7 @@ import 'package:bloc_concurrency/bloc_concurrency.dart';
 import 'package:dartz/dartz.dart';
 import 'package:familytrusts/src/application/family/setup/bloc.dart';
 import 'package:familytrusts/src/domain/core/value_objects.dart';
+import 'package:familytrusts/src/domain/family/i_family_repository.dart';
 import 'package:familytrusts/src/domain/invitation/i_spouse_proposal_repository.dart';
 import 'package:familytrusts/src/domain/invitation/invitation.dart';
 import 'package:familytrusts/src/domain/invitation/invitation_failure.dart';
@@ -24,71 +25,42 @@ import 'package:quiver/strings.dart' as quiver;
 class SetupFamilyBloc extends Bloc<SetupFamilyEvent, SetupFamilyState>
     with LogMixin {
   final IUserRepository _userRepository;
+  final IFamilyRepository _familyRepository;
   final ISpouseProposalRepository _spouseProposalRepository;
   final INotificationRepository _notificationRepository;
   final AnalyticsSvc _analyticsSvc;
 
   SetupFamilyBloc(
     this._userRepository,
+    this._familyRepository,
     this._spouseProposalRepository,
     this._notificationRepository,
     this._analyticsSvc,
   ) : super(const SetupFamilyState.setupFamilyInitial()) {
-    on<SetupFamilyEvent>(
-      (event, emit) => mapEventToState(event, emit),
+    on<EndedSpouseRelationTriggered>(
+      _mapEndedSpouseRelationTriggered,
       transformer: restartable(),
     );
-  }
 
-  Future<void> mapEventToState(
-    SetupFamilyEvent event,
-    Emitter<SetupFamilyState> emit,
-  ) async {
-    event.map(
-      newFamilyCreationTriggered: (event) {
-        _mapNewFamilyCreationTriggeredToState(event, emit);
-      },
-      askToJoinFamilyTriggered: (event) {
-        _mapSetupFamilyAskToJoinFamilyTriggeredToState(event, emit);
-      },
-      joinFamilyCancelTriggered: (event) {
-        _mapSetupFamilyJoinFamilyCancelTriggeredToState(event.invitation, emit);
-      },
-      acceptInvitationTriggered: (event) {
-        _mapAcceptInvitationTriggeredToState(event, emit);
-      },
-      declineInvitationTriggered: (event) {
-        _mapDeclineInvitationTriggeredToState(event, emit);
-      },
-      endedSpouseRelationTriggered: (event) {
-        _mapEndedSpouseRelationTriggered(event, emit);
-      },
+    on<AskToJoinFamilyTriggered>(
+      _mapSetupFamilyAskToJoinFamilyTriggeredToState,
+      transformer: restartable(),
     );
-  }
 
-  FutureOr<void> _mapNewFamilyCreationTriggeredToState(
-    NewFamilyCreationTriggered event,
-    Emitter<SetupFamilyState> emit,
-  ) async {
-    emit(const SetupFamilyState.setupFamilyNewFamilyInProgress());
-    try {
-      final Either<InvitationFailure, Invitation?> eitherSpouseProposal =
-          await _spouseProposalRepository.getSpouseProposal(event.user.id!);
+    on<JoinFamilyCancelTriggered>(
+      _mapSetupFamilyJoinFamilyCancelTriggeredToState,
+      transformer: restartable(),
+    );
 
-      if (eitherSpouseProposal.isRight()) {
-        /// Si une proposition en cours, on l'annule
-        _mapSetupFamilyJoinFamilyCancelTriggeredToState(
-          eitherSpouseProposal.toOption().toNullable()!,
-          emit,
-        );
-      }
-      await _userRepository
-          .update(event.user.copyWith(familyId: UniqueId().getOrCrash()));
+    on<AcceptInvitationTriggered>(
+      _mapAcceptInvitationTriggeredToState,
+      transformer: restartable(),
+    );
 
-      emit(const SetupFamilyState.setupFamilyNewFamilySuccess());
-    } catch (_) {
-      emit(const SetupFamilyState.setupFamilyNewFamilyFailed());
-    }
+    on<DeclineInvitationTriggered>(
+      _mapDeclineInvitationTriggeredToState,
+      transformer: restartable(),
+    );
   }
 
   FutureOr<void> _mapSetupFamilyAskToJoinFamilyTriggeredToState(
@@ -145,13 +117,14 @@ class SetupFamilyBloc extends Bloc<SetupFamilyEvent, SetupFamilyState>
   }
 
   FutureOr<void> _mapSetupFamilyJoinFamilyCancelTriggeredToState(
-    Invitation invitation,
+    JoinFamilyCancelTriggered event,
     Emitter<SetupFamilyState> emit,
   ) async {
     emit(const SetupFamilyState.setupFamilyJoinFamilyCancelInProgress());
     try {
       final Either<InvitationFailure, Unit> result =
-          await _spouseProposalRepository.deleteSpouseProposal(invitation.from);
+          await _spouseProposalRepository
+              .deleteSpouseProposal(event.invitation.from);
 
       result.fold(
         (l) => _analyticsSvc.debug("delete spouse proposal failed $l"),
@@ -160,12 +133,12 @@ class SetupFamilyBloc extends Bloc<SetupFamilyEvent, SetupFamilyState>
 
       if (result.isRight()) {
         await _notificationRepository.createEvent(
-          invitation.from.id!,
+          event.invitation.from.id!,
           Event(
             date: TimestampVo.now(),
             seen: false,
-            from: invitation.from,
-            to: invitation.to,
+            from: event.invitation.from,
+            to: event.invitation.to,
             type: EventType.spouseProposalCanceled(),
             fromConnectedUser: true,
             subject: '',
@@ -173,8 +146,8 @@ class SetupFamilyBloc extends Bloc<SetupFamilyEvent, SetupFamilyState>
         );
 
         await _notificationRepository.deleteInvitation(
-          from: invitation.from,
-          to: invitation.to,
+          from: event.invitation.from,
+          to: event.invitation.to,
         );
 
         emit(const SetupFamilyState.setupFamilyJoinFamilyCancelSuccess());

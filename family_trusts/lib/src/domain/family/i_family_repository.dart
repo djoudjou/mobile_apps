@@ -3,19 +3,30 @@ import 'dart:async';
 import 'package:dartz/dartz.dart';
 import 'package:familytrusts/src/domain/family/child.dart';
 import 'package:familytrusts/src/domain/family/children_failure.dart';
+import 'package:familytrusts/src/domain/family/family.dart';
+import 'package:familytrusts/src/domain/family/family_failure.dart';
 import 'package:familytrusts/src/domain/family/locations/location.dart';
 import 'package:familytrusts/src/domain/family/locations/location_failure.dart';
 import 'package:familytrusts/src/domain/family/trusted_user/trusted.dart';
 import 'package:familytrusts/src/domain/user/user_failure.dart';
 
 abstract class IFamilyRepository {
+  Future<Either<FamilyFailure, Unit>> create({
+    required String userId,
+    required Family family,
+  });
+
+  Future<Either<FamilyFailure, Unit>> deleteFamily({
+    required String familyId,
+  });
+
   Future<Either<ChildrenFailure, Child>> getChildById({
     required String familyId,
     required String childId,
   });
 
-  Stream<Either<ChildrenFailure, List<Either<ChildrenFailure, Child>>>>
-      getChildren(String familyId);
+  //Stream<Either<ChildrenFailure, List<Either<ChildrenFailure, Child>>>>
+  //    getChildren(String familyId);
 
   Future<Either<ChildrenFailure, Unit>> deleteChild({
     required String familyId,
@@ -28,9 +39,9 @@ abstract class IFamilyRepository {
     String? pickedFilePath,
   });
 
-  Stream<Either<UserFailure, List<TrustedUser>>> getTrustedUsers(
-    String familyId,
-  );
+  //Stream<Either<UserFailure, List<TrustedUser>>> getTrustedUsers(
+  //   String familyId,
+  //);
 
   Future<Either<UserFailure, List<TrustedUser>>> getFutureTrustedUsers(
     String familyId,
@@ -51,8 +62,8 @@ abstract class IFamilyRepository {
     required String locationId,
   });
 
-  Stream<Either<LocationFailure, List<Either<LocationFailure, Location>>>>
-      getLocations(String familyId);
+  //Stream<Either<LocationFailure, List<Either<LocationFailure, Location>>>>
+  //    getLocations(String familyId);
 
   Future<Either<LocationFailure, Unit>> addUpdateLocation({
     required String familyId,

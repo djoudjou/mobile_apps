@@ -2,28 +2,31 @@
 // in familytrusts/test/src/application/family/trusted/trusted_form/trusted_user_form_bloc_test.dart.
 // Do not manually edit this file.
 
+// ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'dart:async' as _i4;
 
 import 'package:dartz/dartz.dart' as _i2;
 import 'package:familytrusts/src/domain/auth/auth_failure.dart' as _i5;
 import 'package:familytrusts/src/domain/auth/user_info.dart' as _i8;
 import 'package:familytrusts/src/domain/children_lookup/children_lookup.dart'
-    as _i21;
-import 'package:familytrusts/src/domain/family/child.dart' as _i12;
-import 'package:familytrusts/src/domain/family/children_failure.dart' as _i11;
-import 'package:familytrusts/src/domain/family/locations/location.dart' as _i15;
+    as _i23;
+import 'package:familytrusts/src/domain/family/child.dart' as _i14;
+import 'package:familytrusts/src/domain/family/children_failure.dart' as _i13;
+import 'package:familytrusts/src/domain/family/family.dart' as _i12;
+import 'package:familytrusts/src/domain/family/family_failure.dart' as _i11;
+import 'package:familytrusts/src/domain/family/locations/location.dart' as _i17;
 import 'package:familytrusts/src/domain/family/locations/location_failure.dart'
-    as _i14;
-import 'package:familytrusts/src/domain/family/trusted_user/trusted.dart'
-    as _i13;
-import 'package:familytrusts/src/domain/invitation/invitation.dart' as _i19;
-import 'package:familytrusts/src/domain/invitation/invitation_failure.dart'
-    as _i18;
-import 'package:familytrusts/src/domain/notification/event.dart' as _i17;
-import 'package:familytrusts/src/domain/notification/event_failure.dart'
     as _i16;
-import 'package:familytrusts/src/domain/notification/notifications_failure.dart'
+import 'package:familytrusts/src/domain/family/trusted_user/trusted.dart'
+    as _i15;
+import 'package:familytrusts/src/domain/invitation/invitation.dart' as _i21;
+import 'package:familytrusts/src/domain/invitation/invitation_failure.dart'
     as _i20;
+import 'package:familytrusts/src/domain/notification/event.dart' as _i19;
+import 'package:familytrusts/src/domain/notification/event_failure.dart'
+    as _i18;
+import 'package:familytrusts/src/domain/notification/notifications_failure.dart'
+    as _i22;
 import 'package:familytrusts/src/domain/user/user.dart' as _i10;
 import 'package:familytrusts/src/domain/user/user_failure.dart' as _i9;
 import 'package:familytrusts/src/domain/user/value_objects.dart' as _i6;
@@ -159,63 +162,63 @@ class MockMockFamilyRepository extends _i1.Mock
   }
 
   @override
-  _i4.Future<_i2.Either<_i11.ChildrenFailure, _i12.Child>> getChildById(
+  _i4.Future<_i2.Either<_i11.FamilyFailure, _i2.Unit>> create(
+          {String? userId, _i12.Family? family}) =>
+      (super.noSuchMethod(
+          Invocation.method(#create, [], {#userId: userId, #family: family}),
+          returnValue: Future<_i2.Either<_i11.FamilyFailure, _i2.Unit>>.value(
+              _FakeEither_1<_i11.FamilyFailure, _i2.Unit>())) as _i4
+          .Future<_i2.Either<_i11.FamilyFailure, _i2.Unit>>);
+  @override
+  _i4.Future<_i2.Either<_i11.FamilyFailure, _i2.Unit>> deleteFamily(
+          {String? familyId}) =>
+      (super.noSuchMethod(
+          Invocation.method(#deleteFamily, [], {#familyId: familyId}),
+          returnValue: Future<_i2.Either<_i11.FamilyFailure, _i2.Unit>>.value(
+              _FakeEither_1<_i11.FamilyFailure, _i2.Unit>())) as _i4
+          .Future<_i2.Either<_i11.FamilyFailure, _i2.Unit>>);
+  @override
+  _i4.Future<_i2.Either<_i13.ChildrenFailure, _i14.Child>> getChildById(
           {String? familyId, String? childId}) =>
       (super.noSuchMethod(
               Invocation.method(
                   #getChildById, [], {#familyId: familyId, #childId: childId}),
               returnValue:
-                  Future<_i2.Either<_i11.ChildrenFailure, _i12.Child>>.value(
-                      _FakeEither_1<_i11.ChildrenFailure, _i12.Child>()))
-          as _i4.Future<_i2.Either<_i11.ChildrenFailure, _i12.Child>>);
+                  Future<_i2.Either<_i13.ChildrenFailure, _i14.Child>>.value(
+                      _FakeEither_1<_i13.ChildrenFailure, _i14.Child>()))
+          as _i4.Future<_i2.Either<_i13.ChildrenFailure, _i14.Child>>);
   @override
-  _i4.Stream<_i2.Either<_i11.ChildrenFailure, List<_i2.Either<_i11.ChildrenFailure, _i12.Child>>>>
-      getChildren(String? familyId) => (super.noSuchMethod(
-              Invocation.method(#getChildren, [familyId]),
-              returnValue:
-                  Stream<_i2.Either<_i11.ChildrenFailure, List<_i2.Either<_i11.ChildrenFailure, _i12.Child>>>>.empty())
-          as _i4.Stream<
-              _i2.Either<_i11.ChildrenFailure,
-                  List<_i2.Either<_i11.ChildrenFailure, _i12.Child>>>>);
-  @override
-  _i4.Future<_i2.Either<_i11.ChildrenFailure, _i2.Unit>> deleteChild(
-          {String? familyId, _i12.Child? child}) =>
+  _i4.Future<_i2.Either<_i13.ChildrenFailure, _i2.Unit>> deleteChild(
+          {String? familyId, _i14.Child? child}) =>
       (super.noSuchMethod(
           Invocation.method(
               #deleteChild, [], {#familyId: familyId, #child: child}),
-          returnValue: Future<_i2.Either<_i11.ChildrenFailure, _i2.Unit>>.value(
-              _FakeEither_1<_i11.ChildrenFailure, _i2.Unit>())) as _i4
-          .Future<_i2.Either<_i11.ChildrenFailure, _i2.Unit>>);
+          returnValue: Future<_i2.Either<_i13.ChildrenFailure, _i2.Unit>>.value(
+              _FakeEither_1<_i13.ChildrenFailure, _i2.Unit>())) as _i4
+          .Future<_i2.Either<_i13.ChildrenFailure, _i2.Unit>>);
   @override
-  _i4.Future<_i2.Either<_i11.ChildrenFailure, _i2.Unit>> addUpdateChild(
-          {String? familyId, _i12.Child? child, String? pickedFilePath}) =>
+  _i4.Future<_i2.Either<_i13.ChildrenFailure, _i2.Unit>> addUpdateChild(
+          {String? familyId, _i14.Child? child, String? pickedFilePath}) =>
       (super.noSuchMethod(
           Invocation.method(#addUpdateChild, [], {
             #familyId: familyId,
             #child: child,
             #pickedFilePath: pickedFilePath
           }),
-          returnValue: Future<_i2.Either<_i11.ChildrenFailure, _i2.Unit>>.value(
-              _FakeEither_1<_i11.ChildrenFailure, _i2.Unit>())) as _i4
-          .Future<_i2.Either<_i11.ChildrenFailure, _i2.Unit>>);
+          returnValue: Future<_i2.Either<_i13.ChildrenFailure, _i2.Unit>>.value(
+              _FakeEither_1<_i13.ChildrenFailure, _i2.Unit>())) as _i4
+          .Future<_i2.Either<_i13.ChildrenFailure, _i2.Unit>>);
   @override
-  _i4.Stream<_i2.Either<_i9.UserFailure, List<_i13.TrustedUser>>>
-      getTrustedUsers(String? familyId) => (super.noSuchMethod(
-              Invocation.method(#getTrustedUsers, [familyId]),
-              returnValue: Stream<
-                  _i2.Either<_i9.UserFailure, List<_i13.TrustedUser>>>.empty())
-          as _i4.Stream<_i2.Either<_i9.UserFailure, List<_i13.TrustedUser>>>);
-  @override
-  _i4.Future<_i2.Either<_i9.UserFailure, List<_i13.TrustedUser>>>
+  _i4.Future<_i2.Either<_i9.UserFailure, List<_i15.TrustedUser>>>
       getFutureTrustedUsers(String? familyId) => (super.noSuchMethod(
           Invocation.method(#getFutureTrustedUsers, [familyId]),
           returnValue: Future<
-                  _i2.Either<_i9.UserFailure, List<_i13.TrustedUser>>>.value(
-              _FakeEither_1<_i9.UserFailure, List<_i13.TrustedUser>>())) as _i4
-          .Future<_i2.Either<_i9.UserFailure, List<_i13.TrustedUser>>>);
+                  _i2.Either<_i9.UserFailure, List<_i15.TrustedUser>>>.value(
+              _FakeEither_1<_i9.UserFailure, List<_i15.TrustedUser>>())) as _i4
+          .Future<_i2.Either<_i9.UserFailure, List<_i15.TrustedUser>>>);
   @override
   _i4.Future<_i2.Either<_i9.UserFailure, _i2.Unit>> addTrustedUser(
-          {String? familyId, _i13.TrustedUser? trustedUser}) =>
+          {String? familyId, _i15.TrustedUser? trustedUser}) =>
       (super.noSuchMethod(
               Invocation.method(#addTrustedUser, [],
                   {#familyId: familyId, #trustedUser: trustedUser}),
@@ -232,28 +235,19 @@ class MockMockFamilyRepository extends _i1.Mock
                   _FakeEither_1<_i9.UserFailure, _i2.Unit>()))
           as _i4.Future<_i2.Either<_i9.UserFailure, _i2.Unit>>);
   @override
-  _i4.Future<_i2.Either<_i14.LocationFailure, _i15.Location>> getLocationById(
+  _i4.Future<_i2.Either<_i16.LocationFailure, _i17.Location>> getLocationById(
           {String? familyId, String? locationId}) =>
       (super.noSuchMethod(
               Invocation.method(#getLocationById, [],
                   {#familyId: familyId, #locationId: locationId}),
               returnValue:
-                  Future<_i2.Either<_i14.LocationFailure, _i15.Location>>.value(
-                      _FakeEither_1<_i14.LocationFailure, _i15.Location>()))
-          as _i4.Future<_i2.Either<_i14.LocationFailure, _i15.Location>>);
+                  Future<_i2.Either<_i16.LocationFailure, _i17.Location>>.value(
+                      _FakeEither_1<_i16.LocationFailure, _i17.Location>()))
+          as _i4.Future<_i2.Either<_i16.LocationFailure, _i17.Location>>);
   @override
-  _i4.Stream<_i2.Either<_i14.LocationFailure, List<_i2.Either<_i14.LocationFailure, _i15.Location>>>>
-      getLocations(String? familyId) => (super.noSuchMethod(
-              Invocation.method(#getLocations, [familyId]),
-              returnValue:
-                  Stream<_i2.Either<_i14.LocationFailure, List<_i2.Either<_i14.LocationFailure, _i15.Location>>>>.empty())
-          as _i4.Stream<
-              _i2.Either<_i14.LocationFailure,
-                  List<_i2.Either<_i14.LocationFailure, _i15.Location>>>>);
-  @override
-  _i4.Future<_i2.Either<_i14.LocationFailure, _i2.Unit>> addUpdateLocation(
+  _i4.Future<_i2.Either<_i16.LocationFailure, _i2.Unit>> addUpdateLocation(
           {String? familyId,
-          _i15.Location? location,
+          _i17.Location? location,
           String? pickedFilePath}) =>
       (super.noSuchMethod(
           Invocation.method(#addUpdateLocation, [], {
@@ -261,18 +255,18 @@ class MockMockFamilyRepository extends _i1.Mock
             #location: location,
             #pickedFilePath: pickedFilePath
           }),
-          returnValue: Future<_i2.Either<_i14.LocationFailure, _i2.Unit>>.value(
-              _FakeEither_1<_i14.LocationFailure, _i2.Unit>())) as _i4
-          .Future<_i2.Either<_i14.LocationFailure, _i2.Unit>>);
+          returnValue: Future<_i2.Either<_i16.LocationFailure, _i2.Unit>>.value(
+              _FakeEither_1<_i16.LocationFailure, _i2.Unit>())) as _i4
+          .Future<_i2.Either<_i16.LocationFailure, _i2.Unit>>);
   @override
-  _i4.Future<_i2.Either<_i14.LocationFailure, _i2.Unit>> deleteLocation(
-          {String? familyId, _i15.Location? location}) =>
+  _i4.Future<_i2.Either<_i16.LocationFailure, _i2.Unit>> deleteLocation(
+          {String? familyId, _i17.Location? location}) =>
       (super.noSuchMethod(
           Invocation.method(
               #deleteLocation, [], {#familyId: familyId, #location: location}),
-          returnValue: Future<_i2.Either<_i14.LocationFailure, _i2.Unit>>.value(
-              _FakeEither_1<_i14.LocationFailure, _i2.Unit>())) as _i4
-          .Future<_i2.Either<_i14.LocationFailure, _i2.Unit>>);
+          returnValue: Future<_i2.Either<_i16.LocationFailure, _i2.Unit>>.value(
+              _FakeEither_1<_i16.LocationFailure, _i2.Unit>())) as _i4
+          .Future<_i2.Either<_i16.LocationFailure, _i2.Unit>>);
 }
 
 /// A class which mocks [MockNotificationRepository].
@@ -285,80 +279,80 @@ class MockMockNotificationRepository extends _i1.Mock
   }
 
   @override
-  _i4.Stream<List<_i2.Either<_i16.EventFailure, _i17.Event>>> getEvents(
+  _i4.Stream<List<_i2.Either<_i18.EventFailure, _i19.Event>>> getEvents(
           String? userId) =>
       (super.noSuchMethod(Invocation.method(#getEvents, [userId]),
               returnValue: Stream<
-                  List<_i2.Either<_i16.EventFailure, _i17.Event>>>.empty())
-          as _i4.Stream<List<_i2.Either<_i16.EventFailure, _i17.Event>>>);
+                  List<_i2.Either<_i18.EventFailure, _i19.Event>>>.empty())
+          as _i4.Stream<List<_i2.Either<_i18.EventFailure, _i19.Event>>>);
   @override
-  _i4.Stream<List<_i2.Either<_i18.InvitationFailure, _i19.Invitation>>>
+  _i4.Stream<List<_i2.Either<_i20.InvitationFailure, _i21.Invitation>>>
       getInvitations(String? userId) => (super.noSuchMethod(
           Invocation.method(#getInvitations, [userId]),
           returnValue: Stream<
               List<
-                  _i2.Either<_i18.InvitationFailure,
-                      _i19.Invitation>>>.empty()) as _i4
-          .Stream<List<_i2.Either<_i18.InvitationFailure, _i19.Invitation>>>);
+                  _i2.Either<_i20.InvitationFailure,
+                      _i21.Invitation>>>.empty()) as _i4
+          .Stream<List<_i2.Either<_i20.InvitationFailure, _i21.Invitation>>>);
   @override
-  _i4.Stream<_i2.Either<_i20.NotificationsFailure, int>> getUnRedCount(
+  _i4.Stream<_i2.Either<_i22.NotificationsFailure, int>> getUnRedCount(
           String? userId) =>
       (super.noSuchMethod(Invocation.method(#getUnRedCount, [userId]),
               returnValue:
-                  Stream<_i2.Either<_i20.NotificationsFailure, int>>.empty())
-          as _i4.Stream<_i2.Either<_i20.NotificationsFailure, int>>);
+                  Stream<_i2.Either<_i22.NotificationsFailure, int>>.empty())
+          as _i4.Stream<_i2.Either<_i22.NotificationsFailure, int>>);
   @override
-  _i4.Future<_i2.Either<_i20.NotificationsFailure, _i2.Unit>> createEvent(
-          String? userId, _i17.Event? event) =>
+  _i4.Future<_i2.Either<_i22.NotificationsFailure, _i2.Unit>> createEvent(
+          String? userId, _i19.Event? event) =>
       (super.noSuchMethod(Invocation.method(#createEvent, [userId, event]),
               returnValue:
-                  Future<_i2.Either<_i20.NotificationsFailure, _i2.Unit>>.value(
-                      _FakeEither_1<_i20.NotificationsFailure, _i2.Unit>()))
-          as _i4.Future<_i2.Either<_i20.NotificationsFailure, _i2.Unit>>);
+                  Future<_i2.Either<_i22.NotificationsFailure, _i2.Unit>>.value(
+                      _FakeEither_1<_i22.NotificationsFailure, _i2.Unit>()))
+          as _i4.Future<_i2.Either<_i22.NotificationsFailure, _i2.Unit>>);
   @override
-  _i4.Future<_i2.Either<_i20.NotificationsFailure, _i2.Unit>> updateEvent(
-          String? userId, _i17.Event? event) =>
+  _i4.Future<_i2.Either<_i22.NotificationsFailure, _i2.Unit>> updateEvent(
+          String? userId, _i19.Event? event) =>
       (super.noSuchMethod(Invocation.method(#updateEvent, [userId, event]),
               returnValue:
-                  Future<_i2.Either<_i20.NotificationsFailure, _i2.Unit>>.value(
-                      _FakeEither_1<_i20.NotificationsFailure, _i2.Unit>()))
-          as _i4.Future<_i2.Either<_i20.NotificationsFailure, _i2.Unit>>);
+                  Future<_i2.Either<_i22.NotificationsFailure, _i2.Unit>>.value(
+                      _FakeEither_1<_i22.NotificationsFailure, _i2.Unit>()))
+          as _i4.Future<_i2.Either<_i22.NotificationsFailure, _i2.Unit>>);
   @override
-  _i4.Future<_i2.Either<_i20.NotificationsFailure, _i2.Unit>> deleteEvent(
-          String? userId, _i17.Event? event) =>
+  _i4.Future<_i2.Either<_i22.NotificationsFailure, _i2.Unit>> deleteEvent(
+          String? userId, _i19.Event? event) =>
       (super.noSuchMethod(Invocation.method(#deleteEvent, [userId, event]),
               returnValue:
-                  Future<_i2.Either<_i20.NotificationsFailure, _i2.Unit>>.value(
-                      _FakeEither_1<_i20.NotificationsFailure, _i2.Unit>()))
-          as _i4.Future<_i2.Either<_i20.NotificationsFailure, _i2.Unit>>);
+                  Future<_i2.Either<_i22.NotificationsFailure, _i2.Unit>>.value(
+                      _FakeEither_1<_i22.NotificationsFailure, _i2.Unit>()))
+          as _i4.Future<_i2.Either<_i22.NotificationsFailure, _i2.Unit>>);
   @override
-  _i4.Future<_i2.Either<_i20.NotificationsFailure, _i2.Unit>> createInvitation(
-          _i19.Invitation? invitation) =>
+  _i4.Future<_i2.Either<_i22.NotificationsFailure, _i2.Unit>> createInvitation(
+          _i21.Invitation? invitation) =>
       (super.noSuchMethod(Invocation.method(#createInvitation, [invitation]),
               returnValue:
-                  Future<_i2.Either<_i20.NotificationsFailure, _i2.Unit>>.value(
-                      _FakeEither_1<_i20.NotificationsFailure, _i2.Unit>()))
-          as _i4.Future<_i2.Either<_i20.NotificationsFailure, _i2.Unit>>);
+                  Future<_i2.Either<_i22.NotificationsFailure, _i2.Unit>>.value(
+                      _FakeEither_1<_i22.NotificationsFailure, _i2.Unit>()))
+          as _i4.Future<_i2.Either<_i22.NotificationsFailure, _i2.Unit>>);
   @override
-  _i4.Future<_i2.Either<_i20.NotificationsFailure, _i2.Unit>> deleteInvitation(
+  _i4.Future<_i2.Either<_i22.NotificationsFailure, _i2.Unit>> deleteInvitation(
           {_i10.User? from, _i10.User? to}) =>
       (super.noSuchMethod(
               Invocation.method(#deleteInvitation, [], {#from: from, #to: to}),
               returnValue:
-                  Future<_i2.Either<_i20.NotificationsFailure, _i2.Unit>>.value(
-                      _FakeEither_1<_i20.NotificationsFailure, _i2.Unit>()))
-          as _i4.Future<_i2.Either<_i20.NotificationsFailure, _i2.Unit>>);
+                  Future<_i2.Either<_i22.NotificationsFailure, _i2.Unit>>.value(
+                      _FakeEither_1<_i22.NotificationsFailure, _i2.Unit>()))
+          as _i4.Future<_i2.Either<_i22.NotificationsFailure, _i2.Unit>>);
   @override
-  _i4.Future<_i2.Either<_i20.NotificationsFailure, _i2.Unit>>
+  _i4.Future<_i2.Either<_i22.NotificationsFailure, _i2.Unit>>
       createEventForChildrenLookup(
-              _i21.ChildrenLookup? childrenLookup, _i17.Event? event) =>
+              _i23.ChildrenLookup? childrenLookup, _i19.Event? event) =>
           (super.noSuchMethod(
               Invocation.method(
                   #createEventForChildrenLookup, [childrenLookup, event]),
               returnValue:
-                  Future<_i2.Either<_i20.NotificationsFailure, _i2.Unit>>.value(
-                      _FakeEither_1<_i20.NotificationsFailure, _i2.Unit>())) as _i4
-              .Future<_i2.Either<_i20.NotificationsFailure, _i2.Unit>>);
+                  Future<_i2.Either<_i22.NotificationsFailure, _i2.Unit>>.value(
+                      _FakeEither_1<_i22.NotificationsFailure, _i2.Unit>())) as _i4
+              .Future<_i2.Either<_i22.NotificationsFailure, _i2.Unit>>);
 }
 
 /// A class which mocks [MockAnalyticsSvc].

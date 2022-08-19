@@ -5,6 +5,13 @@ import 'package:familytrusts/src/domain/core/value_validators.dart';
 import 'package:familytrusts/src/helper/date_helper.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
+enum FamilyFormStateEnum {
+  none,
+  adding,
+  updating,
+  deleting,
+}
+
 class Birthday extends ValueObject<DateTime> {
   @override
   final Either<ValueFailure<DateTime>, DateTime> value;

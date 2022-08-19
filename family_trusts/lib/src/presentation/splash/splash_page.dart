@@ -17,7 +17,7 @@ class SplashPage extends StatelessWidget {
           authenticated: (e) {
             AutoRouter.of(context).replace(
               HomePageRoute(
-                currentTab: AppTab.ask,
+                currentTab: AppTab.me,
                 connectedUserId: e.userId,
               ),
             );

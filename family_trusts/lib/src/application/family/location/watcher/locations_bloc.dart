@@ -42,6 +42,8 @@ class LocationsBloc extends Bloc<LocationsEvent, LocationsState> {
     if (quiver.isNotBlank(event.familyId)) {
       emit(const LocationsState.loading());
       //await Future.delayed(const Duration(seconds: 10));
+      /*
+      TODO ADJ no more stream
       _locationsSubscription?.cancel();
       _locationsSubscription =
           _familyRepository.getLocations(event.familyId!).listen(
@@ -52,6 +54,8 @@ class LocationsBloc extends Bloc<LocationsEvent, LocationsState> {
           _locationsSubscription?.cancel();
         },
       );
+
+       */
     } else {
       emit(const LocationsState.locationsNotLoaded());
     }

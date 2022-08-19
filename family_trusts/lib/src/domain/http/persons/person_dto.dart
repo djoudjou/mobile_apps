@@ -39,11 +39,5 @@ class PersonDTO {
 
   Map<String, dynamic> toJson() => _$PersonDTOToJson(this);
 
-  User toUser() => User(
-        email: EmailAddress(email),
-        name: Name(lastName),
-        surname: Surname(firstName),
-        photoUrl: photoUrl,
-        id: personId,
-      );
+
 }

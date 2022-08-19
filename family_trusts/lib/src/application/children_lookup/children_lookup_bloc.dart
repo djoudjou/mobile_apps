@@ -65,6 +65,8 @@ class ChildrenLookupBloc
             ),
           );
         } else {
+          /*
+      TODO ADJ no more stream
           _childrenSubscription?.cancel();
           _childrenSubscription =
               _familyRepository.getChildren(e.familyId!).listen((event) {
@@ -89,6 +91,8 @@ class ChildrenLookupBloc
               familyId: e.familyId,
             ),
           );
+
+           */
         }
       },
       noteChanged: (NoteChanged e) {

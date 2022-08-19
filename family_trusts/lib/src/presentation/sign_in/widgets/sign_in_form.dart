@@ -43,14 +43,10 @@ class SignInForm extends StatelessWidget with LogMixin {
             (userId) {
               AutoRouter.of(context).replace(
                 HomePageRoute(
-                  currentTab: AppTab.ask,
+                  currentTab: AppTab.me,
                   connectedUserId: userId,
                 ),
               );
-
-              //ExtendedNavigator.of(context).pushAndRemoveUntil(
-              //    Routes.homePage, (route) => false,
-              //    arguments: HomePageArguments(currentTab: AppTab.ask));
 
               context
                   .read<AuthenticationBloc>()

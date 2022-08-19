@@ -73,7 +73,7 @@ dependencies:
   injectable: ^1.0.4
   get_it: ^7.2.0
   uuid: ^3.0.4
-  auto_route: ^4.0.1
+  auto_route: ^5.0.0
   another_flushbar: ^1.10.29
   json_annotation: ^4.0.1
   http: ^0.13.3
@@ -89,7 +89,7 @@ dependencies:
   geoflutterfire: ^3.0.1
   geolocator: ^8.2.1
   easy_localization: ^3.0.1
-  easy_localization_loader: ^1.0.0
+  # easy_localization_loader: ^1.0.0
   slide_to_act: ^2.0.1
   diacritic: ^0.1.1
   carousel_slider: ^4.1.1
@@ -111,6 +111,7 @@ dependencies:
 
   flutter_launcher_icons: ^0.9.3
   flutter_dotenv: ^5.0.2
+  #analyzer: ^4.6.0
 
 dev_dependencies:
   flutter_test:
@@ -121,9 +122,9 @@ dev_dependencies:
   lint: ^1.8.2
   freezed: ^2.0.3+1
   injectable_generator: ^1.5.3
-  auto_route_generator: ^4.0.0
+  auto_route_generator: ^5.0.0
   json_serializable: ^6.2.0
-  mockito: ^5.2.0
+  mockito: 5.2.0
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
 
@@ -154,6 +155,7 @@ flutter:
     - images/childheadwithsmilingface.png
     - images/family.jpeg
     - images/family2.jpg
+    - images/family_logo.png
     - images/fb-logo.png
     - images/garde_enfants.jpeg
     - images/400PngdpiLogo.png

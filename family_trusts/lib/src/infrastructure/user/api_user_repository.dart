@@ -1,13 +1,14 @@
 import 'dart:async';
 
 import 'package:dartz/dartz.dart';
+import 'package:familytrusts/src/domain/http/families/family_dto.dart';
+import 'package:familytrusts/src/domain/http/persons/login_person_dto.dart';
+import 'package:familytrusts/src/domain/http/persons/person_dto.dart';
 import 'package:familytrusts/src/domain/user/i_user_repository.dart';
 import 'package:familytrusts/src/domain/user/user.dart';
 import 'package:familytrusts/src/domain/user/user_failure.dart';
 import 'package:familytrusts/src/helper/log_mixin.dart';
 import 'package:familytrusts/src/infrastructure/http/api_service.dart';
-import 'package:familytrusts/src/infrastructure/http/login_person_dto.dart';
-import 'package:familytrusts/src/infrastructure/http/person_dto.dart';
 import 'package:injectable/injectable.dart';
 
 @Environment(Environment.prod)
@@ -82,7 +83,12 @@ class ApiUserRepository with LogMixin implements IUserRepository {
     try {
       final PersonDTO result =
           await _apiService.getPersonRestClient().findPersonById(id);
-      return right(result.toUser());
+
+      final List<FamilyDTO> families = await _apiService.getFamilyRestClient().findMatchingFamiliesByMemberIdQuery(id);
+
+      final User user = User.fromDTO(result,families.isNotEmpty?families.first:null);
+
+      return right(user);
     } catch (e) {
       log("error in getUser method : $e");
       return left(const UserFailure.unexpected());
@@ -91,7 +97,7 @@ class ApiUserRepository with LogMixin implements IUserRepository {
 
   @override
   Future<Either<UserFailure, Unit>> saveToken(
-      String userId, String token) async {
+      String userId, String token,) async {
     try {
       await _apiService
           .getPersonRestClient()

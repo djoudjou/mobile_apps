@@ -42,6 +42,10 @@ class TrustedUserWatcherBloc
   ) {
     if (quiver.isNotBlank(event.familyId)) {
       emit(const TrustedUserWatcherState.trustedUsersLoading());
+
+    /*
+      TODO ADJ no more stream
+
       _trustedUsersSubscription?.cancel();
       _trustedUsersSubscription =
           _familyRepository.getTrustedUsers(event.familyId!).listen(
@@ -56,6 +60,8 @@ class TrustedUserWatcherBloc
           _trustedUsersSubscription?.cancel();
         },
       );
+
+     */
     } else {
       emit(const TrustedUserWatcherState.trustedUsersNotLoaded());
     }

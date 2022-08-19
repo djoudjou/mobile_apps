@@ -19,7 +19,9 @@ class AuthenticationBloc
   }
 
   FutureOr<void> _mapAuthCheckRequested(
-      AuthCheckRequested event, Emitter<AuthenticationState> emit) async {
+    AuthCheckRequested event,
+    Emitter<AuthenticationState> emit,
+  ) async {
     final userOption = _authFacade.getSignedInUserId();
     emit(
       userOption.fold(
@@ -30,7 +32,9 @@ class AuthenticationBloc
   }
 
   FutureOr<void> _mapSignedOut(
-      SignedOut event, Emitter<AuthenticationState> emit) async {
+    SignedOut event,
+    Emitter<AuthenticationState> emit,
+  ) async {
     await _authFacade.signOut();
     emit(const AuthenticationState.unauthenticated());
   }

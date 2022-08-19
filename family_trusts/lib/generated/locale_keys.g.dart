@@ -238,6 +238,7 @@ abstract class  LocaleKeys {
   static const profile_rejoinFamily = 'profile.rejoinFamily';
   static const profile_createNewFamily = 'profile.createNewFamily';
   static const profile_createNewFamilyConfirm = 'profile.createNewFamilyConfirm';
+  static const profile_deleteFamilyConfirm = 'profile.deleteFamilyConfirm';
   static const profile_deleteLocationConfirm = 'profile.deleteLocationConfirm';
   static const profile_deleteChildConfirm = 'profile.deleteChildConfirm';
   static const profile_tabs_children_tab = 'profile.tabs.children.tab';
@@ -256,6 +257,16 @@ abstract class  LocaleKeys {
   static const profile_tabs_locations_noPlaces = 'profile.tabs.locations.noPlaces';
   static const profile_tabs_locations = 'profile.tabs.locations';
   static const profile_tabs = 'profile.tabs';
+  static const profile_addFamilyInProgress = 'profile.addFamilyInProgress';
+  static const profile_addFamilySuccess = 'profile.addFamilySuccess';
+  static const profile_addFamilyFailure = 'profile.addFamilyFailure';
+  static const profile_updateFamilyInProgress = 'profile.updateFamilyInProgress';
+  static const profile_updateFamilySuccess = 'profile.updateFamilySuccess';
+  static const profile_updateFamilyFailure = 'profile.updateFamilyFailure';
+  static const profile_deleteFamilyInProgress = 'profile.deleteFamilyInProgress';
+  static const profile_deleteFamilySuccess = 'profile.deleteFamilySuccess';
+  static const profile_deleteFamilyFailure = 'profile.deleteFamilyFailure';
+  static const profile_unknownFamily = 'profile.unknownFamily';
   static const profile_childrenNotLoaded = 'profile.childrenNotLoaded';
   static const profile_addChildInProgress = 'profile.addChildInProgress';
   static const profile_addChildSuccess = 'profile.addChildSuccess';
@@ -303,6 +314,10 @@ abstract class  LocaleKeys {
   static const profile_endedSpouseRelationSuccess = 'profile.endedSpouseRelationSuccess';
   static const profile = 'profile';
   static const family_title = 'family.title';
+  static const family_form_name_label = 'family.form.name.label';
+  static const family_form_name_error = 'family.form.name.error';
+  static const family_form_name = 'family.form.name';
+  static const family_form = 'family.form';
   static const family = 'family';
 
 }

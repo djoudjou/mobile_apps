@@ -4,6 +4,7 @@ import 'package:familytrusts/src/presentation/ask/children_lookup/children_looku
 import 'package:familytrusts/src/presentation/child/child_page.dart';
 import 'package:familytrusts/src/presentation/demands/demands_page.dart';
 import 'package:familytrusts/src/presentation/home/home_page.dart';
+import 'package:familytrusts/src/presentation/profile/families/family_form/family_page.dart';
 import 'package:familytrusts/src/presentation/profile/locations/location_form/location_page.dart';
 import 'package:familytrusts/src/presentation/profile/locations/location_form/search/search_address_page.dart';
 import 'package:familytrusts/src/presentation/profile/locations/location_form/widgets/select_place_picker.dart';
@@ -27,6 +28,7 @@ import 'package:familytrusts/src/presentation/user/user_page.dart';
     AutoRoute(page: ChildPage, guards: [AuthGuard], usesPathAsKey: true),
     AutoRoute(page: UserPage, guards: [AuthGuard], usesPathAsKey: true),
     AutoRoute(page: LocationPage, guards: [AuthGuard], usesPathAsKey: true),
+    AutoRoute(page: FamilyPage, guards: [AuthGuard], usesPathAsKey: true),
     AutoRoute(page: SelectPlacePickerPage, guards: [AuthGuard], usesPathAsKey: true),
     AutoRoute(page: SearchAddressPage, guards: [AuthGuard], usesPathAsKey: true),
     AutoRoute(page: ChildrenLookupPage, guards: [AuthGuard], usesPathAsKey: true),

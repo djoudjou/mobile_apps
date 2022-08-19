@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 const String baseUrlEnvVar = "API_URL";
 
 //Images
+
+const String logoFamilyImagesPath = "images/family_logo.png";
 const String logoImagesPath = "images/400PngdpiLogo.png";
 const String defaultChildImagesPath = "images/childheadwithsmilingface.png";
 const String defaultUserImagesPath =

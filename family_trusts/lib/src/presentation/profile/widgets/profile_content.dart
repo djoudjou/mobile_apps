@@ -201,7 +201,7 @@ class _ProfileContentState extends State<ProfileContent>
 
           return (!displayFamilyContent)
               ? Scaffold(
-                  drawer: MyDrawer(user: widget.user, spouse: widget.spouse),
+                  //drawer: MyDrawer(user: widget.user, spouse: widget.spouse),
                   appBar: MyAppBar(
                     context: profileContext,
                     pageTitle: LocaleKeys.family_title.tr(),

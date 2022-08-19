@@ -9,7 +9,7 @@ class ProfilePage extends StatelessWidget {
   final Invitation? spouseProposal;
   final _key = const PageStorageKey<String>('ProfileContent');
 
-  ProfilePage({
+  const ProfilePage({
     Key? key,
     required this.connectedUser,
     this.spouse,
