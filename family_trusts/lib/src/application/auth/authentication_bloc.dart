@@ -5,9 +5,7 @@ import 'package:bloc_concurrency/bloc_concurrency.dart';
 import 'package:familytrusts/src/application/auth/authentication_event.dart';
 import 'package:familytrusts/src/application/auth/authentication_state.dart';
 import 'package:familytrusts/src/domain/auth/i_auth_facade.dart';
-import 'package:injectable/injectable.dart';
 
-@injectable
 class AuthenticationBloc
     extends Bloc<AuthenticationEvent, AuthenticationState> {
   final IAuthFacade _authFacade;
@@ -23,11 +21,12 @@ class AuthenticationBloc
     Emitter<AuthenticationState> emit,
   ) async {
     final userOption = _authFacade.getSignedInUserId();
-    emit(
-      userOption.fold(
-        () => const AuthenticationState.unauthenticated(),
-        (userId) => AuthenticationState.authenticated(userId),
-      ),
+
+    userOption.fold(
+      () => emit(const AuthenticationState.unauthenticated()),
+      (userId) {
+        emit(AuthenticationState.authenticated(userId));
+      },
     );
   }
 

@@ -4,6 +4,7 @@ import 'package:familytrusts/src/presentation/ask/children_lookup/children_looku
 import 'package:familytrusts/src/presentation/child/child_page.dart';
 import 'package:familytrusts/src/presentation/demands/demands_page.dart';
 import 'package:familytrusts/src/presentation/home/home_page.dart';
+import 'package:familytrusts/src/presentation/home/home_page_without_family.dart';
 import 'package:familytrusts/src/presentation/profile/families/family_form/family_page.dart';
 import 'package:familytrusts/src/presentation/profile/locations/location_form/location_page.dart';
 import 'package:familytrusts/src/presentation/profile/locations/location_form/search/search_address_page.dart';
@@ -34,6 +35,7 @@ import 'package:familytrusts/src/presentation/user/user_page.dart';
     AutoRoute(page: ChildrenLookupPage, guards: [AuthGuard], usesPathAsKey: true),
     AutoRoute(page: DemandsPage, guards: [AuthGuard], usesPathAsKey: true),
     AutoRoute(page: HomePage, guards: [AuthGuard], usesPathAsKey: true),
+    AutoRoute(page: HomePageWithoutFamily, guards: [AuthGuard], usesPathAsKey: true),
     AutoRoute(page: TrustedUserFormPage, guards: [AuthGuard], usesPathAsKey: true),
     AutoRoute(page: ChildrenLookupDetailsPage, guards: [AuthGuard], usesPathAsKey: true),
     AutoRoute(path: "*", page: UnknownPage),

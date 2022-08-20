@@ -7,7 +7,6 @@ class ProfilePage extends StatelessWidget {
   final User connectedUser;
   final User? spouse;
   final Invitation? spouseProposal;
-  final _key = const PageStorageKey<String>('ProfileContent');
 
   const ProfilePage({
     Key? key,
@@ -19,7 +18,7 @@ class ProfilePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ProfileContent(
-      key: _key,
+      key: const PageStorageKey<String>('ProfileContent'),
       user: connectedUser,
       spouse: spouse,
       spouseProposal: spouseProposal,

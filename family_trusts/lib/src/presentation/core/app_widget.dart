@@ -3,9 +3,11 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:familytrusts/injection.dart';
 import 'package:familytrusts/src/application/auth/bloc.dart';
 import 'package:familytrusts/src/application/core/simple_navigator_observer.dart';
+import 'package:familytrusts/src/application/home/user/user_bloc.dart';
 import 'package:familytrusts/src/application/messages/bloc.dart';
-import 'package:familytrusts/src/application/notifications/tab/bloc.dart';
-import 'package:familytrusts/src/application/profil/tab/bloc.dart';
+import 'package:familytrusts/src/domain/auth/i_auth_facade.dart';
+import 'package:familytrusts/src/domain/invitation/i_spouse_proposal_repository.dart';
+import 'package:familytrusts/src/domain/user/i_user_repository.dart';
 import 'package:familytrusts/src/helper/constants.dart';
 import 'package:familytrusts/src/helper/log_mixin.dart';
 import 'package:familytrusts/src/presentation/routes/auth_guard.dart';
@@ -43,7 +45,6 @@ class AppWidget extends StatelessWidget with LogMixin {
       ),
       routeInformationParser: appRouter.defaultRouteParser(),
       builder: (_, router) {
-        log(".... $router");
         return router!;
       },
       theme: ThemeData(
@@ -115,10 +116,6 @@ class AppWidget extends StatelessWidget with LogMixin {
       ),
     );
 
-    log(" debug material #${materialApp.title}");
-    log(" debug material #${materialApp.routerDelegate}");
-    log(" debug material #${materialApp.routeInformationParser}");
-
     return MultiBlocProvider(
       providers: [
         BlocProvider(
@@ -126,89 +123,26 @@ class AppWidget extends StatelessWidget with LogMixin {
               getIt<MessagesBloc>()..add(const MessagesEvent.init()),
         ),
         BlocProvider(
-          create: (context) => getIt<AuthenticationBloc>()
-            ..add(const AuthenticationEvent.authCheckRequested()),
+          create: (context) => AuthenticationBloc(
+            getIt<IAuthFacade>(),
+          )..add(const AuthenticationEvent.authCheckRequested()),
         ),
+        //BlocProvider(
+        //  create: (context) =>
+        //      getIt<ProfilTabBloc>()..add(const ProfilTabEvent.gotoChildren()),
+        //),
+        //BlocProvider(
+        //  create: (context) => getIt<NotificationTabBloc>(),
+        //),
         BlocProvider(
-          create: (context) =>
-              getIt<ProfilTabBloc>()..add(const ProfilTabEvent.gotoChildren()),
+          create: (context) => UserBloc(
+            getIt<IAuthFacade>(),
+            getIt<IUserRepository>(),
+            getIt<ISpouseProposalRepository>(),
+          ),
         ),
-        BlocProvider(
-          create: (context) => getIt<NotificationTabBloc>(),
-        )
       ],
       child: materialApp,
     );
-    /*
-        builder: ExtendedNavigator.builder(
-          router: router_gr.Router(),
-          guards: [AuthGuard()],
-          observers: [
-            FirebaseAnalyticsObserver(analytics: getIt<FirebaseAnalytics>()),
-            SentryNavigatorObserver(), // for sent navigator observer
-          ],
-          builder: (context, extendedNav) =>
-              Theme(
-                data: ThemeData(
-                  brightness: Brightness.light,
-                  textTheme: const TextTheme(
-                    headline1: TextStyle(
-                      fontSize: 30.0,
-                      fontWeight: FontWeight.normal,
-                      fontStyle: FontStyle.normal,
-                    ),
-                    bodyText1: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.normal,
-                      fontStyle: FontStyle.normal,
-                      fontFamily: 'Hind',
-                      color: Colors.black,
-                    ),
-                  ),
-                  //primaryColor: Colors.blue,
-                  //accentColor: Colors.blueAccent,
-                  //focusColor: Colors.red,
-                  //backgroundColor: Colors.indigo,
-                  //dividerColor: Colors.grey,
-                  primarySwatch: primaryColor,
-                  tabBarTheme: const TabBarTheme(
-                    labelColor: Colors.black,
-                    unselectedLabelColor: Colors.grey,
-                    indicator: BoxDecoration(
-                      borderRadius: BorderRadius.only(
-                          topLeft: Radius.circular(10),
-                          topRight: Radius.circular(10)),
-                      color: Colors.white,
-                    ),
-                  ),
-                  cardTheme: CardTheme(
-                    elevation: 8,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(30.0),
-                    ),
-                  ),
-                  buttonTheme: ButtonThemeData(
-                    height: 40,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(30.0),
-                    ),
-                  ),
-                  floatingActionButtonTheme: FloatingActionButtonThemeData(
-                    backgroundColor: Colors.blue[900],
-                  ),
-                  inputDecorationTheme: InputDecorationTheme(
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    labelStyle: const TextStyle(
-                      fontSize: 20,
-                      decorationColor: Colors.grey,
-                    ),
-                  ),
-                ),
-                child: extendedNav,
-              ),
-        ),
-        */
   }
 }

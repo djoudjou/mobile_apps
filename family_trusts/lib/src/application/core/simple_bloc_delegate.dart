@@ -17,17 +17,14 @@ class SimpleBlocDelegate extends BlocObserver with LogMixin {
 
   @override
   void onTransition(Bloc bloc, Transition transition) {
-    log("#${bloc.runtimeType}# onTransition current state #${transition.currentState}#");
-    log("#${bloc.runtimeType}# onTransition event #${transition.event}#");
-    log("#${bloc.runtimeType}# onTransition next state #${transition.nextState}#");
+    log("#${bloc.runtimeType}# onTransition current <#${transition.currentState}#> event #${transition.event}# next state #${transition.nextState}#");
     //Analytics.sendEvent(transition);
     super.onTransition(bloc, transition);
   }
 
   @override
   void onChange(BlocBase bloc, Change change) {
-    log("#${bloc.runtimeType}# onChange current state #${change.currentState}#");
-    log("#${bloc.runtimeType}# onChange next state #${change.nextState}#");
+    log("#${bloc.runtimeType}# onChange current state #${change.currentState}# next state #${change.nextState}#");
     super.onChange(bloc, change);
   }
 

@@ -3,23 +3,22 @@ import 'dart:async';
 import 'package:bloc/bloc.dart';
 import 'package:dartz/dartz.dart';
 import 'package:familytrusts/src/application/home/user/bloc.dart';
+import 'package:familytrusts/src/domain/auth/i_auth_facade.dart';
 import 'package:familytrusts/src/domain/invitation/i_spouse_proposal_repository.dart';
 import 'package:familytrusts/src/domain/invitation/invitation.dart';
 import 'package:familytrusts/src/domain/invitation/invitation_failure.dart';
 import 'package:familytrusts/src/domain/user/i_user_repository.dart';
 import 'package:familytrusts/src/domain/user/user.dart';
 import 'package:familytrusts/src/domain/user/user_failure.dart';
-import 'package:injectable/injectable.dart';
 import 'package:quiver/strings.dart' as quiver;
 
-@injectable
 class UserBloc extends Bloc<UserEvent, UserState> {
+  final IAuthFacade _authFacade;
   final IUserRepository _userRepository;
   final ISpouseProposalRepository _spouseProposalRepository;
 
-  //final AnalyticsSvc _analyticsSvc;
-
   UserBloc(
+    this._authFacade,
     this._userRepository,
     this._spouseProposalRepository,
   ) : super(const UserState.userInitial()) {
@@ -33,11 +32,6 @@ class UserBloc extends Bloc<UserEvent, UserState> {
     on<UserSubmitted>(
       _onUserSubmitted,
     );
-  }
-
-  @override
-  Future<void> close() async {
-    await super.close();
   }
 
   FutureOr<void> _onInit(Init event, Emitter<UserState> emit) {
@@ -68,6 +62,8 @@ class UserBloc extends Bloc<UserEvent, UserState> {
         ),
         (r) => false,
       );
+
+      _authFacade.signOut();
 
       if (userNotFound) {
         emit(const UserState.userNotFound());
@@ -170,5 +166,10 @@ class UserBloc extends Bloc<UserEvent, UserState> {
         add(UserEvent.userStarted(event.user.id!));
       },
     );
+  }
+
+  @override
+  Future<void> close() async {
+    await super.close();
   }
 }

@@ -16,7 +16,7 @@ class CreateAccountButton extends StatelessWidget {
         TextButton(
           style: flatButtonStyle,
           onPressed: () {
-            context.pushRoute(const RegisterPageRoute());
+            AutoRouter.of(context).replace(const RegisterPageRoute());
           },
           child: MyText(
             LocaleKeys.login_register.tr(),

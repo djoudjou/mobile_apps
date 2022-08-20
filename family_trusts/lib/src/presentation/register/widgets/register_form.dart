@@ -4,7 +4,6 @@ import 'package:familytrusts/generated/locale_keys.g.dart';
 import 'package:familytrusts/src/application/auth/authentication_bloc.dart';
 import 'package:familytrusts/src/application/auth/authentication_event.dart';
 import 'package:familytrusts/src/application/register/bloc.dart';
-import 'package:familytrusts/src/domain/home/app_tab.dart';
 import 'package:familytrusts/src/helper/constants.dart';
 import 'package:familytrusts/src/helper/snackbar_helper.dart';
 import 'package:familytrusts/src/presentation/core/my_button.dart';
@@ -16,11 +15,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class RegisterForm extends StatelessWidget {
-  //static const parisLocation = ;
   @override
   Widget build(BuildContext context) {
     return BlocListener<RegisterBloc, RegisterState>(
-      listener: (context, state) {
+      listener: (registerBlocContext, state) {
         state.registerFailureOrSuccessOption.fold(
           () {},
           (either) => either.fold(
@@ -36,7 +34,7 @@ class RegisterForm extends StatelessWidget {
                       .register_alreadySignedWithAnotherMethod
                       .tr(args: [e.providerName]),
                 ),
-                context,
+                registerBlocContext,
               );
             },
             (userId) {
@@ -44,20 +42,10 @@ class RegisterForm extends StatelessWidget {
               //  "Success $userId",
               //  context,
               //);
-
-              context.replaceRoute(
-                HomePageRoute(
-                  currentTab: AppTab.ask,
-                  connectedUserId: userId!,
-                ),
-              );
-              //ExtendedNavigator.of(context).pushAndRemoveUntil(
-              //  Routes.homePage,
-              //  (route) => false,
-              //);
-              context
+              registerBlocContext
                   .read<AuthenticationBloc>()
                   .add(const AuthenticationEvent.authCheckRequested());
+              AutoRouter.of(registerBlocContext).replace(const SplashPageRoute());
             },
           ),
         );

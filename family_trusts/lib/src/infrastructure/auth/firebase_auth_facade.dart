@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:dartz/dartz.dart';
 import 'package:familytrusts/src/domain/auth/auth_failure.dart';
 import 'package:familytrusts/src/domain/auth/i_auth_facade.dart';
@@ -15,6 +17,7 @@ class FirebaseAuthFacade implements IAuthFacade {
   final fire.FirebaseAuth _firebaseAuth;
   final GoogleSignIn _googleSignIn;
   final FacebookAuth _facebookAuth;
+  //final _onConnectionStream = StreamController<Either<AuthFailure, String>>.broadcast();
 
   bool _loggedWithGoogle = false;
   bool _loggedWithFacebook = false;
@@ -31,6 +34,7 @@ class FirebaseAuthFacade implements IAuthFacade {
 
   @override
   Option<fire.User> getSignedInUser() => optionOf(_firebaseAuth.currentUser);
+
 
   @override
   Future<Either<AuthFailure, String>> registerWithEmailAndPassword({
@@ -155,52 +159,6 @@ class FirebaseAuthFacade implements IAuthFacade {
         return left(
           AuthFailure.alreadySignWithAnotherMethod(userSignInMethods.first),
         );
-        /*
-
-        // The account already exists with a different credential
-        final String email = e.email;
-        final AuthCredential pendingCredential = e.credential;
-
-        // Fetch a list of what sign-in methods exist for the conflicting user
-        final List<String> userSignInMethods = await _firebaseAuth.fetchSignInMethodsForEmail(email);
-
-        // If the user has several sign-in methods,
-        // the first method in the list will be the "recommended" method to use.
-        if (userSignInMethods.first == 'password') {
-          // Prompt the user to enter their password
-          const String password = '...';
-
-          // Sign the user in to their account with the password
-          final UserCredential userCredential = await _firebaseAuth.signInWithEmailAndPassword(
-            email: email,
-            password: password,
-          );
-
-          // Link the pending credential with the existing account
-          await userCredential.user.linkWithCredential(pendingCredential);
-        }
-
-
-
-        // Since other providers are now external, you must now sign the user in with another
-        // auth provider, such as Facebook.
-        if (userSignInMethods.first == FacebookAuthProvider.PROVIDER_ID) {
-          // Create a new Facebook credential
-          final String accessToken = await triggerFacebookAuthentication();
-          final fire.OAuthCredential facebookAuthCredential = FacebookAuthProvider.credential(accessToken);
-
-          // Sign the user in with the credential
-          UserCredential userCredential = await _firebaseAuth.signInWithCredential(facebookAuthCredential);
-
-          // Link the pending credential with the existing account
-          await userCredential.user.linkWithCredential(pendingCredential);
-        }
-
-
-
-        // Handle other OAuth providers...
-
-         */
       } else {
         return left(const AuthFailure.serverError());
       }
@@ -280,4 +238,5 @@ class FirebaseAuthFacade implements IAuthFacade {
       return "";
     }
   }
+
 }

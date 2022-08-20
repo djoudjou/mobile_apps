@@ -13,9 +13,7 @@ import 'package:familytrusts/src/domain/user/user.dart' as backend_user;
 import 'package:familytrusts/src/domain/user/user_failure.dart';
 import 'package:familytrusts/src/domain/user/value_objects.dart';
 import 'package:familytrusts/src/helper/log_mixin.dart';
-import 'package:injectable/injectable.dart';
 
-@injectable
 class RegisterBloc extends Bloc<RegisterEvent, RegisterState> with LogMixin {
   final IAuthFacade _authFacade;
   final IUserRepository _userRepository;
@@ -140,7 +138,7 @@ class RegisterBloc extends Bloc<RegisterEvent, RegisterState> with LogMixin {
 
       Either<RegisterFailure, String>? registerFailureOrSuccess =
           eitherFailureOrUserId.fold(
-        (failure) => left(mapRegisterFailureToErrorMessage(failure)),
+        (failure) => left(mapAuthFailureToRegisterFailure(failure)),
         (userId) => right(userId),
       );
 
@@ -148,8 +146,15 @@ class RegisterBloc extends Bloc<RegisterEvent, RegisterState> with LogMixin {
         registerFailureOrSuccess = await doCreateUserInBackend(
           registerFailureOrSuccess.toOption().toNullable()!,
         );
+
+        if(registerFailureOrSuccess.isLeft()) {
+          // delete current user if issue on doCreateUserInBackend
+          await _authFacade.getSignedInUser().fold(() => null, (user) => user.delete());
+        }
       }
       log("_performRegister result $registerFailureOrSuccess");
+
+
 
       emit(
         state.copyWith(
@@ -173,7 +178,7 @@ class RegisterBloc extends Bloc<RegisterEvent, RegisterState> with LogMixin {
     );
   }
 
-  RegisterFailure mapRegisterFailureToErrorMessage(AuthFailure failure) {
+  RegisterFailure mapAuthFailureToRegisterFailure(AuthFailure failure) {
     return failure.map(
       cancelledByUser: (_) => const RegisterFailure.cancelledByUser(),
       serverError: (_) => const RegisterFailure.serverError(),
@@ -190,7 +195,7 @@ class RegisterBloc extends Bloc<RegisterEvent, RegisterState> with LogMixin {
   Future<Either<RegisterFailure, String>> doCreateUserInBackend(
     String userId,
   ) async {
-       final backend_user.User user = backend_user.User(
+    final backend_user.User user = backend_user.User(
       id: userId,
       email: state.emailAddress,
       name: state.name,
@@ -203,7 +208,6 @@ class RegisterBloc extends Bloc<RegisterEvent, RegisterState> with LogMixin {
       user,
       pickedFilePath: state.imagePath,
     );
-
 
     log("_userRepository create result $createUserFailureOrSuccess");
 
