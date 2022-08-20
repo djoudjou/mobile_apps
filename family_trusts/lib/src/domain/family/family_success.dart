@@ -4,9 +4,9 @@ part 'family_success.freezed.dart';
 
 @freezed
 abstract class FamilySuccess with _$FamilySuccess {
-  const factory FamilySuccess.updateSuccess() = _UpdateSuccess;
+  const factory FamilySuccess.updateSuccess(String familyId) = _UpdateSuccess;
 
-  const factory FamilySuccess.createSuccess() = _CreateSuccess;
+  const factory FamilySuccess.createSuccess(String familyId) = _CreateSuccess;
 
   const factory FamilySuccess.deleteSucces() = _DeleteSucces;
 }

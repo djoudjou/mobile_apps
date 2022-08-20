@@ -4,7 +4,10 @@ import 'package:familytrusts/generated/locale_keys.g.dart';
 import 'package:familytrusts/injection.dart';
 import 'package:familytrusts/src/application/auth/bloc.dart';
 import 'package:familytrusts/src/application/family/setup/bloc.dart';
+import 'package:familytrusts/src/application/home/user/user_bloc.dart';
+import 'package:familytrusts/src/application/home/user/user_state.dart';
 import 'package:familytrusts/src/domain/family/i_family_repository.dart';
+import 'package:familytrusts/src/domain/home/app_tab.dart';
 import 'package:familytrusts/src/domain/invitation/i_spouse_proposal_repository.dart';
 import 'package:familytrusts/src/domain/invitation/invitation.dart';
 import 'package:familytrusts/src/domain/notification/i_notification_repository.dart';
@@ -47,6 +50,32 @@ class HomePageWithoutFamily extends StatelessWidget with LogMixin {
       ],
       child: MultiBlocListener(
         listeners: [
+          BlocListener<UserBloc, UserState>(
+            listener: (userBlocContext, state) {
+              if (state is UserLoadFailure) {
+                //showErrorMessage(LocaleKeys.global_serverError.tr(),context,);
+                AutoRouter.of(userBlocContext).replace(const SignInPageRoute());
+              } else if (state is UserLoadSuccess) {
+                final User user = state.user;
+
+                if (user.notInFamily()) {
+                  // navigation ver
+                  AutoRouter.of(userBlocContext).replace(
+                    HomePageWithoutFamilyRoute(
+                      connectedUser: user,
+                    ),
+                  );
+                } else {
+                  AutoRouter.of(userBlocContext).replace(
+                    HomePageRoute(
+                      currentTab: AppTab.ask,
+                      connectedUserId: user.id!,
+                    ),
+                  );
+                }
+              }
+            },
+          ),
           BlocListener<AuthenticationBloc, AuthenticationState>(
             listener: (authenticationBlocContext, state) {
               if (state is Unauthenticated) {

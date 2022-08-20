@@ -4,8 +4,10 @@ import 'package:familytrusts/generated/locale_keys.g.dart';
 import 'package:familytrusts/injection.dart';
 import 'package:familytrusts/src/application/family/form/bloc.dart';
 import 'package:familytrusts/src/domain/family/family.dart';
+import 'package:familytrusts/src/domain/family/i_family_repository.dart';
 import 'package:familytrusts/src/domain/family/value_objects.dart';
 import 'package:familytrusts/src/domain/user/user.dart';
+import 'package:familytrusts/src/helper/analytics_svc.dart';
 import 'package:familytrusts/src/helper/log_mixin.dart';
 import 'package:familytrusts/src/helper/snackbar_helper.dart';
 import 'package:familytrusts/src/presentation/core/my_apps_bars.dart';
@@ -32,7 +34,10 @@ class FamilyPage extends StatelessWidget with LogMixin {
     return MultiBlocProvider(
       providers: [
         BlocProvider<FamilyFormBloc>(
-          create: (context) => getIt<FamilyFormBloc>()
+          create: (context) => FamilyFormBloc(
+            getIt<IFamilyRepository>(),
+            getIt<AnalyticsSvc>(),
+          )
             ..add(FamilyFormEvent.init(currentUser.familyId, familyToEdit)),
         ),
       ],
@@ -83,14 +88,15 @@ class FamilyPage extends StatelessWidget with LogMixin {
                 );
               }, (success) {
                 success.map(
-                  updateSuccess: (_) => showSuccessMessage(
+                  updateSuccess: (e) => showSuccessMessage(
                     LocaleKeys.profile_updateFamilySuccess.tr(),
                     context,
+                    onDismissed: () => AutoRouter.of(context).pop(e.familyId),
                   ),
-                  createSuccess: (_) => showSuccessMessage(
+                  createSuccess: (e) => showSuccessMessage(
                     LocaleKeys.profile_addFamilySuccess.tr(),
                     context,
-                    onDismissed: () => AutoRouter.of(context).pop(),
+                    onDismissed: () => AutoRouter.of(context).pop(e.familyId),
                   ),
                   deleteSucces: (_) => showSuccessMessage(
                     LocaleKeys.profile_deleteFamilySuccess.tr(),

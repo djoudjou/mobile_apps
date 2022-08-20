@@ -1,6 +1,5 @@
 import 'dart:core';
 
-import 'package:familytrusts/src/domain/http/persons/person_dto.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 part 'create_family_dto.g.dart';

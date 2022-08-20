@@ -2,17 +2,20 @@ import 'package:auto_route/auto_route.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:familytrusts/generated/locale_keys.g.dart';
 import 'package:familytrusts/src/application/family/setup/bloc.dart';
+import 'package:familytrusts/src/application/home/user/bloc.dart';
+import 'package:familytrusts/src/application/home/user/user_bloc.dart';
 import 'package:familytrusts/src/domain/family/family.dart';
 import 'package:familytrusts/src/domain/invitation/invitation.dart';
 import 'package:familytrusts/src/domain/user/user.dart';
 import 'package:familytrusts/src/domain/user/value_objects.dart';
 import 'package:familytrusts/src/helper/alert_helper.dart';
+import 'package:familytrusts/src/helper/log_mixin.dart';
 import 'package:familytrusts/src/presentation/core/my_text.dart';
 import 'package:familytrusts/src/presentation/routes/router.gr.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-class ProfileMissingFamilyContent extends StatelessWidget {
+class ProfileMissingFamilyContent extends StatelessWidget with LogMixin {
   final Invitation? spouseProposal;
   final User user;
 
@@ -60,9 +63,21 @@ class ProfileMissingFamilyContent extends StatelessWidget {
             context,
             LocaleKeys.profile_createNewFamilyConfirm.tr(),
             onConfirmCallback: () {
-              AutoRouter.of(context).push(
-                FamilyPageRoute(familyToEdit: Family(name: Name('')), currentUser: this.user),
-              );
+              AutoRouter.of(context)
+                  .push(
+                FamilyPageRoute(
+                  familyToEdit: Family(name: Name('')),
+                  currentUser: user,
+                ),
+              )
+                  .then((value) {
+                if (value != null) {
+                  log("returned from 'create family Page' $value");
+                  // reload user
+                  BlocProvider.of<UserBloc>(context)
+                      .add(UserEvent.init(user.id!));
+                }
+              });
             },
           );
         },
@@ -180,5 +195,3 @@ class ProfileMissingFamilyContent extends StatelessWidget {
     );
   }
 }
-
-

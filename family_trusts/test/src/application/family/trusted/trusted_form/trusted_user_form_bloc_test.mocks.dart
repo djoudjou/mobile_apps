@@ -162,13 +162,13 @@ class MockMockFamilyRepository extends _i1.Mock
   }
 
   @override
-  _i4.Future<_i2.Either<_i11.FamilyFailure, _i2.Unit>> create(
+  _i4.Future<_i2.Either<_i11.FamilyFailure, String>> create(
           {String? userId, _i12.Family? family}) =>
       (super.noSuchMethod(
           Invocation.method(#create, [], {#userId: userId, #family: family}),
-          returnValue: Future<_i2.Either<_i11.FamilyFailure, _i2.Unit>>.value(
-              _FakeEither_1<_i11.FamilyFailure, _i2.Unit>())) as _i4
-          .Future<_i2.Either<_i11.FamilyFailure, _i2.Unit>>);
+          returnValue: Future<_i2.Either<_i11.FamilyFailure, String>>.value(
+              _FakeEither_1<_i11.FamilyFailure, String>())) as _i4
+          .Future<_i2.Either<_i11.FamilyFailure, String>>);
   @override
   _i4.Future<_i2.Either<_i11.FamilyFailure, _i2.Unit>> deleteFamily(
           {String? familyId}) =>

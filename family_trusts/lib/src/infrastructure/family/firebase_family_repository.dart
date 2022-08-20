@@ -475,7 +475,7 @@ class FirebaseFamilyRepository implements IFamilyRepository {
   }
 
   @override
-  Future<Either<FamilyFailure, Unit>> create({required String userId, required Family family}) {
+  Future<Either<FamilyFailure, String>> create({required String userId, required Family family}) {
     // TODO: implement create
     throw UnimplementedError();
   }

@@ -10,6 +10,7 @@ import 'package:familytrusts/src/domain/family/locations/location.dart';
 import 'package:familytrusts/src/domain/family/locations/location_failure.dart';
 import 'package:familytrusts/src/domain/family/trusted_user/trusted.dart';
 import 'package:familytrusts/src/domain/http/families/create_family_dto.dart';
+import 'package:familytrusts/src/domain/http/families/family_dto.dart';
 import 'package:familytrusts/src/domain/user/user_failure.dart';
 import 'package:familytrusts/src/helper/log_mixin.dart';
 import 'package:familytrusts/src/infrastructure/http/api_service.dart';
@@ -48,15 +49,18 @@ class ApiFamilyRepository with LogMixin implements IFamilyRepository {
   }
 
   @override
-  Future<Either<FamilyFailure, Unit>> create(
-      {required String userId, required Family family}) async {
+  Future<Either<FamilyFailure, String>> create({
+    required String userId,
+    required Family family,
+  }) async {
     try {
       final CreateFamilyDTO createFamilyDTO = CreateFamilyDTO(
         name: family.name.getOrCrash(),
         memberId: userId,
       );
-      await _apiService.getFamilyRestClient().createFamily(createFamilyDTO);
-      return right(unit);
+      final FamilyDTO newFamily =
+          await _apiService.getFamilyRestClient().createFamily(createFamilyDTO);
+      return right(newFamily.familyId!);
     } catch (e) {
       log("error in create method : $e");
       return left(const FamilyFailure.unexpected());

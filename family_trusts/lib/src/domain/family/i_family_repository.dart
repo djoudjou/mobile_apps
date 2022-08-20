@@ -11,7 +11,7 @@ import 'package:familytrusts/src/domain/family/trusted_user/trusted.dart';
 import 'package:familytrusts/src/domain/user/user_failure.dart';
 
 abstract class IFamilyRepository {
-  Future<Either<FamilyFailure, Unit>> create({
+  Future<Either<FamilyFailure, String>> create({
     required String userId,
     required Family family,
   });

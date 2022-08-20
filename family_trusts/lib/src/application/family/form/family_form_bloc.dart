@@ -3,8 +3,6 @@ import 'dart:async';
 import 'package:bloc_concurrency/bloc_concurrency.dart';
 import 'package:dartz/dartz.dart';
 import 'package:familytrusts/src/application/family/form/bloc.dart';
-import 'package:familytrusts/src/application/home/user/bloc.dart';
-import 'package:familytrusts/src/application/home/user/user_bloc.dart';
 import 'package:familytrusts/src/domain/family/family_failure.dart';
 import 'package:familytrusts/src/domain/family/family_success.dart';
 import 'package:familytrusts/src/domain/family/i_family_repository.dart';
@@ -13,19 +11,15 @@ import 'package:familytrusts/src/domain/user/user.dart';
 import 'package:familytrusts/src/domain/user/value_objects.dart';
 import 'package:familytrusts/src/helper/analytics_svc.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:injectable/injectable.dart';
 import 'package:quiver/strings.dart' as quiver;
 
-@injectable
 class FamilyFormBloc extends Bloc<FamilyFormEvent, FamilyFormState> {
   final IFamilyRepository _familyRepository;
   final AnalyticsSvc _analyticsSvc;
-  final UserBloc _userBloc;
 
   FamilyFormBloc(
     this._familyRepository,
     this._analyticsSvc,
-    this._userBloc,
   ) : super(FamilyFormState.initial()) {
     on<FamilyInit>(
       _mapFamilyInit,
@@ -81,12 +75,10 @@ class FamilyFormBloc extends Bloc<FamilyFormEvent, FamilyFormState> {
       );
       final User user = event.connectedUser;
 
-      final Either<FamilyFailure, Unit> result = await _familyRepository.create(
+      final Either<FamilyFailure, String> result = await _familyRepository.create(
         userId: user.id!,
         family: event.family,
       );
-
-      _userBloc.add(UserEvent.init(user.id!));
 
       emit(
         result.fold(
@@ -104,13 +96,14 @@ class FamilyFormBloc extends Bloc<FamilyFormEvent, FamilyFormState> {
             );
           },
           (success) {
+            final String familyId = success;
             return state.copyWith(
               state: FamilyFormStateEnum.none,
               failureOrSuccessOption: some(
                 right(
                   quiver.isNotBlank(event.family.id)
-                      ? const FamilySuccess.updateSuccess()
-                      : const FamilySuccess.createSuccess(),
+                      ? FamilySuccess.updateSuccess(familyId)
+                      : FamilySuccess.createSuccess(familyId),
                 ),
               ),
             );

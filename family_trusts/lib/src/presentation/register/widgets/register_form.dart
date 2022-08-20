@@ -3,8 +3,14 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:familytrusts/generated/locale_keys.g.dart';
 import 'package:familytrusts/src/application/auth/authentication_bloc.dart';
 import 'package:familytrusts/src/application/auth/authentication_event.dart';
+import 'package:familytrusts/src/application/home/user/bloc.dart';
+import 'package:familytrusts/src/application/home/user/user_bloc.dart';
+import 'package:familytrusts/src/application/home/user/user_state.dart';
 import 'package:familytrusts/src/application/register/bloc.dart';
+import 'package:familytrusts/src/domain/home/app_tab.dart';
+import 'package:familytrusts/src/domain/user/user.dart';
 import 'package:familytrusts/src/helper/constants.dart';
+import 'package:familytrusts/src/helper/log_mixin.dart';
 import 'package:familytrusts/src/helper/snackbar_helper.dart';
 import 'package:familytrusts/src/presentation/core/my_button.dart';
 import 'package:familytrusts/src/presentation/core/my_image.dart';
@@ -14,42 +20,70 @@ import 'package:familytrusts/src/presentation/routes/router.gr.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-class RegisterForm extends StatelessWidget {
+class RegisterForm extends StatelessWidget with LogMixin {
   @override
   Widget build(BuildContext context) {
-    return BlocListener<RegisterBloc, RegisterState>(
-      listener: (registerBlocContext, state) {
-        state.registerFailureOrSuccessOption.fold(
-          () {},
-          (either) => either.fold(
-            (failure) {
-              showErrorMessage(
-                failure.map(
-                  cancelledByUser: (_) =>
-                      LocaleKeys.register_cancelledByUser.tr(),
-                  serverError: (_) => LocaleKeys.global_serverError.tr(),
-                  emailAlreadyInUse: (_) =>
-                      LocaleKeys.register_emailAlreadyInUse.tr(),
-                  alreadySignWithAnotherMethod: (e) => LocaleKeys
-                      .register_alreadySignedWithAnotherMethod
-                      .tr(args: [e.providerName]),
-                ),
-                registerBlocContext,
-              );
-            },
-            (userId) {
-              //showSuccessMessage(
-              //  "Success $userId",
-              //  context,
-              //);
-              registerBlocContext
-                  .read<AuthenticationBloc>()
-                  .add(const AuthenticationEvent.authCheckRequested());
-              AutoRouter.of(registerBlocContext).replace(const SplashPageRoute());
-            },
-          ),
-        );
-      },
+    return MultiBlocListener(
+      listeners: [
+        BlocListener<UserBloc, UserState>(
+          listener: (userBlocContext, state) {
+            if (state is UserLoadFailure) {
+              //showErrorMessage(LocaleKeys.global_serverError.tr(),context,);
+              AutoRouter.of(userBlocContext).replace(const SignInPageRoute());
+            } else if (state is UserLoadSuccess) {
+              final User user = state.user;
+
+              if (user.notInFamily()) {
+                // navigation ver
+                AutoRouter.of(userBlocContext).replace(
+                  HomePageWithoutFamilyRoute(
+                    connectedUser: user,
+                  ),
+                );
+              } else {
+                AutoRouter.of(userBlocContext).replace(
+                  HomePageRoute(
+                    currentTab: AppTab.ask,
+                    connectedUserId: user.id!,
+                  ),
+                );
+              }
+            }
+          },
+        ),
+        BlocListener<RegisterBloc, RegisterState>(
+          listener: (registerBlocContext, state) {
+            state.registerFailureOrSuccessOption.fold(
+              () {},
+              (either) => either.fold(
+                (failure) {
+                  showErrorMessage(
+                    failure.map(
+                      cancelledByUser: (_) =>
+                          LocaleKeys.register_cancelledByUser.tr(),
+                      serverError: (_) => LocaleKeys.global_serverError.tr(),
+                      emailAlreadyInUse: (_) =>
+                          LocaleKeys.register_emailAlreadyInUse.tr(),
+                      alreadySignWithAnotherMethod: (e) => LocaleKeys
+                          .register_alreadySignedWithAnotherMethod
+                          .tr(args: [e.providerName]),
+                    ),
+                    registerBlocContext,
+                  );
+                },
+                (userId) {
+                  registerBlocContext
+                      .read<AuthenticationBloc>()
+                      .add(const AuthenticationEvent.authCheckRequested());
+                  registerBlocContext
+                      .read<UserBloc>()
+                      .add(UserEvent.userStarted(userId!));
+                },
+              ),
+            );
+          },
+        ),
+      ],
       child: BlocBuilder<RegisterBloc, RegisterState>(
         builder: (context, state) {
           if (state.isInitializing) {
