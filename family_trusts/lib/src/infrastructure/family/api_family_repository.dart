@@ -9,11 +9,11 @@ import 'package:familytrusts/src/domain/family/i_family_repository.dart';
 import 'package:familytrusts/src/domain/family/locations/location.dart';
 import 'package:familytrusts/src/domain/family/locations/location_failure.dart';
 import 'package:familytrusts/src/domain/family/trusted_user/trusted.dart';
-import 'package:familytrusts/src/domain/http/families/create_family_dto.dart';
-import 'package:familytrusts/src/domain/http/families/family_dto.dart';
 import 'package:familytrusts/src/domain/user/user_failure.dart';
 import 'package:familytrusts/src/helper/log_mixin.dart';
 import 'package:familytrusts/src/infrastructure/http/api_service.dart';
+import 'package:familytrusts/src/infrastructure/http/families/create_family_dto.dart';
+import 'package:familytrusts/src/infrastructure/http/families/family_dto.dart';
 import 'package:injectable/injectable.dart';
 
 @Environment(Environment.prod)
@@ -24,26 +24,30 @@ class ApiFamilyRepository with LogMixin implements IFamilyRepository {
   ApiFamilyRepository(this._apiService);
 
   @override
-  Future<Either<UserFailure, Unit>> addTrustedUser(
-      {required String familyId, required TrustedUser trustedUser}) {
+  Future<Either<UserFailure, Unit>> addTrustedUser({
+    required String familyId,
+    required TrustedUser trustedUser,
+  }) {
     // TODO: implement addTrustedUser
     throw UnimplementedError();
   }
 
   @override
-  Future<Either<ChildrenFailure, Unit>> addUpdateChild(
-      {required String familyId,
-      required Child child,
-      String? pickedFilePath}) {
+  Future<Either<ChildrenFailure, Unit>> addUpdateChild({
+    required String familyId,
+    required Child child,
+    String? pickedFilePath,
+  }) {
     // TODO: implement addUpdateChild
     throw UnimplementedError();
   }
 
   @override
-  Future<Either<LocationFailure, Unit>> addUpdateLocation(
-      {required String familyId,
-      required Location location,
-      String? pickedFilePath}) {
+  Future<Either<LocationFailure, Unit>> addUpdateLocation({
+    required String familyId,
+    required Location location,
+    String? pickedFilePath,
+  }) {
     // TODO: implement addUpdateLocation
     throw UnimplementedError();
   }
@@ -68,8 +72,10 @@ class ApiFamilyRepository with LogMixin implements IFamilyRepository {
   }
 
   @override
-  Future<Either<ChildrenFailure, Unit>> deleteChild(
-      {required String familyId, required Child child}) {
+  Future<Either<ChildrenFailure, Unit>> deleteChild({
+    required String familyId,
+    required Child child,
+  }) {
     // TODO: implement deleteChild
     throw UnimplementedError();
   }
@@ -81,51 +87,75 @@ class ApiFamilyRepository with LogMixin implements IFamilyRepository {
   }
 
   @override
-  Future<Either<LocationFailure, Unit>> deleteLocation(
-      {required String familyId, required Location location}) {
+  Future<Either<LocationFailure, Unit>> deleteLocation({
+    required String familyId,
+    required Location location,
+  }) {
     // TODO: implement deleteLocation
     throw UnimplementedError();
   }
 
   @override
-  Future<Either<UserFailure, Unit>> deleteTrustedUser(
-      {required String familyId, required String trustedUserId}) {
+  Future<Either<UserFailure, Unit>> deleteTrustedUser({
+    required String familyId,
+    required String trustedUserId,
+  }) {
     // TODO: implement deleteTrustedUser
     throw UnimplementedError();
   }
 
   @override
-  Future<Either<ChildrenFailure, Child>> getChildById(
-      {required String familyId, required String childId}) {
+  Future<Either<ChildrenFailure, Child>> getChildById({
+    required String familyId,
+    required String childId,
+  }) {
     // TODO: implement getChildById
     throw UnimplementedError();
   }
 
   @override
   Future<Either<UserFailure, List<TrustedUser>>> getFutureTrustedUsers(
-      String familyId) {
+    String familyId,
+  ) {
     // TODO: implement getFutureTrustedUsers
     throw UnimplementedError();
   }
 
   @override
-  Future<Either<LocationFailure, Location>> getLocationById(
-      {required String familyId, required String locationId}) {
+  Future<Either<LocationFailure, Location>> getLocationById({
+    required String familyId,
+    required String locationId,
+  }) {
     // TODO: implement getLocationById
     throw UnimplementedError();
   }
 
   @override
-  Future<Either<FamilyFailure, List<Family>>> findAllByName(
-      {required String familyName}) {
-    // TODO: implement findAllByName
-    throw UnimplementedError();
+  Future<Either<FamilyFailure, List<Family>>> findAllByName({
+    required String familyName,
+  }) async {
+    try {
+      final List<FamilyDTO> families =
+          await _apiService.getFamilyRestClient().findAvailableFamiliesByNameQuery(familyName);
+
+      return right(families.map((f) => f.toDomain()).toList());
+    } catch (e) {
+      log("error in findAllByName method : $e");
+      return left(const FamilyFailure.unexpected());
+    }
   }
 
   @override
-  Future<Either<FamilyFailure, Unit>> removeMember(
-      {required String userId, required Family family}) {
-    // TODO: implement removeMember
-    throw UnimplementedError();
+  Future<Either<FamilyFailure, Unit>> removeMember({
+    required String userId,
+    required Family family,
+  }) async {
+    try {
+      await _apiService.getFamilyRestClient().removeMember(family.id!,userId);
+      return right(unit);
+    } catch (e) {
+      log("error in findAllByName method : $e");
+      return left(const FamilyFailure.unexpected());
+    }
   }
 }

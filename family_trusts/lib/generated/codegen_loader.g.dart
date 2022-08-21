@@ -189,7 +189,8 @@ class CodegenLoader extends AssetLoader{
   "search_family": {
     "title": "Recherche d'une famille",
     "familyLookupText": "nom",
-    "ask": "envoyer invitation"
+    "ask": "envoyer invitation",
+    "no_result": "Aucun résultats"
   },
   "join_proposal": {
     "loadingFailed": "Erreur lors de la récupération des propositions \n merci de contacter le support",
@@ -406,7 +407,7 @@ class CodegenLoader extends AssetLoader{
   },
   "family": {
     "title": "Famille",
-    "create_confirm": "Voulez créer une nouvelle famille ?",
+    "create_confirm": "Vous aller créer une nouvelle famille ?",
     "form": {
       "name": {
         "label": "Nom",

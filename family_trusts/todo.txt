@@ -1,4 +1,3 @@
 TODO :
- - comme j'ai plus de "stream", une fois la mise à jour (création de l'entreprise) il faut recharger toutes les données....
- - j'arrive pas à mettre à jour les données une fois mise à jour coté backend
- - Piste : Server Sent Event ? pour s'abonner aux données de la famille par exemple
+ - ne renvoyer que les propositions "en cours"
+ - 

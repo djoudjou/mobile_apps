@@ -4,6 +4,7 @@ import 'package:familytrusts/generated/locale_keys.g.dart';
 import 'package:familytrusts/src/domain/family/family.dart';
 import 'package:familytrusts/src/presentation/core/my_button.dart';
 import 'package:familytrusts/src/presentation/core/my_text.dart';
+import 'package:familytrusts/src/presentation/core/separator.dart';
 import 'package:flutter/material.dart';
 
 class SearchFamilyCard extends StatelessWidget {
@@ -21,10 +22,12 @@ class SearchFamilyCard extends StatelessWidget {
         child: Container(
           padding: const EdgeInsets.all(10.0),
           child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
               Column(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: <Widget>[
+                  const MyVerticalSeparator(),
                   MyText(family.displayName),
                   MyButton(
                     onPressed: () async {

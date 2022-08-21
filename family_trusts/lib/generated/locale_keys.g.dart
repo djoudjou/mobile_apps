@@ -142,6 +142,7 @@ abstract class  LocaleKeys {
   static const search_family_title = 'search_family.title';
   static const search_family_familyLookupText = 'search_family.familyLookupText';
   static const search_family_ask = 'search_family.ask';
+  static const search_family_no_result = 'search_family.no_result';
   static const search_family = 'search_family';
   static const join_proposal_loadingFailed = 'join_proposal.loadingFailed';
   static const join_proposal_summary = 'join_proposal.summary';

@@ -16,42 +16,6 @@ class _FamilyRestClient implements FamilyRestClient {
   String? baseUrl;
 
   @override
-  Future<List<FamilyDTO>> findAll() async {
-    const _extra = <String, dynamic>{};
-    final queryParameters = <String, dynamic>{};
-    final _headers = <String, dynamic>{};
-    final _data = <String, dynamic>{};
-    final _result = await _dio.fetch<List<dynamic>>(
-        _setStreamType<List<FamilyDTO>>(
-            Options(method: 'GET', headers: _headers, extra: _extra)
-                .compose(_dio.options, '/families',
-                    queryParameters: queryParameters, data: _data)
-                .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
-    var value = _result.data!
-        .map((dynamic i) => FamilyDTO.fromJson(i as Map<String, dynamic>))
-        .toList();
-    return value;
-  }
-
-  @override
-  Future<List<FamilyDTO>> findMatchingFamiliesByName(name) async {
-    const _extra = <String, dynamic>{};
-    final queryParameters = <String, dynamic>{r'name': name};
-    final _headers = <String, dynamic>{};
-    final _data = <String, dynamic>{};
-    final _result = await _dio.fetch<List<dynamic>>(
-        _setStreamType<List<FamilyDTO>>(
-            Options(method: 'GET', headers: _headers, extra: _extra)
-                .compose(_dio.options, '/families',
-                    queryParameters: queryParameters, data: _data)
-                .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
-    var value = _result.data!
-        .map((dynamic i) => FamilyDTO.fromJson(i as Map<String, dynamic>))
-        .toList();
-    return value;
-  }
-
-  @override
   Future<List<FamilyDTO>> findMatchingFamiliesByMemberIdQuery(memberId) async {
     const _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{r'memberId': memberId};
@@ -61,24 +25,6 @@ class _FamilyRestClient implements FamilyRestClient {
         _setStreamType<List<FamilyDTO>>(
             Options(method: 'GET', headers: _headers, extra: _extra)
                 .compose(_dio.options, '/families',
-                    queryParameters: queryParameters, data: _data)
-                .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
-    var value = _result.data!
-        .map((dynamic i) => FamilyDTO.fromJson(i as Map<String, dynamic>))
-        .toList();
-    return value;
-  }
-
-  @override
-  Future<List<FamilyDTO>> findFamilyByNameQuery(familyName) async {
-    const _extra = <String, dynamic>{};
-    final queryParameters = <String, dynamic>{r'name': familyName};
-    final _headers = <String, dynamic>{};
-    final _data = <String, dynamic>{};
-    final _result = await _dio.fetch<List<dynamic>>(
-        _setStreamType<List<FamilyDTO>>(
-            Options(method: 'GET', headers: _headers, extra: _extra)
-                .compose(_dio.options, '/families/match',
                     queryParameters: queryParameters, data: _data)
                 .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
     var value = _result.data!
@@ -106,22 +52,6 @@ class _FamilyRestClient implements FamilyRestClient {
   }
 
   @override
-  Future<FamilyDTO> findFamilyById(familyId) async {
-    const _extra = <String, dynamic>{};
-    final queryParameters = <String, dynamic>{};
-    final _headers = <String, dynamic>{};
-    final _data = <String, dynamic>{};
-    final _result = await _dio.fetch<Map<String, dynamic>>(
-        _setStreamType<FamilyDTO>(
-            Options(method: 'GET', headers: _headers, extra: _extra)
-                .compose(_dio.options, '/families/${familyId}',
-                    queryParameters: queryParameters, data: _data)
-                .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
-    final value = FamilyDTO.fromJson(_result.data!);
-    return value;
-  }
-
-  @override
   Future<FamilyDTO> createFamily(createFamilyDTO) async {
     const _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
@@ -132,22 +62,6 @@ class _FamilyRestClient implements FamilyRestClient {
         _setStreamType<FamilyDTO>(
             Options(method: 'POST', headers: _headers, extra: _extra)
                 .compose(_dio.options, '/families',
-                    queryParameters: queryParameters, data: _data)
-                .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
-    final value = FamilyDTO.fromJson(_result.data!);
-    return value;
-  }
-
-  @override
-  Future<FamilyDTO> updateFamilyName(familyId, familyName) async {
-    const _extra = <String, dynamic>{};
-    final queryParameters = <String, dynamic>{r'familyName': familyName};
-    final _headers = <String, dynamic>{};
-    final _data = <String, dynamic>{};
-    final _result = await _dio.fetch<Map<String, dynamic>>(
-        _setStreamType<FamilyDTO>(
-            Options(method: 'PUT', headers: _headers, extra: _extra)
-                .compose(_dio.options, '/families/${familyId}',
                     queryParameters: queryParameters, data: _data)
                 .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
     final value = FamilyDTO.fromJson(_result.data!);

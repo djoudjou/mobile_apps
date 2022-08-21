@@ -26,28 +26,32 @@ class MissingFamilyContent extends StatelessWidget with LogMixin {
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<JoinProposalBloc, JoinProposalState>(
-        builder: (joinProposalBlocContext, state) {
-      return Container(
-        width: double.infinity,
-        //color: Colors.red,
-        margin: const EdgeInsets.all(10.0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          children: <Widget>[
-            buildCreateFamily(joinProposalBlocContext),
-            if (state is JoinProposalsLoaded && state.hasProposals) ...[
-              buildJoinProposals(state.joinProposals, joinProposalBlocContext),
+      builder: (joinProposalBlocContext, state) {
+        return Container(
+          width: double.infinity,
+          //color: Colors.red,
+          margin: const EdgeInsets.all(10.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              buildCreateFamily(joinProposalBlocContext),
+              if (state is JoinProposalsLoaded && state.hasProposals) ...[
+                buildJoinProposals(
+                  state.joinProposals,
+                  joinProposalBlocContext,
+                ),
+              ],
+              if (state is JoinProposalsLoaded && !state.hasProposals) ...[
+                buidConnectToFamily(joinProposalBlocContext),
+              ],
+              if (state is JoinProposalsLoadInProgress) ...[
+                const LoadingContent(),
+              ]
             ],
-            if (state is JoinProposalsLoaded && !state.hasProposals) ...[
-              buidConnectToFamily(joinProposalBlocContext),
-            ],
-            if (state is JoinProposalsLoadInProgress) ...[
-              const LoadingContent(),
-            ]
-          ],
-        ),
-      );
-    });
+          ),
+        );
+      },
+    );
   }
 
   Widget buildCreateFamily(BuildContext context) {
@@ -109,7 +113,7 @@ class MissingFamilyContent extends StatelessWidget with LogMixin {
         ),
         onPressed: () async {
           AutoRouter.of(context)
-              .replace(SearchFamilyPageRoute())
+              .push(SearchFamilyPageRoute())
               .then((selected) async {
             if (selected != null) {
               final Family selectedFamily = selected as Family;
@@ -138,7 +142,9 @@ class MissingFamilyContent extends StatelessWidget with LogMixin {
   }
 
   Widget buildJoinProposals(
-      List<JoinProposal> proposals, BuildContext context) {
+    List<JoinProposal> proposals,
+    BuildContext context,
+  ) {
     final JoinProposal joinProposal = proposals.first;
     return Card(
       elevation: 8,
@@ -149,10 +155,12 @@ class MissingFamilyContent extends StatelessWidget with LogMixin {
           child: Column(
             children: <Widget>[
               MyText(
-                LocaleKeys.join_proposal_summary.tr(args: [
-                  joinProposal.family!.displayName,
-                  joinProposal.creationDate.toPrintableDate,
-                ]),
+                LocaleKeys.join_proposal_summary.tr(
+                  args: [
+                    joinProposal.family!.displayName,
+                    joinProposal.creationDate.toPrintableDate,
+                  ],
+                ),
                 maxLines: 5,
                 style: FontStyle.italic,
               ),

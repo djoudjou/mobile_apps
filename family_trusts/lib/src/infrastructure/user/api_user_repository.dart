@@ -1,14 +1,14 @@
 import 'dart:async';
 
 import 'package:dartz/dartz.dart';
-import 'package:familytrusts/src/domain/http/families/family_dto.dart';
-import 'package:familytrusts/src/domain/http/persons/login_person_dto.dart';
-import 'package:familytrusts/src/domain/http/persons/person_dto.dart';
 import 'package:familytrusts/src/domain/user/i_user_repository.dart';
 import 'package:familytrusts/src/domain/user/user.dart';
 import 'package:familytrusts/src/domain/user/user_failure.dart';
 import 'package:familytrusts/src/helper/log_mixin.dart';
 import 'package:familytrusts/src/infrastructure/http/api_service.dart';
+import 'package:familytrusts/src/infrastructure/http/families/family_dto.dart';
+import 'package:familytrusts/src/infrastructure/http/persons/login_person_dto.dart';
+import 'package:familytrusts/src/infrastructure/http/persons/person_dto.dart';
 import 'package:injectable/injectable.dart';
 
 @Environment(Environment.prod)
@@ -86,7 +86,7 @@ class ApiUserRepository with LogMixin implements IUserRepository {
 
       final List<FamilyDTO> families = await _apiService.getFamilyRestClient().findMatchingFamiliesByMemberIdQuery(id);
 
-      final User user = User.fromDTO(result,families.isNotEmpty?families.first:null);
+      final User user = result.toDomain(families.isNotEmpty?families.first:null);
 
       return right(user);
     } catch (e) {

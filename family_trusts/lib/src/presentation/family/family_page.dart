@@ -36,7 +36,7 @@ class FamilyPage extends MyBasePage {
           create: (context) => FamilyFormBloc(
             getIt<IFamilyRepository>(),
             getIt<AnalyticsSvc>(),
-          )..add(FamilyFormEvent.init(currentUser.family!.id, familyToEdit)),
+          )..add(FamilyFormEvent.init(currentUser.family?.id, familyToEdit)),
         ),
       ],
       child: BlocConsumer<FamilyFormBloc, FamilyFormState>(

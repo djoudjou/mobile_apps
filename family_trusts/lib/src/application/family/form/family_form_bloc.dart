@@ -47,7 +47,7 @@ class FamilyFormBloc extends Bloc<FamilyFormEvent, FamilyFormState> {
     Emitter<FamilyFormState> emit,
   ) async {
     final FamilyFormState newState = state.copyWith(
-      id: event.family.id,
+      id: event.familyId,
       isInitializing: false,
       failureOrSuccessOption: none(),
     );

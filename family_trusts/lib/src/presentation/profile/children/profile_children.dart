@@ -19,7 +19,7 @@ class ProfileChildren extends StatelessWidget {
   final User connectedUser;
   final _key = const PageStorageKey<String>('children');
 
-  ProfileChildren({
+  const ProfileChildren({
     Key? key,
     required this.radius,
     required this.connectedUser,

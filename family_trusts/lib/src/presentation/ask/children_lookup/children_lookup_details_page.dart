@@ -9,6 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class ChildrenLookupDetailsPage extends StatelessWidget {
+
   final ChildrenLookup childrenLookup;
 
   const ChildrenLookupDetailsPage({Key? key, required this.childrenLookup})

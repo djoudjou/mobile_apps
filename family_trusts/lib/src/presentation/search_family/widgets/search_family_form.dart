@@ -2,8 +2,8 @@ import 'package:auto_route/auto_route.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:familytrusts/generated/locale_keys.g.dart';
 import 'package:familytrusts/src/application/family_search/search_family_bloc.dart';
+import 'package:familytrusts/src/application/family_search/search_family_event.dart';
 import 'package:familytrusts/src/application/family_search/search_family_state.dart';
-import 'package:familytrusts/src/application/search_user/bloc.dart';
 import 'package:familytrusts/src/domain/family/family.dart';
 import 'package:familytrusts/src/helper/alert_helper.dart';
 import 'package:familytrusts/src/helper/snackbar_helper.dart';
@@ -21,7 +21,7 @@ class SearchFamilyForm extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocListener<SearchFamilyBloc, SearchFamilyState>(
-      listener: (context, state) {
+      listener: (searchFamilyBlocContext, state) {
         state.searchFamilyFailureOrSuccessOption.fold(
           () {},
           (either) => either.fold(
@@ -30,7 +30,7 @@ class SearchFamilyForm extends StatelessWidget {
                 failure.map(
                   serverError: (_) => LocaleKeys.global_serverError.tr(),
                 ),
-                context,
+                searchFamilyBlocContext,
               );
             },
             (_) {},
@@ -38,15 +38,16 @@ class SearchFamilyForm extends StatelessWidget {
         );
       },
       child: BlocBuilder<SearchFamilyBloc, SearchFamilyState>(
-        builder: (context, state) {
+        builder: (searchFamilyBlocContext, state) {
           return Padding(
             padding: const EdgeInsets.all(20),
             child: Column(
               children: <Widget>[
                 const MyVerticalSeparator(),
-                familyLookupText(context),
+                familyLookupText(searchFamilyBlocContext),
                 const MyVerticalSeparator(),
-                buildResult(state, context),
+                const Divider(),
+                buildResult(state, searchFamilyBlocContext),
               ],
             ),
           );
@@ -58,13 +59,13 @@ class SearchFamilyForm extends StatelessWidget {
   Widget familyLookupText(BuildContext context) {
     return TextFormField(
       decoration: InputDecoration(
-        labelText: LocaleKeys.search_userLookupText.tr(),
+        labelText: LocaleKeys.search_family_familyLookupText.tr(),
       ),
       keyboardType: TextInputType.text,
       autocorrect: false,
       onChanged: (value) => context
-          .read<SearchUserBloc>()
-          .add(SearchUserEvent.userLookupChanged(value)),
+          .read<SearchFamilyBloc>()
+          .add(SearchFamilyEvent.familyLookupChanged(value)),
     );
   }
 
@@ -82,27 +83,41 @@ class SearchFamilyForm extends StatelessWidget {
           ),
           (result) {
             final List<Family> families = result;
-            return Expanded(
-              child: ListView.builder(
-                itemBuilder: (context, index) {
-                  final Family selectedFamily = families[index];
-                  return InkWell(
-                    onTap: () async {
-                      await AlertHelper().confirm(
-                        context,
-                        LocaleKeys.profile_sendTrustProposal
-                            .tr(args: [selectedFamily.name.getOrCrash()]),
-                        onConfirmCallback: () {
-                          AutoRouter.of(context).pop(selectedFamily);
-                        },
-                      );
-                    },
-                    child: SearchFamilyCard(family: selectedFamily),
+            return families.isEmpty
+                ? Column(
+                  children: [
+                    const MyVerticalSeparator(),
+                    const MyVerticalSeparator(),
+                    const MyVerticalSeparator(),
+                    Align(
+                        child: MyText(
+                          LocaleKeys.search_family_no_result.tr(),
+                          maxLines: 3,
+                        ),
+                      ),
+                  ],
+                )
+                : Expanded(
+                    child: ListView.builder(
+                      itemBuilder: (context, index) {
+                        final Family selectedFamily = families[index];
+                        return InkWell(
+                          onTap: () async {
+                            await AlertHelper().confirm(
+                              context,
+                              LocaleKeys.profile_sendTrustProposal
+                                  .tr(args: [selectedFamily.displayName]),
+                              onConfirmCallback: () {
+                                AutoRouter.of(context).pop(selectedFamily);
+                              },
+                            );
+                          },
+                          child: SearchFamilyCard(family: selectedFamily),
+                        );
+                      },
+                      itemCount: families.length,
+                    ),
                   );
-                },
-                itemCount: families.length,
-              ),
-            );
           },
         ),
       );

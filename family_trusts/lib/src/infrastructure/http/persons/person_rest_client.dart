@@ -1,7 +1,7 @@
 import 'package:dio/dio.dart';
-import 'package:familytrusts/src/domain/http/persons/login_person_dto.dart';
-import 'package:familytrusts/src/domain/http/persons/person_dto.dart';
-import 'package:familytrusts/src/domain/http/persons/registred_person_response_dto.dart';
+import 'package:familytrusts/src/infrastructure/http/persons/login_person_dto.dart';
+import 'package:familytrusts/src/infrastructure/http/persons/person_dto.dart';
+import 'package:familytrusts/src/infrastructure/http/persons/registred_person_response_dto.dart';
 import 'package:retrofit/retrofit.dart';
 
 part 'person_rest_client.g.dart';

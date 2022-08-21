@@ -173,12 +173,13 @@
   "search_family": {
     "title": "Recherche d'une famille",
     "familyLookupText": "nom",
-    "ask": "envoyer invitation"
+    "ask": "envoyer invitation",
+    "no_result": "Aucun résultats"
   },
   "join_proposal" : {
     "loadingFailed": "Erreur lors de la récupération des propositions \n merci de contacter le support",
 
-    "summary" : "Invitation envoyée à la famille {} le {}",
+    "summary" : "Invitation envoyée à la famille '{}' {}",
 
     "send": {
       "button" : "Envoyer une invitation",
@@ -400,7 +401,7 @@
   },
   "family": {
     "title": "Famille",
-    "create_confirm": "Voulez créer une nouvelle famille ?",
+    "create_confirm": "Vous aller créer une nouvelle famille ?",
     "form": {
       "name": {
         "label": "Nom",
