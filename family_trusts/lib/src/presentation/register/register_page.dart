@@ -4,15 +4,16 @@ import 'package:familytrusts/src/application/register/bloc.dart';
 import 'package:familytrusts/src/domain/auth/i_auth_facade.dart';
 import 'package:familytrusts/src/domain/user/i_user_repository.dart';
 import 'package:familytrusts/src/presentation/core/my_apps_bars.dart';
+import 'package:familytrusts/src/presentation/core/page/my_base_page.dart';
 import 'package:familytrusts/src/presentation/register/widgets/register_form.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../injection.dart';
 
-class RegisterPage extends StatelessWidget {
+class RegisterPage extends MyBasePage {
   @override
-  Widget build(BuildContext context) {
+  Widget myBuild(BuildContext context) {
     return Scaffold(
       appBar: MyAppBar(
         pageTitle: LocaleKeys.register_title.tr(),

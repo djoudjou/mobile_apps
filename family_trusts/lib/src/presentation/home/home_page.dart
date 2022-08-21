@@ -9,18 +9,18 @@ import 'package:familytrusts/src/application/messages/bloc.dart';
 import 'package:familytrusts/src/application/notifications/unseen/notifications_unseen_bloc.dart';
 import 'package:familytrusts/src/domain/home/app_tab.dart';
 import 'package:familytrusts/src/domain/notification/notifications_failure.dart';
-import 'package:familytrusts/src/helper/log_mixin.dart';
-import 'package:familytrusts/src/presentation/ask/ask_page.dart';
+import 'package:familytrusts/src/presentation/ask/ask_page_tab.dart';
 import 'package:familytrusts/src/presentation/core/error_scaffold.dart';
 import 'package:familytrusts/src/presentation/core/loading_scaffold.dart';
-import 'package:familytrusts/src/presentation/demands/demands_page.dart';
+import 'package:familytrusts/src/presentation/core/page/my_base_page.dart';
+import 'package:familytrusts/src/presentation/demands/demands_page_tab.dart';
 import 'package:familytrusts/src/presentation/home/widgets/my_bottom_navigation_bar.dart';
 import 'package:familytrusts/src/presentation/notifications/notifications_page.dart';
-import 'package:familytrusts/src/presentation/profile/profile_page.dart';
+import 'package:familytrusts/src/presentation/profile/profile_page_tab.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-class HomePage extends StatelessWidget with LogMixin {
+class HomePage extends MyBasePage {
   final AppTab currentTab;
   final String connectedUserId;
 
@@ -30,7 +30,7 @@ class HomePage extends StatelessWidget with LogMixin {
       : super(key: key);
 
   @override
-  Widget build(BuildContext context) {
+  Widget myBuild(BuildContext context) {
     return MultiBlocProvider(
       providers: [
         BlocProvider(
@@ -47,21 +47,6 @@ class HomePage extends StatelessWidget with LogMixin {
       ],
       child: MultiBlocListener(
         listeners: [
-          /*
-          BlocListener<AuthenticationBloc, AuthenticationState>(
-            listener: (context, state) {
-              state.map(
-                initial: (_) {},
-                authenticated: (_) {},
-                unauthenticated: (_) {
-                  AutoRouter.of(context).popUntilRoot();
-                  AutoRouter.of(context).replace(const SignInPageRoute());
-                },
-              );
-            },
-          ),
-
-           */
           BlocListener<MessagesBloc, MessagesState>(
             listener: (context, state) {
               state.map(
@@ -91,39 +76,6 @@ class HomePage extends StatelessWidget with LogMixin {
               );
             },
           ),
-          /*
-          BlocListener<UserBloc, UserState>(
-            listener: (userBlocCtx, state) {
-              state.maybeMap(
-                userLoadFailure: (e) {
-                  showErrorMessage(
-                    LocaleKeys.global_serverError.tr(),
-                    userBlocCtx,
-                  );
-                  //AutoRouter.of(context).popUntilRoot();
-                  AutoRouter.of(context).replace(const SignInPageRoute());
-                },
-                userNotFound: (e) {
-                  //AutoRouter.of(context).popUntilRoot();
-                  context.replaceRoute(const RegisterPageRoute());
-                },
-                userLoadSuccess: (e) {
-                  userBlocCtx
-                      .read<MessagesBloc>()
-                      .add(MessagesEvent.saveToken(e.user.id!));
-
-                  // si pas de famille -> redirige vers l'écran de création/rejoint de famille
-                  if (e.user.notInFamily()) {
-                    userBlocCtx.read<TabBloc>().add(const TabEvent.gotoMe());
-                    context.popRoute();
-                  }
-                },
-                orElse: () {},
-              );
-            },
-          ),
-
-           */
         ],
         child: BlocBuilder<UserBloc, UserState>(
           builder: (context, state) {
@@ -136,7 +88,6 @@ class HomePage extends StatelessWidget with LogMixin {
               userLoadSuccess: (UserLoadSuccess value) {
                 final user = value.user;
                 final spouse = value.spouse;
-                final spouseProposal = value.spouseProposal;
 
                 return BlocBuilder<NotificationsUnseenBloc, SimpleLoaderState>(
                   builder: (context, state) {
@@ -157,16 +108,16 @@ class HomePage extends StatelessWidget with LogMixin {
                           key: _scaffoldKey,
                           body: SafeArea(
                             child: state.map(
-                              ask: (_) => AskPage(user: user, spouse: spouse),
+                              ask: (_) =>
+                                  AskPageTab(user: user, spouse: spouse),
                               myDemands: (_) =>
-                                  DemandsPage(user: user, spouse: spouse),
+                                  DemandsPageTab(user: user, spouse: spouse),
                               //lookup: (_) => LookupScreen(),
                               notification: (_) =>
                                   NotificationsPage(user: user, spouse: spouse),
-                              me: (_) => ProfilePage(
+                              me: (_) => ProfilePageTab(
                                 connectedUser: user,
                                 spouse: spouse,
-                                spouseProposal: spouseProposal,
                               ),
                             ),
                           ),

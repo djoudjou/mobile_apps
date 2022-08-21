@@ -31,7 +31,7 @@ class UserEntity with _$UserEntity {
       email: user.email.getOrCrash(),
       photoUrl: user.photoUrl,
       spouse: user.spouse,
-      familyId: user.familyId,
+      familyId: user.family?.id,
     );
   }
 
@@ -43,7 +43,6 @@ class UserEntity with _$UserEntity {
       photoUrl: photoUrl,
       surname: Surname(surname),
       name: Name(name),
-      familyId: familyId,
     );
   }
 

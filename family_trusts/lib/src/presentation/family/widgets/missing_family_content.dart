@@ -1,51 +1,56 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:familytrusts/generated/locale_keys.g.dart';
-import 'package:familytrusts/src/application/family/setup/bloc.dart';
 import 'package:familytrusts/src/application/home/user/bloc.dart';
-import 'package:familytrusts/src/application/home/user/user_bloc.dart';
+import 'package:familytrusts/src/application/join_proposal/bloc.dart';
 import 'package:familytrusts/src/domain/family/family.dart';
-import 'package:familytrusts/src/domain/invitation/invitation.dart';
+import 'package:familytrusts/src/domain/join_proposal/join_proposal.dart';
 import 'package:familytrusts/src/domain/user/user.dart';
 import 'package:familytrusts/src/domain/user/value_objects.dart';
 import 'package:familytrusts/src/helper/alert_helper.dart';
 import 'package:familytrusts/src/helper/log_mixin.dart';
+import 'package:familytrusts/src/presentation/core/loading_content.dart';
 import 'package:familytrusts/src/presentation/core/my_text.dart';
 import 'package:familytrusts/src/presentation/routes/router.gr.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-class ProfileMissingFamilyContent extends StatelessWidget with LogMixin {
-  final Invitation? spouseProposal;
+class MissingFamilyContent extends StatelessWidget with LogMixin {
   final User user;
 
-  const ProfileMissingFamilyContent({
+  const MissingFamilyContent({
     Key? key,
-    required this.spouseProposal,
     required this.user,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      width: double.infinity,
-      //color: Colors.red,
-      margin: const EdgeInsets.all(10.0),
-      child: Column(
-        //mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        children: <Widget>[
-          buidCreateFamily(context),
-          if (spouseProposal != null) ...[
-            buildSpouseProposal(spouseProposal!, context),
-          ] else ...[
-            buidConnectToFamily(context),
-          ]
-        ],
-      ),
-    );
+    return BlocBuilder<JoinProposalBloc, JoinProposalState>(
+        builder: (joinProposalBlocContext, state) {
+      return Container(
+        width: double.infinity,
+        //color: Colors.red,
+        margin: const EdgeInsets.all(10.0),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: <Widget>[
+            buildCreateFamily(joinProposalBlocContext),
+            if (state is JoinProposalsLoaded && state.hasProposals) ...[
+              buildJoinProposals(state.joinProposals, joinProposalBlocContext),
+            ],
+            if (state is JoinProposalsLoaded && !state.hasProposals) ...[
+              buidConnectToFamily(joinProposalBlocContext),
+            ],
+            if (state is JoinProposalsLoadInProgress) ...[
+              const LoadingContent(),
+            ]
+          ],
+        ),
+      );
+    });
   }
 
-  Widget buidCreateFamily(BuildContext context) {
+  Widget buildCreateFamily(BuildContext context) {
     return Container(
       width: double.infinity,
       child: ElevatedButton(
@@ -61,7 +66,7 @@ class ProfileMissingFamilyContent extends StatelessWidget with LogMixin {
         onPressed: () async {
           await AlertHelper().confirm(
             context,
-            LocaleKeys.profile_createNewFamilyConfirm.tr(),
+            LocaleKeys.family_create_confirm.tr(),
             onConfirmCallback: () {
               AutoRouter.of(context)
                   .push(
@@ -103,25 +108,20 @@ class ProfileMissingFamilyContent extends StatelessWidget with LogMixin {
           ),
         ),
         onPressed: () async {
-          context
-              .pushRoute(
-            SearchUserPageRoute(
-              connectedUser: user,
-              lookingForNewTrustUser: false,
-            ),
-          )
-              .then((_selectedUser) async {
-            if (_selectedUser != null) {
-              final User selectedUser = _selectedUser as User;
+          AutoRouter.of(context)
+              .replace(SearchFamilyPageRoute())
+              .then((selected) async {
+            if (selected != null) {
+              final Family selectedFamily = selected as Family;
               await AlertHelper().confirm(
                 context,
-                LocaleKeys.profile_sendSpouseProposal
-                    .tr(args: [selectedUser.displayName]),
+                LocaleKeys.join_proposal_send_confirm
+                    .tr(args: [selectedFamily.displayName]),
                 onConfirmCallback: () {
-                  context.read<SetupFamilyBloc>().add(
-                        SetupFamilyEvent.askToJoinFamilyTriggered(
-                          from: user,
-                          to: selectedUser,
+                  context.read<JoinProposalBloc>().add(
+                        JoinProposalEvent.send(
+                          connectedUser: user,
+                          family: selectedFamily,
                         ),
                       );
                 },
@@ -137,10 +137,9 @@ class ProfileMissingFamilyContent extends StatelessWidget with LogMixin {
     );
   }
 
-  Widget buildSpouseProposal(Invitation spouseProposal, BuildContext context) {
-    final String subject = (user.id == spouseProposal.from.id)
-        ? "Vous"
-        : "${spouseProposal.from.surname}";
+  Widget buildJoinProposals(
+      List<JoinProposal> proposals, BuildContext context) {
+    final JoinProposal joinProposal = proposals.first;
     return Card(
       elevation: 8,
       child: Container(
@@ -150,7 +149,10 @@ class ProfileMissingFamilyContent extends StatelessWidget with LogMixin {
           child: Column(
             children: <Widget>[
               MyText(
-                "$subject avez demandé à ${spouseProposal.to.displayName} de confirmer votre relation ${spouseProposal.date.toPrintableDate}",
+                LocaleKeys.join_proposal_summary.tr(args: [
+                  joinProposal.family!.displayName,
+                  joinProposal.creationDate.toPrintableDate,
+                ]),
                 maxLines: 5,
                 style: FontStyle.italic,
               ),
@@ -172,18 +174,20 @@ class ProfileMissingFamilyContent extends StatelessWidget with LogMixin {
                   onPressed: () async {
                     await AlertHelper().confirm(
                       context,
-                      "Annuler l'invitation à ${spouseProposal.to.displayName} ?",
+                      LocaleKeys.join_proposal_cancel_confirm
+                          .tr(args: [joinProposal.family!.displayName]),
                       onConfirmCallback: () {
-                        BlocProvider.of<SetupFamilyBloc>(context).add(
-                          SetupFamilyEvent.joinFamilyCancelTriggered(
-                            invitation: spouseProposal,
+                        BlocProvider.of<JoinProposalBloc>(context).add(
+                          JoinProposalEvent.cancel(
+                            connectedUser: user,
+                            joinProposal: joinProposal,
                           ),
                         );
                       },
                     );
                   },
-                  child: const MyText(
-                    "Annuler la demande",
+                  child: MyText(
+                    LocaleKeys.join_proposal_cancel_button.tr(),
                     color: Colors.white,
                   ),
                 ),

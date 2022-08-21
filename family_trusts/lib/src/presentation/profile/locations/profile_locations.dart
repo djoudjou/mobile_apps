@@ -32,7 +32,7 @@ class ProfileLocations extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocProvider<LocationsBloc>(
       create: (BuildContext context) => getIt<LocationsBloc>()
-        ..add(LocationsEvent.loadLocations(connectedUser.familyId)),
+        ..add(LocationsEvent.loadLocations(connectedUser.family!.id)),
       child: Builder(
         builder: (context) => MultiBlocListener(
           listeners: [

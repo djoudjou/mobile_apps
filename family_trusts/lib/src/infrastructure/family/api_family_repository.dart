@@ -60,7 +60,7 @@ class ApiFamilyRepository with LogMixin implements IFamilyRepository {
       );
       final FamilyDTO newFamily =
           await _apiService.getFamilyRestClient().createFamily(createFamilyDTO);
-      return right(newFamily.familyId!);
+      return right(newFamily.name!);
     } catch (e) {
       log("error in create method : $e");
       return left(const FamilyFailure.unexpected());
@@ -112,6 +112,20 @@ class ApiFamilyRepository with LogMixin implements IFamilyRepository {
   Future<Either<LocationFailure, Location>> getLocationById(
       {required String familyId, required String locationId}) {
     // TODO: implement getLocationById
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<Either<FamilyFailure, List<Family>>> findAllByName(
+      {required String familyName}) {
+    // TODO: implement findAllByName
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<Either<FamilyFailure, Unit>> removeMember(
+      {required String userId, required Family family}) {
+    // TODO: implement removeMember
     throw UnimplementedError();
   }
 }

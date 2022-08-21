@@ -7,9 +7,6 @@ import 'package:familytrusts/src/domain/children_lookup/children_lookup_failure.
 import 'package:familytrusts/src/domain/children_lookup/i_children_lookup_repository.dart';
 import 'package:familytrusts/src/domain/core/value_objects.dart';
 import 'package:familytrusts/src/domain/error/i_error_service.dart';
-import 'package:familytrusts/src/domain/invitation/invitation.dart';
-import 'package:familytrusts/src/domain/invitation/invitation_failure.dart';
-import 'package:familytrusts/src/domain/invitation/value_objects.dart';
 import 'package:familytrusts/src/domain/notification/event.dart';
 import 'package:familytrusts/src/domain/notification/event_failure.dart';
 import 'package:familytrusts/src/domain/notification/i_notification_repository.dart';
@@ -21,7 +18,6 @@ import 'package:familytrusts/src/domain/user/user_failure.dart';
 import 'package:familytrusts/src/helper/constants.dart';
 import 'package:familytrusts/src/helper/log_mixin.dart';
 import 'package:familytrusts/src/infrastructure/core/firestore_helpers.dart';
-import 'package:familytrusts/src/infrastructure/invitation/invitation_entity.dart';
 import 'package:familytrusts/src/infrastructure/notification/event_entity.dart';
 import 'package:flutter/services.dart';
 import 'package:injectable/injectable.dart';
@@ -115,124 +111,6 @@ class FirebaseNotificationRepository
     }
   }
 
-  @override
-  Future<Either<NotificationsFailure, Unit>> createInvitation(
-    Invitation invitation,
-  ) async {
-    try {
-      final InvitationEntity invitationEntity =
-          InvitationEntity.fromDomain(invitation);
-
-      await _firebaseFirestore
-          .notificationsByUserId(invitationEntity.to)
-          .invitationsCollection
-          .doc(invitationEntity.from)
-          .set(invitationEntity.toJson());
-      return right(unit);
-    } on PlatformException catch (e) {
-      if (e.message?.contains('PERMISSION_DENIED') ?? false) {
-        return left(const NotificationsFailure.insufficientPermission());
-      } else {
-        return left(const NotificationsFailure.unexpected());
-      }
-    } on Exception {
-      return left(const NotificationsFailure.unexpected());
-    }
-  }
-
-  @override
-  Future<Either<NotificationsFailure, Unit>> deleteInvitation({
-    required User from,
-    required User to,
-  }) async {
-    try {
-      await _firebaseFirestore
-          .notificationsByUserId(to.id!)
-          .invitationsCollection
-          .doc(from.id)
-          .delete();
-      return right(unit);
-    } on PlatformException catch (e) {
-      if (e.message?.contains('PERMISSION_DENIED') ?? false) {
-        return left(const NotificationsFailure.insufficientPermission());
-      } else {
-        return left(const NotificationsFailure.unexpected());
-      }
-    } on Exception {
-      return left(const NotificationsFailure.unexpected());
-    }
-  }
-
-  @override
-  Stream<List<Either<InvitationFailure, Invitation>>> getInvitations(
-    String userId,
-  ) {
-    return transformInvitations(
-      _firebaseFirestore
-          .notificationsByUserId(userId)
-          .invitationsCollection
-          .orderBy(fieldDate, descending: true)
-          .snapshots()
-          .map(
-        (snapshot) {
-          return snapshot.docs
-              .map((doc) => InvitationEntity.fromFirestore(doc))
-              .toList();
-        },
-      ).handleError(
-        (err, stacktrace) => log('_getInvitations handleError: $err'),
-      ),
-    );
-  }
-
-  Stream<List<Either<InvitationFailure, Invitation>>> transformInvitations(
-    Stream<List<InvitationEntity>> invitationEntities,
-  ) async* {
-    await for (final entities in invitationEntities) {
-      final List<Future<Either<InvitationFailure, Invitation>>> futures =
-          entities
-              .map(
-                (invitationEntity) =>
-                    invitationEntityToInvitation(invitationEntity),
-              )
-              .toList();
-
-      yield await Future.wait(futures);
-    }
-  }
-
-  Future<Either<InvitationFailure, Invitation>> invitationEntityToInvitation(
-    InvitationEntity invitationEntity,
-  ) async {
-    final Either<UserFailure, User> eitherFromUser =
-        await _userRepository.getUser(invitationEntity.from);
-    final Either<UserFailure, User> eitherToUser =
-        await _userRepository.getUser(invitationEntity.to);
-
-    return eitherFromUser.fold(
-      (userFailure) =>
-          left(InvitationFailure.unknownUser(invitationEntity.from)),
-      (userFrom) => eitherToUser.fold(
-        (userFailure) =>
-            left(InvitationFailure.unknownUser(invitationEntity.to)),
-        (userTo) => right(
-          Invitation(
-            type: InvitationType.fromValue(invitationEntity.type),
-            date: TimestampVo.fromTimestamp(invitationEntity.date),
-            from: userFrom,
-            to: userTo,
-          ),
-        ),
-      ),
-    );
-  }
-
-  Stream<List<Either<ChildrenLookupFailure, ChildrenLookup>>>
-      _getChildrenLookups(String userId) {
-    return _childrenLookupRepository.getChildrenLookupsByTrustedId(
-      trustedUserId: userId,
-    );
-  }
 
   @override
   Stream<List<Either<EventFailure, Event>>> getEvents(String userId) {
@@ -340,7 +218,7 @@ class FirebaseNotificationRepository
   }
 
   @override
-  Stream<Either<NotificationsFailure, int>> getUnRedCount(
+  Stream<Either<NotificationsFailure, int>> getUnReadCount(
     String userId,
   ) async* {
     final doc = _firebaseFirestore.notificationsByUserId(userId);

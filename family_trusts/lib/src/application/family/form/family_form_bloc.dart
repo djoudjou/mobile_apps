@@ -43,7 +43,9 @@ class FamilyFormBloc extends Bloc<FamilyFormEvent, FamilyFormState> {
   }
 
   FutureOr<void> _mapFamilyInit(
-      FamilyInit event, Emitter<FamilyFormState> emit) async {
+    FamilyInit event,
+    Emitter<FamilyFormState> emit,
+  ) async {
     final FamilyFormState newState = state.copyWith(
       id: event.family.id,
       isInitializing: false,
@@ -53,7 +55,9 @@ class FamilyFormBloc extends Bloc<FamilyFormEvent, FamilyFormState> {
   }
 
   FutureOr<void> _mapNameChanged(
-      NameChanged event, Emitter<FamilyFormState> emit) {
+    NameChanged event,
+    Emitter<FamilyFormState> emit,
+  ) {
     emit(
       state.copyWith(
         name: Name(event.name),
@@ -63,7 +67,9 @@ class FamilyFormBloc extends Bloc<FamilyFormEvent, FamilyFormState> {
   }
 
   Future<FutureOr<void>> _mapSaveFamily(
-      SaveFamily event, Emitter<FamilyFormState> emit) async {
+    SaveFamily event,
+    Emitter<FamilyFormState> emit,
+  ) async {
     try {
       emit(
         state.copyWith(
@@ -75,7 +81,8 @@ class FamilyFormBloc extends Bloc<FamilyFormEvent, FamilyFormState> {
       );
       final User user = event.connectedUser;
 
-      final Either<FamilyFailure, String> result = await _familyRepository.create(
+      final Either<FamilyFailure, String> result =
+          await _familyRepository.create(
         userId: user.id!,
         family: event.family,
       );
@@ -96,14 +103,14 @@ class FamilyFormBloc extends Bloc<FamilyFormEvent, FamilyFormState> {
             );
           },
           (success) {
-            final String familyId = success;
+            final String familyName = success;
             return state.copyWith(
               state: FamilyFormStateEnum.none,
               failureOrSuccessOption: some(
                 right(
                   quiver.isNotBlank(event.family.id)
-                      ? FamilySuccess.updateSuccess(familyId)
-                      : FamilySuccess.createSuccess(familyId),
+                      ? FamilySuccess.updateSuccess(familyName)
+                      : FamilySuccess.createSuccess(familyName),
                 ),
               ),
             );
@@ -140,7 +147,7 @@ class FamilyFormBloc extends Bloc<FamilyFormEvent, FamilyFormState> {
       final User user = event.connectedUser;
       final Either<FamilyFailure, Unit> result =
           await _familyRepository.deleteFamily(
-        familyId: user.familyId!,
+        familyId: user.family!.id!,
       );
       emit(
         result.fold(

@@ -144,7 +144,7 @@ class LocationFormBloc extends Bloc<LocationFormEvent, LocationFormState> {
 
       final Either<LocationFailure, Unit> result =
           await _familyRepository.addUpdateLocation(
-        familyId: user.familyId!,
+            familyId: user.family!.id!,
         location: event.location,
         pickedFilePath: event.pickedFilePath,
       );
@@ -232,7 +232,7 @@ class LocationFormBloc extends Bloc<LocationFormEvent, LocationFormState> {
       final User user = event.connectedUser;
       final Either<LocationFailure, Unit> result =
           await _familyRepository.deleteLocation(
-        familyId: user.familyId!,
+            familyId: user.family!.id!,
         location: event.location,
       );
       emit(

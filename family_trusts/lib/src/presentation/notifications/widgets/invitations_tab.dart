@@ -1,31 +1,18 @@
-import 'package:dartz/dartz.dart';
-import 'package:easy_localization/easy_localization.dart';
-import 'package:familytrusts/generated/locale_keys.g.dart';
-import 'package:familytrusts/injection.dart';
-import 'package:familytrusts/src/application/core/loader/simple_loader_event.dart';
-import 'package:familytrusts/src/application/core/loader/simple_loader_state.dart';
-import 'package:familytrusts/src/application/family/setup/bloc.dart';
-import 'package:familytrusts/src/application/notifications/notifications_invitations/bloc.dart';
-import 'package:familytrusts/src/domain/invitation/invitation.dart';
-import 'package:familytrusts/src/domain/invitation/invitation_failure.dart';
-import 'package:familytrusts/src/domain/invitation/value_objects.dart';
 import 'package:familytrusts/src/domain/user/user.dart';
-import 'package:familytrusts/src/helper/alert_helper.dart';
-import 'package:familytrusts/src/presentation/core/error_content.dart';
-import 'package:familytrusts/src/presentation/core/loading_content.dart';
-import 'package:familytrusts/src/presentation/core/my_text.dart';
+import 'package:familytrusts/src/presentation/core/empty_content.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 
 class InvitationsTab extends StatelessWidget {
   final User connectedUser;
   final _key = const PageStorageKey<String>('invitations');
 
-  InvitationsTab({Key? key, required this.connectedUser}) : super(key: key);
+  const InvitationsTab({Key? key, required this.connectedUser})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider<NotificationsInvitationsBloc>(
+    return const EmptyContent();
+    /*BlocProvider<NotificationsInvitationsBloc>(
       create: (context) => getIt<NotificationsInvitationsBloc>()
         ..add(SimpleLoaderEvent.startLoading(connectedUser.id)),
       child: BlocConsumer<NotificationsInvitationsBloc, SimpleLoaderState>(
@@ -172,8 +159,9 @@ class InvitationsTab extends StatelessWidget {
         },
       ),
     );
+    */
   }
-
+/*
   String formatMessage(Invitation invitation) {
     String msg = "";
     final String from = invitation.from.displayName;
@@ -189,4 +177,6 @@ class InvitationsTab extends StatelessWidget {
 
     return msg;
   }
+
+ */
 }

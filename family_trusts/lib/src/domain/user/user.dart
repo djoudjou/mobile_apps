@@ -1,5 +1,6 @@
 import 'package:dartz/dartz.dart';
 import 'package:familytrusts/src/domain/core/failures.dart';
+import 'package:familytrusts/src/domain/family/family.dart';
 import 'package:familytrusts/src/domain/http/families/family_dto.dart';
 import 'package:familytrusts/src/domain/http/persons/person_dto.dart';
 import 'package:familytrusts/src/domain/user/value_objects.dart';
@@ -15,7 +16,7 @@ class User with _$User {
   const factory User({
     String? id,
     required EmailAddress email,
-    String? familyId,
+    Family? family,
     required Name name,
     required Surname surname,
     String? photoUrl,
@@ -31,7 +32,7 @@ class User with _$User {
 
   String get displayName => "${surname.getOrCrash()} ${name.getOrCrash()}";
 
-  bool notInFamily() => familyId == null;
+  bool notInFamily() => family?.id == null;
 
   factory User.fromDTO(PersonDTO personDTO, FamilyDTO? familyDTO) {
     final PersonDTO? spouse = (familyDTO != null && familyDTO.members != null)
@@ -45,7 +46,7 @@ class User with _$User {
       surname: Surname(personDTO.firstName),
       photoUrl: personDTO.photoUrl,
       id: personDTO.personId,
-      familyId: familyDTO?.familyId,
+      family: familyDTO != null ? Family.fromDTO(familyDTO) : null,
       spouse: spouse?.personId,
     );
   }

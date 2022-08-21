@@ -9,6 +9,7 @@ import 'package:familytrusts/src/domain/children_lookup/i_children_lookup_reposi
 import 'package:familytrusts/src/domain/children_lookup/value_objects.dart';
 import 'package:familytrusts/src/domain/core/value_objects.dart';
 import 'package:familytrusts/src/domain/family/child.dart';
+import 'package:familytrusts/src/domain/family/family.dart';
 import 'package:familytrusts/src/domain/family/locations/location.dart';
 import 'package:familytrusts/src/domain/family/value_objects.dart';
 import 'package:familytrusts/src/domain/notification/i_notification_repository.dart';
@@ -57,7 +58,10 @@ void main() {
   group('ChildrenLookupDetails', () {
     final User berangere = User(
       id: "BGU",
-      familyId: "DJOUTSOP_ID",
+      family: Family(
+        id: "DJOUTSOP_ID",
+        name: Name("DJOUTSOP"),
+      ),
       email: EmailAddress("berangere.guilley@me.com"),
       name: Name("Guilley"),
       surname: Surname("Bérangère"),
@@ -65,7 +69,10 @@ void main() {
     );
     final User aurelien = User(
       id: "ADJ",
-      familyId: "DJOUTSOP_ID",
+      family: Family(
+        id: "DJOUTSOP_ID",
+        name: Name("DJOUTSOP"),
+      ),
       email: EmailAddress("a.djoutsop@gmail.com"),
       name: Name("Djoutsop"),
       surname: Surname("Aurélien"),

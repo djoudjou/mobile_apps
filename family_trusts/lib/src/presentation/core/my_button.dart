@@ -37,7 +37,7 @@ class MyButton extends StatelessWidget {
         onPressed: _onPressed,
         child: MyText(
           _message,
-          color: textColor ?? themeData.accentTextTheme.bodyText1!.color,
+          color: textColor ?? themeData.colorScheme.secondary,
         ),
       ),
     );

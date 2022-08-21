@@ -79,7 +79,7 @@ class TrustedUserFormBloc
 
         final Either<UserFailure, List<TrustedUser>> userFailreOrTrustedUsers =
             await _familyRepository
-                .getFutureTrustedUsers(event.currentUser.familyId!);
+                .getFutureTrustedUsers(event.currentUser.family!.id!);
         final List<String> trustedUsersId = userFailreOrTrustedUsers.fold(
           (l) => [],
           (r) => r.map((e) => e.user.id!).toList(),
@@ -143,7 +143,7 @@ class TrustedUserFormBloc
       final User user = event.currentUser;
       final Either<UserFailure, Unit> result =
           await _familyRepository.addTrustedUser(
-        familyId: user.familyId!,
+        familyId: user.family!.id!,
         trustedUser: TrustedUser(
           user: event.userToAdd,
           since: event.time,

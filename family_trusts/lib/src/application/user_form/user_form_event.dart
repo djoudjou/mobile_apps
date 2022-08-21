@@ -1,3 +1,4 @@
+import 'package:familytrusts/src/domain/family/family.dart';
 import 'package:familytrusts/src/domain/user/user.dart';
 import 'package:flutter/foundation.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
@@ -11,6 +12,11 @@ class UserFormEvent with _$UserFormEvent {
     required User connectedUser,
   }) = Init;
 
+  const factory UserFormEvent.leaveFamily({
+    required User connectedUser,
+    required Family family,
+  }) = LeaveFamily;
+
   const factory UserFormEvent.nameChanged(String name) = NameChanged;
 
   const factory UserFormEvent.surnameChanged(String surname) = SurnameChanged;
@@ -23,9 +29,4 @@ class UserFormEvent with _$UserFormEvent {
     required User user,
     required User connectedUser,
   }) = UserSubmitted;
-
-  const factory UserFormEvent.userUntrusted({
-    required User user,
-    required User connectedUser,
-  }) = UserUntrusted;
 }

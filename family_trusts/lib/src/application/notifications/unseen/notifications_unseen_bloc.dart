@@ -16,6 +16,6 @@ class NotificationsUnseenBloc
 
   @override
   Stream<Either<NotificationsFailure, int>> load(StartLoading event) {
-    return _notificationRepository.getUnRedCount(event.userId!);
+    return _notificationRepository.getUnReadCount(event.userId!);
   }
 }

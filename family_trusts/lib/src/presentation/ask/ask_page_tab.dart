@@ -10,11 +10,12 @@ import 'package:familytrusts/src/presentation/core/my_text.dart';
 import 'package:familytrusts/src/presentation/routes/router.gr.dart';
 import 'package:flutter/material.dart';
 
-class AskPage extends StatelessWidget {
+class AskPageTab extends StatelessWidget {
   final User user;
   final User? spouse;
 
-  const AskPage({Key? key, required this.user, this.spouse}) : super(key: key);
+  const AskPageTab({Key? key, required this.user, this.spouse})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -71,7 +72,7 @@ class AskPage extends StatelessWidget {
     AutoRouter.of(context).push(
       ChildrenLookupPageRoute(
         currentUserId: user.id!,
-        currentFamilyId: user.familyId,
+        currentFamilyId: user.family?.id,
       ),
     );
   }

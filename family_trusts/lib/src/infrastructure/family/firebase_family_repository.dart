@@ -485,4 +485,16 @@ class FirebaseFamilyRepository implements IFamilyRepository {
     // TODO: implement deleteFamily
     throw UnimplementedError();
   }
+
+  @override
+  Future<Either<FamilyFailure, List<Family>>> findAllByName({required String familyName}) {
+    // TODO: implement findAllByName
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<Either<FamilyFailure, Unit>> removeMember({required String userId, required Family family}) {
+    // TODO: implement removeMember
+    throw UnimplementedError();
+  }
 }

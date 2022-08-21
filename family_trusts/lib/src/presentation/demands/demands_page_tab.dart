@@ -14,11 +14,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
-class DemandsPage extends StatelessWidget {
+class DemandsPageTab extends StatelessWidget {
   final User user;
   final User? spouse;
 
-  const DemandsPage({Key? key, required this.user, this.spouse})
+  const DemandsPageTab({Key? key, required this.user, this.spouse})
       : super(key: key);
 
   @override
@@ -27,7 +27,7 @@ class DemandsPage extends StatelessWidget {
       providers: [
         BlocProvider(
           create: (context) => getIt<DemandsBloc>()
-            ..add(DemandsEvent.loadDemands(user.familyId)),
+            ..add(DemandsEvent.loadDemands(user.family!.id)),
         ),
       ],
       child: MultiBlocListener(

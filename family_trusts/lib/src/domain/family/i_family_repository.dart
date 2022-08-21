@@ -16,6 +16,15 @@ abstract class IFamilyRepository {
     required Family family,
   });
 
+  Future<Either<FamilyFailure, Unit>> removeMember({
+    required String userId,
+    required Family family,
+  });
+
+  Future<Either<FamilyFailure, List<Family>>> findAllByName({
+    required String familyName,
+  });
+
   Future<Either<FamilyFailure, Unit>> deleteFamily({
     required String familyId,
   });
@@ -44,8 +53,7 @@ abstract class IFamilyRepository {
   //);
 
   Future<Either<UserFailure, List<TrustedUser>>> getFutureTrustedUsers(
-    String familyId,
-  );
+      String familyId,);
 
   Future<Either<UserFailure, Unit>> addTrustedUser({
     required String familyId,

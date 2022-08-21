@@ -29,7 +29,7 @@ class ProfileChildren extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (BuildContext context) => getIt<ChildrenBloc>()
-        ..add(ChildrenEvent.loadChildren(connectedUser.familyId)),
+        ..add(ChildrenEvent.loadChildren(connectedUser.family!.id)),
       child: MultiBlocListener(
         listeners: [
           BlocListener<ChildrenBloc, ChildrenState>(

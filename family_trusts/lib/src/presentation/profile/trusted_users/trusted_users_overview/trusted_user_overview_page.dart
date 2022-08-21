@@ -29,7 +29,7 @@ class ProfileTrusted extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocProvider<TrustedUserWatcherBloc>(
       create: (BuildContext context) => getIt<TrustedUserWatcherBloc>()
-        ..add(TrustedUserWatcherEvent.loadTrustedUsers(connectedUser.familyId)),
+        ..add(TrustedUserWatcherEvent.loadTrustedUsers(connectedUser.family!.id)),
       child: Builder(
         builder: (context) =>
             BlocConsumer<TrustedUserWatcherBloc, TrustedUserWatcherState>(

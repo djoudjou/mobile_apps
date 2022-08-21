@@ -35,7 +35,7 @@ class LocationPage extends StatelessWidget with LogMixin {
       providers: [
         BlocProvider<LocationFormBloc>(
           create: (context) => getIt<LocationFormBloc>()
-            ..add(LocationFormEvent.init(currentUser.familyId, locationToEdit)),
+            ..add(LocationFormEvent.init(currentUser.family!.id, locationToEdit)),
         ),
       ],
       child: BlocConsumer<LocationFormBloc, LocationFormState>(

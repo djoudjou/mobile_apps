@@ -59,7 +59,7 @@ class ChildrenLookupEntity with _$ChildrenLookupEntity {
   factory ChildrenLookupEntity.fromDomain(ChildrenLookup domain) {
     return ChildrenLookupEntity(
       id: domain.id,
-      familyId: domain.issuer?.familyId,
+      familyId: domain.issuer?.family?.id,
       creationDate: domain.creationDate.getOrCrash(),
       childId: domain.child!.id,
       locationId: domain.location!.id,

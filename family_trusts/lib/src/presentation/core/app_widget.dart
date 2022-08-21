@@ -6,7 +6,6 @@ import 'package:familytrusts/src/application/core/simple_navigator_observer.dart
 import 'package:familytrusts/src/application/home/user/user_bloc.dart';
 import 'package:familytrusts/src/application/messages/bloc.dart';
 import 'package:familytrusts/src/domain/auth/i_auth_facade.dart';
-import 'package:familytrusts/src/domain/invitation/i_spouse_proposal_repository.dart';
 import 'package:familytrusts/src/domain/user/i_user_repository.dart';
 import 'package:familytrusts/src/helper/constants.dart';
 import 'package:familytrusts/src/helper/log_mixin.dart';
@@ -138,7 +137,6 @@ class AppWidget extends StatelessWidget with LogMixin {
           create: (context) => UserBloc(
             getIt<IAuthFacade>(),
             getIt<IUserRepository>(),
-            getIt<ISpouseProposalRepository>(),
           ),
         ),
       ],

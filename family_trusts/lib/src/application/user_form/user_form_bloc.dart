@@ -1,22 +1,20 @@
 import 'dart:async';
 
 import 'package:bloc/bloc.dart';
+import 'package:bloc_concurrency/bloc_concurrency.dart';
 import 'package:dartz/dartz.dart';
 import 'package:familytrusts/src/application/user_form/bloc.dart';
+import 'package:familytrusts/src/domain/family/family_failure.dart';
 import 'package:familytrusts/src/domain/family/i_family_repository.dart';
-import 'package:familytrusts/src/domain/family/trusted_user/trusted.dart';
 import 'package:familytrusts/src/domain/user/i_user_repository.dart';
 import 'package:familytrusts/src/domain/user/submit_user_failure.dart';
-import 'package:familytrusts/src/domain/user/untrust_user_failure.dart';
 import 'package:familytrusts/src/domain/user/user_failure.dart';
 import 'package:familytrusts/src/domain/user/value_objects.dart';
 import 'package:familytrusts/src/helper/analytics_svc.dart';
 import 'package:familytrusts/src/helper/bloc_helper.dart';
 import 'package:familytrusts/src/helper/log_mixin.dart';
-import 'package:injectable/injectable.dart';
 import 'package:quiver/strings.dart' as quiver;
 
-@injectable
 class UserFormBloc extends Bloc<UserFormEvent, UserFormState> with LogMixin {
   final IUserRepository _userRepository;
   final IFamilyRepository _familyRepository;
@@ -25,50 +23,81 @@ class UserFormBloc extends Bloc<UserFormEvent, UserFormState> with LogMixin {
 
   UserFormBloc(
     this._userRepository,
-    this._analyticsSvc,
     this._familyRepository,
+    this._analyticsSvc,
   ) : super(UserFormState.initial()) {
-    on<UserFormEvent>(
-      (event, emit) => mapEventToState(event, emit),
-      transformer: debounce(duration),
+    on<Init>(_initialize, transformer: sequential());
+    on<LeaveFamily>(_mapLeaveFamily, transformer: sequential());
+    on<NameChanged>(_mapNameChanged, transformer: debounce(duration));
+    on<SurnameChanged>(_mapSurnameChanged, transformer: debounce(duration));
+    on<PictureChanged>(_mapPictureChanged, transformer: sequential());
+    on<UserSubmitted>(_performSubmit, transformer: sequential());
+  }
+
+  FutureOr<void> _mapLeaveFamily(
+    LeaveFamily event,
+    Emitter<UserFormState> emit,
+  ) async {
+    emit(
+      state.copyWith(
+        status: UserFormStateEnum.submiting,
+        submitUserFailureOrSuccessOption: none(),
+      ),
+    );
+
+    final Either<FamilyFailure, Unit> result = await _familyRepository
+        .removeMember(userId: event.connectedUser.id!, family: event.family);
+
+    emit(
+      result.fold(
+        (l) {
+          _analyticsSvc
+              .debug("unable to leave family ${event.family.displayName} > $l");
+          return state.copyWith(
+            status: UserFormStateEnum.none,
+            submitUserFailureOrSuccessOption: none(),
+            leaveFamilyFailureOrSuccessOption: some(left(l)),
+          );
+        },
+        (r) => state.copyWith(
+          status: UserFormStateEnum.none,
+          submitUserFailureOrSuccessOption: none(),
+          leaveFamilyFailureOrSuccessOption: some(right(unit)),
+        ),
+      ),
     );
   }
 
-  void mapEventToState(
-    UserFormEvent event,
+  FutureOr<void> _mapNameChanged(
+    NameChanged event,
     Emitter<UserFormState> emit,
   ) {
-    event.map(
-      init: (e) {
-        _initialize(e, emit);
-      },
-      pictureChanged: (e) {
-        emit(
-          state.copyWith(
-            imagePath: e.pickedFilePath,
-          ),
-        );
-      },
-      nameChanged: (e) {
-        emit(
-          state.copyWith(
-            name: Name(e.name),
-          ),
-        );
-      },
-      surnameChanged: (e) {
-        emit(
-          state.copyWith(
-            surname: Surname(e.surname),
-          ),
-        );
-      },
-      userSubmitted: (e) {
-        _performSubmit(e, emit);
-      },
-      userUntrusted: (e) {
-        _performUntrust(e, emit);
-      },
+    emit(
+      state.copyWith(
+        name: Name(event.name),
+      ),
+    );
+  }
+
+  FutureOr<void> _mapSurnameChanged(
+    SurnameChanged event,
+    Emitter<UserFormState> emit,
+  ) {
+    emit(
+      state.copyWith(
+        surname: Surname(event.surname),
+      ),
+    );
+  }
+
+  FutureOr<void> _mapPictureChanged(
+    PictureChanged event,
+    Emitter<UserFormState> emit,
+  ) {
+    emit(
+      state.copyWith(
+        imagePath: event.pickedFilePath,
+      ),
     );
   }
 
@@ -85,22 +114,6 @@ class UserFormBloc extends Bloc<UserFormEvent, UserFormState> with LogMixin {
     final bool submitUserEnable =
         quiver.equalsIgnoreCase(e.userToEdit.id, e.connectedUser.id);
 
-    bool? unTrustUserEnable = false;
-
-    if (e.connectedUser.familyId != null &&
-        e.userToEdit.id != e.connectedUser.id &&
-        e.userToEdit.id != e.connectedUser.spouse) {
-      final Either<UserFailure, List<TrustedUser>> getFutureTrustedUsersResult =
-          await _familyRepository
-              .getFutureTrustedUsers(e.connectedUser.familyId!);
-      final List<TrustedUser>? trustedUsers =
-          getFutureTrustedUsersResult.toOption().toNullable();
-      if (trustedUsers != null) {
-        unTrustUserEnable =
-            trustedUsers.map((e) => e.user.id!).contains(e.userToEdit.id);
-      }
-    }
-
     final bool disconnectUserEnable = quiver.isNotBlank(e.userToEdit.spouse) &&
         !quiver.equalsIgnoreCase(e.userToEdit.id, e.connectedUser.id) &&
         quiver.equalsIgnoreCase(e.userToEdit.id, e.connectedUser.spouse);
@@ -113,7 +126,6 @@ class UserFormBloc extends Bloc<UserFormEvent, UserFormState> with LogMixin {
         name: e.userToEdit.name,
         imagePath: e.userToEdit.photoUrl,
         submitUserEnable: submitUserEnable,
-        unTrustUserEnable: unTrustUserEnable,
         disconnectUserEnable: disconnectUserEnable,
       ),
     );
@@ -149,43 +161,6 @@ class UserFormBloc extends Bloc<UserFormEvent, UserFormState> with LogMixin {
           (r) => state.copyWith(
             status: UserFormStateEnum.none,
             submitUserFailureOrSuccessOption: some(right(unit)),
-          ),
-        ),
-      );
-    }
-  }
-
-  FutureOr<void> _performUntrust(
-    UserUntrusted e,
-    Emitter<UserFormState> emit,
-  ) async {
-    if (quiver.isNotBlank(e.connectedUser.familyId)) {
-      emit(
-        state.copyWith(
-          status: UserFormStateEnum.unTrusting,
-          unTrustUserFailureOrSuccessOption: none(),
-        ),
-      );
-
-      final Either<UserFailure, Unit> unTrustUserResult =
-          await _familyRepository.deleteTrustedUser(
-        familyId: e.connectedUser.familyId!,
-        trustedUserId: e.user.id!,
-      );
-
-      emit(
-        unTrustUserResult.fold(
-          (l) {
-            _analyticsSvc.debug("unable to untrust user ${e.user} > $l");
-            return state.copyWith(
-              status: UserFormStateEnum.none,
-              unTrustUserFailureOrSuccessOption:
-                  some(left(const UnTrustUserFailure.unableToUnTrust())),
-            );
-          },
-          (r) => state.copyWith(
-            status: UserFormStateEnum.none,
-            unTrustUserFailureOrSuccessOption: some(right(unit)),
           ),
         ),
       );

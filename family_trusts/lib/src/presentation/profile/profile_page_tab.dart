@@ -1,18 +1,16 @@
-import 'package:familytrusts/src/domain/invitation/invitation.dart';
+
 import 'package:familytrusts/src/domain/user/user.dart';
 import 'package:familytrusts/src/presentation/profile/widgets/profile_content.dart';
 import 'package:flutter/material.dart';
 
-class ProfilePage extends StatelessWidget {
+class ProfilePageTab extends StatelessWidget {
   final User connectedUser;
   final User? spouse;
-  final Invitation? spouseProposal;
 
-  const ProfilePage({
+  const ProfilePageTab({
     Key? key,
     required this.connectedUser,
     this.spouse,
-    this.spouseProposal,
   }) : super(key: key);
 
   @override
@@ -21,7 +19,6 @@ class ProfilePage extends StatelessWidget {
       key: const PageStorageKey<String>('ProfileContent'),
       user: connectedUser,
       spouse: spouse,
-      spouseProposal: spouseProposal,
     );
   }
 }

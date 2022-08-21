@@ -1,211 +1,96 @@
-import 'package:auto_route/auto_route.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:familytrusts/generated/locale_keys.g.dart';
 import 'package:familytrusts/injection.dart';
-import 'package:familytrusts/src/application/auth/bloc.dart';
-import 'package:familytrusts/src/application/family/setup/bloc.dart';
-import 'package:familytrusts/src/application/home/user/user_bloc.dart';
-import 'package:familytrusts/src/application/home/user/user_state.dart';
-import 'package:familytrusts/src/domain/family/i_family_repository.dart';
-import 'package:familytrusts/src/domain/home/app_tab.dart';
-import 'package:familytrusts/src/domain/invitation/i_spouse_proposal_repository.dart';
-import 'package:familytrusts/src/domain/invitation/invitation.dart';
-import 'package:familytrusts/src/domain/notification/i_notification_repository.dart';
-import 'package:familytrusts/src/domain/user/i_user_repository.dart';
+import 'package:familytrusts/src/application/join_proposal/bloc.dart';
+import 'package:familytrusts/src/domain/join_proposal/i_join_proposal_repository.dart';
 import 'package:familytrusts/src/domain/user/user.dart';
-import 'package:familytrusts/src/helper/analytics_svc.dart';
-import 'package:familytrusts/src/helper/log_mixin.dart';
 import 'package:familytrusts/src/helper/snackbar_helper.dart';
 import 'package:familytrusts/src/presentation/core/my_apps_bars.dart';
-import 'package:familytrusts/src/presentation/profile/widgets/profile_missing_family_content.dart';
-import 'package:familytrusts/src/presentation/routes/router.gr.dart';
+import 'package:familytrusts/src/presentation/core/page/my_base_page.dart';
+import 'package:familytrusts/src/presentation/family/widgets/missing_family_content.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-class HomePageWithoutFamily extends StatelessWidget with LogMixin {
+class HomePageWithoutFamily extends MyBasePage {
   final User connectedUser;
-  final Invitation? spouseProposal;
 
   final _scaffoldKey = GlobalKey<ScaffoldState>();
 
   HomePageWithoutFamily({
     Key? key,
     required this.connectedUser,
-    this.spouseProposal,
   }) : super(key: key);
 
   @override
-  Widget build(BuildContext context) {
+  Widget myBuild(BuildContext context) {
     return MultiBlocProvider(
       providers: [
         BlocProvider(
-          create: (context) => SetupFamilyBloc(
-            getIt<IUserRepository>(),
-            getIt<IFamilyRepository>(),
-            getIt<ISpouseProposalRepository>(),
-            getIt<INotificationRepository>(),
-            getIt<AnalyticsSvc>(),
-          ),
+          create: (context) => JoinProposalBloc(
+            getIt<IJoinProposalRepository>(),
+          )..add(JoinProposalEvent.loadProposals(connectedUser: connectedUser)),
         ),
       ],
       child: MultiBlocListener(
         listeners: [
-          BlocListener<UserBloc, UserState>(
-            listener: (userBlocContext, state) {
-              if (state is UserLoadFailure) {
-                //showErrorMessage(LocaleKeys.global_serverError.tr(),context,);
-                AutoRouter.of(userBlocContext).replace(const SignInPageRoute());
-              } else if (state is UserLoadSuccess) {
-                final User user = state.user;
+          BlocListener<JoinProposalBloc, JoinProposalState>(
+            listener: (joinProposalBlocContext, state) {
+              if (state is JoinProposalsLoadFailure) {
+                showErrorMessage(
+                  LocaleKeys.join_proposal_loadingFailed.tr(),
+                  joinProposalBlocContext,
+                );
+              }
+              if (state is JoinProposalSendInProgress) {
+                showProgressMessage(
+                  LocaleKeys.join_proposal_send_inProgress.tr(),
+                  joinProposalBlocContext,
+                );
+              }
+              if (state is JoinProposalSendSuccess) {
+                showSuccessMessage(
+                  LocaleKeys.join_proposal_send_success.tr(),
+                  joinProposalBlocContext,
+                );
+              }
+              if (state is JoinProposalSendFailure) {
+                showErrorMessage(
+                  LocaleKeys.join_proposal_send_failed.tr(),
+                  joinProposalBlocContext,
+                );
+              }
 
-                if (user.notInFamily()) {
-                  // navigation ver
-                  AutoRouter.of(userBlocContext).replace(
-                    HomePageWithoutFamilyRoute(
-                      connectedUser: user,
-                    ),
-                  );
-                } else {
-                  AutoRouter.of(userBlocContext).replace(
-                    HomePageRoute(
-                      currentTab: AppTab.ask,
-                      connectedUserId: user.id!,
-                    ),
-                  );
-                }
+
+              if (state is JoinProposalCancelInProgress) {
+                showProgressMessage(
+                  LocaleKeys.join_proposal_cancel_inProgress.tr(),
+                  joinProposalBlocContext,
+                );
               }
-            },
-          ),
-          BlocListener<AuthenticationBloc, AuthenticationState>(
-            listener: (authenticationBlocContext, state) {
-              if (state is Unauthenticated) {
-                log("=== logouted ===");
-                AutoRouter.of(authenticationBlocContext)
-                    .replace(const SignInPageRoute());
+              if (state is JoinProposalCancelSuccess) {
+                showSuccessMessage(
+                  LocaleKeys.join_proposal_cancel_success.tr(),
+                  joinProposalBlocContext,
+                );
               }
-            },
-          ),
-          BlocListener<SetupFamilyBloc, SetupFamilyState>(
-            listener: (setupFamilyBlocContext, state) {
-              state.map(
-                acceptInvitationFailed: (_) => showErrorMessage(
-                  LocaleKeys.profile_acceptInvitationFailed.tr(),
-                  setupFamilyBlocContext,
-                ),
-                acceptInvitationInProgress: (_) => showSuccessMessage(
-                  LocaleKeys.profile_acceptInvitationInProgress.tr(),
-                  setupFamilyBlocContext,
-                ),
-                acceptInvitationSuccess: (_) => showSuccessMessage(
-                  LocaleKeys.profile_acceptInvitationSuccess.tr(),
-                  setupFamilyBlocContext,
-                ),
-                declineInvitationFailed: (_) => showErrorMessage(
-                  LocaleKeys.profile_declineInvitationFailed.tr(),
-                  setupFamilyBlocContext,
-                ),
-                declineInvitationInProgress: (_) => showProgressMessage(
-                  LocaleKeys.profile_declineInvitationInProgress.tr(),
-                  setupFamilyBlocContext,
-                ),
-                declineInvitationSuccess: (_) => showSuccessMessage(
-                  LocaleKeys.profile_declineInvitationSuccess.tr(),
-                  setupFamilyBlocContext,
-                ),
-                setupFamilyInitial: (s) => null,
-                setupFamilyNewFamilyInProgress: (s) {
-                  showProgressMessage(
-                    LocaleKeys.profile_setupFamilyNewFamilyInProgress.tr(),
-                    setupFamilyBlocContext,
-                  );
-                },
-                setupFamilyNewFamilySuccess: (s) {
-                  showSuccessMessage(
-                    LocaleKeys.profile_setupFamilyNewFamilySuccess.tr(),
-                    setupFamilyBlocContext,
-                  );
-                },
-                setupFamilyNewFamilyFailed: (s) {
-                  showErrorMessage(
-                    LocaleKeys.profile_setupFamilyNewFamilyFailed.tr(),
-                    setupFamilyBlocContext,
-                  );
-                },
-                setupFamilyAskForJoinFamilyInProgress: (s) {
-                  showProgressMessage(
-                    LocaleKeys.profile_setupFamilyAskForJoinFamilyInProgress
-                        .tr(),
-                    setupFamilyBlocContext,
-                  );
-                },
-                setupFamilyAskForJoinFamilySuccess: (s) {
-                  showSuccessMessage(
-                    LocaleKeys.profile_setupFamilyAskForJoinFamilySuccess.tr(),
-                    setupFamilyBlocContext,
-                  );
-                },
-                setupFamilyAskForJoinFamilyFailed: (s) {
-                  showErrorMessage(
-                    LocaleKeys.profile_setupFamilyAskForJoinFamilyFailed.tr(),
-                    setupFamilyBlocContext,
-                  );
-                },
-                setupFamilyJoinFamilyCancelInProgress: (s) {
-                  showProgressMessage(
-                    LocaleKeys.profile_setupFamilyJoinFamilyCancelInProgress
-                        .tr(),
-                    setupFamilyBlocContext,
-                  );
-                },
-                setupFamilyJoinFamilyCancelSuccess: (s) {
-                  showSuccessMessage(
-                    LocaleKeys.profile_setupFamilyJoinFamilyCancelSuccess.tr(),
-                    setupFamilyBlocContext,
-                  );
-                },
-                setupFamilyJoinFamilyCancelFailed: (s) {
-                  showErrorMessage(
-                    LocaleKeys.profile_setupFamilyJoinFamilyCancelFailed.tr(),
-                    setupFamilyBlocContext,
-                  );
-                },
-                endedSpouseRelationFailed: (s) {
-                  showErrorMessage(
-                    LocaleKeys.profile_endedSpouseRelationFailed.tr(),
-                    setupFamilyBlocContext,
-                  );
-                },
-                endedSpouseRelationInProgress: (s) {
-                  showProgressMessage(
-                    LocaleKeys.profile_endedSpouseRelationInProgress.tr(),
-                    setupFamilyBlocContext,
-                  );
-                },
-                endedSpouseRelationSuccess: (s) {
-                  showSuccessMessage(
-                    LocaleKeys.profile_endedSpouseRelationSuccess.tr(),
-                    setupFamilyBlocContext,
-                  );
-                },
-              );
+              if (state is JoinProposalCancelFailure) {
+                showErrorMessage(
+                  LocaleKeys.join_proposal_cancel_failed.tr(),
+                  joinProposalBlocContext,
+                );
+              }
             },
           ),
         ],
-        child: BlocBuilder<SetupFamilyBloc, SetupFamilyState>(
-          builder: (profileContext, state) {
-            return Scaffold(
-              key: _scaffoldKey,
-              //drawer: MyDrawer(user: widget.user, spouse: widget.spouse),
-              appBar: MyAppBar(
-                context: profileContext,
-                pageTitle: LocaleKeys.family_title.tr(),
-              ),
-              body: ProfileMissingFamilyContent(
-                user: connectedUser,
-                spouseProposal: spouseProposal,
-              ),
-            );
-          },
+        child: Scaffold(
+          key: _scaffoldKey,
+          appBar: MyAppBar(
+            context: context,
+            pageTitle: LocaleKeys.family_title.tr(),
+          ),
+          body: MissingFamilyContent(
+            user: connectedUser,
+          ),
         ),
       ),
     );

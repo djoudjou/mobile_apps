@@ -170,6 +170,43 @@
     "userLookupText": "prénom ou nom",
     "proceed": "S'inscrire"
   },
+  "search_family": {
+    "title": "Recherche d'une famille",
+    "familyLookupText": "nom",
+    "ask": "envoyer invitation"
+  },
+  "join_proposal" : {
+    "loadingFailed": "Erreur lors de la récupération des propositions \n merci de contacter le support",
+
+    "summary" : "Invitation envoyée à la famille {} le {}",
+
+    "send": {
+      "button" : "Envoyer une invitation",
+
+      "confirm": "Envoyer l'invitation à la famille {}?",
+      "failed": "Erreur lors de l'envoie de l'invitation \n merci d'essayer ultérieurement",
+
+      "inProgress": "Envoie de l'invitation en cours ...",
+      "success": "invitation envoyée"
+    },
+
+    "cancel": {
+      "button" : "Annuler la demande ?",
+      "confirm" : "Annuler l'invitation pour la famille {} ?",
+
+      "failed": "Erreur lors de la déclinaison de l'invitation",
+      "inProgress": "Déclinaison de l'invitation en cours...",
+      "success": "Invitation déclinée avec succès"
+    },
+
+
+    "acceptFailed": "Erreur lors de l'acceptation de l'invitation",
+    "acceptInProgress": "Acceptation de l'invitation en cours ...",
+    "acceptSuccess": "invitation acceptée",
+    "declineFailed": "Erreur lors de la déclinaison de l'invitation",
+    "declineInProgress": "Invitation déclinée en cours...",
+    "declineSuccess": "Invitation déclinée avec succès"
+  },
   "user": {
     "title": "fiche utilisateur",
     "update": "Mise à jour de la fiche",
@@ -359,28 +396,11 @@
     "addTrustedUserFailure": "Erreur lors de l'ajout d'une personne de confiance",
     "deleteTrustedUserInProgress": "Suppression de la personne de confiance en cours",
     "deleteTrustedUserSuccess": "Suppression de la personne de confiance réussi",
-    "deleteTrustedUserFailure": "Erreur lors de la suppression de la personne de confiance",
-    "acceptInvitationFailed": "Erreur lors de l'acceptation de l'invitation",
-    "acceptInvitationInProgress": "Acceptation de l'invitation en cours ...",
-    "acceptInvitationSuccess": "invitation acceptée",
-    "declineInvitationFailed": "Erreur lors de la déclinaison de l'invitation",
-    "declineInvitationInProgress": "Invitation déclinée en cours...",
-    "declineInvitationSuccess": "Invitation déclinée avec succès",
-    "setupFamilyNewFamilyInProgress": "Création de la famille en cours ...",
-    "setupFamilyNewFamilySuccess": "Création de la famille réussie",
-    "setupFamilyNewFamilyFailed": "Erreur lors de la création de la famille",
-    "setupFamilyAskForJoinFamilyInProgress": "Envoie de l'invitation en cours ...",
-    "setupFamilyAskForJoinFamilySuccess": "Envoie de l'invitation réussie",
-    "setupFamilyAskForJoinFamilyFailed": "Erreur lors de l'envoie de l'invitation",
-    "setupFamilyJoinFamilyCancelInProgress": "Annulation de l'invitation en cours ...",
-    "setupFamilyJoinFamilyCancelSuccess": "Annulation réussie",
-    "setupFamilyJoinFamilyCancelFailed": "Erreur lors de l'annulation de l'invitation",
-    "endedSpouseRelationFailed": "Erreur lors de fin de la relation",
-    "endedSpouseRelationInProgress": "Fin de la relation en cours",
-    "endedSpouseRelationSuccess": "Fin de la relation réussie"
+    "deleteTrustedUserFailure": "Erreur lors de la suppression de la personne de confiance"
   },
   "family": {
     "title": "Famille",
+    "create_confirm": "Voulez créer une nouvelle famille ?",
     "form": {
       "name": {
         "label": "Nom",

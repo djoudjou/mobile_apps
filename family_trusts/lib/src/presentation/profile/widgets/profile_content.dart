@@ -5,7 +5,6 @@ import 'package:familytrusts/src/application/profil/tab/bloc.dart';
 import 'package:familytrusts/src/domain/family/child.dart';
 import 'package:familytrusts/src/domain/family/locations/location.dart';
 import 'package:familytrusts/src/domain/family/value_objects.dart';
-import 'package:familytrusts/src/domain/invitation/invitation.dart';
 import 'package:familytrusts/src/domain/profil/profil_tab.dart';
 import 'package:familytrusts/src/domain/user/user.dart';
 import 'package:familytrusts/src/domain/user/value_objects.dart';
@@ -23,13 +22,11 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 class ProfileContent extends StatefulWidget with LogMixin {
   final User user;
   final User? spouse;
-  final Invitation? spouseProposal;
 
   ProfileContent({
     Key? key,
     required this.user,
     this.spouse,
-    this.spouseProposal,
   }) : super(key: key);
 
   @override

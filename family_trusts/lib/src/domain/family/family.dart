@@ -1,3 +1,4 @@
+import 'package:familytrusts/src/domain/http/families/family_dto.dart';
 import 'package:familytrusts/src/domain/user/value_objects.dart';
 import 'package:flutter/foundation.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
@@ -11,4 +12,13 @@ class Family with _$Family {
     String? id,
     required Name name,
   }) = _Family;
+
+  String get displayName => name.getOrCrash();
+
+  factory Family.fromDTO(FamilyDTO familyDTO) {
+    return Family(
+      name: Name(familyDTO.name),
+      id: familyDTO.familyId,
+    );
+  }
 }

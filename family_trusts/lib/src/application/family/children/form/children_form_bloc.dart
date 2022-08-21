@@ -52,7 +52,7 @@ class ChildrenFormBloc extends Bloc<ChildrenFormEvent, ChildrenFormState> {
       emit(const ChildrenFormState.addChildInProgress());
       final User user = event.user;
       await _familyRepository.addUpdateChild(
-        familyId: user.familyId!,
+        familyId: user.family!.id!,
         child: event.child,
         pickedFilePath: event.pickedFilePath,
       );
@@ -96,7 +96,7 @@ class ChildrenFormBloc extends Bloc<ChildrenFormEvent, ChildrenFormState> {
       emit(const ChildrenFormState.updateChildInProgress());
       final User user = event.user;
       await _familyRepository.addUpdateChild(
-        familyId: user.familyId!,
+        familyId: user.family!.id!,
         child: event.child,
         pickedFilePath: event.pickedFilePath,
       );
@@ -140,7 +140,7 @@ class ChildrenFormBloc extends Bloc<ChildrenFormEvent, ChildrenFormState> {
       emit(const ChildrenFormState.deleteChildInProgress());
       final User user = event.user;
       await _familyRepository.deleteChild(
-        familyId: user.familyId!,
+        familyId: user.family!.id!,
         child: event.child,
       );
 

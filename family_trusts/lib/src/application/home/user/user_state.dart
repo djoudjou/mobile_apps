@@ -1,4 +1,3 @@
-import 'package:familytrusts/src/domain/invitation/invitation.dart';
 import 'package:familytrusts/src/domain/user/user.dart';
 import 'package:flutter/foundation.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
@@ -14,7 +13,6 @@ class UserState with _$UserState {
 
   const factory UserState.userLoadSuccess({
     required User user,
-    Invitation? spouseProposal,
     User? spouse,
   }) = UserLoadSuccess;
 

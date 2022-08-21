@@ -1,7 +1,10 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:familytrusts/generated/locale_keys.g.dart';
+import 'package:familytrusts/injection.dart';
 import 'package:familytrusts/src/application/auth/sign_in_form/bloc.dart';
 import 'package:familytrusts/src/application/home/user/bloc.dart';
+import 'package:familytrusts/src/domain/auth/i_auth_facade.dart';
+import 'package:familytrusts/src/helper/analytics_svc.dart';
 import 'package:familytrusts/src/helper/constants.dart';
 import 'package:familytrusts/src/helper/log_mixin.dart';
 import 'package:familytrusts/src/helper/snackbar_helper.dart';
@@ -15,19 +18,15 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 class SignInForm extends StatelessWidget with LogMixin {
   @override
   Widget build(BuildContext context) {
-    return BlocListener<UserBloc, UserState>(
-      listener: (userBlocContext, state) {
-        if (state is UserLoadFailure) {
-          showErrorMessage(
-            LocaleKeys.global_serverError.tr(),
-            userBlocContext,
-            onDismissed: () {
-              // AutoRouter.of(context).popUntilRoot();
-              // AutoRouter.of(context).replace(const SignInPageRoute());
-            },
-          );
-        }
-      },
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider(
+          create: (context) => SignInFormBloc(
+            getIt<IAuthFacade>(),
+            getIt<AnalyticsSvc>(),
+          ),
+        ),
+      ],
       child: BlocConsumer<SignInFormBloc, SignInFormState>(
         listener: (blocContext, state) {
           log("signin form > debug signin #$state#");

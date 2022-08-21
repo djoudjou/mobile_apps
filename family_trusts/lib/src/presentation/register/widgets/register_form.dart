@@ -75,9 +75,7 @@ class RegisterForm extends StatelessWidget with LogMixin {
                   registerBlocContext
                       .read<AuthenticationBloc>()
                       .add(const AuthenticationEvent.authCheckRequested());
-                  registerBlocContext
-                      .read<UserBloc>()
-                      .add(UserEvent.userStarted(userId!));
+
                 },
               ),
             );

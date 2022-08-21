@@ -23,7 +23,7 @@ class DemandsTab extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocProvider<DemandsBloc>(
       create: (context) => getIt<DemandsBloc>()
-        ..add(DemandsEvent.loadDemands(connectedUser.familyId)),
+        ..add(DemandsEvent.loadDemands(connectedUser.family!.id)),
       child: BlocConsumer<DemandsBloc, DemandsState>(
         listener: (context, state) {},
         builder: (context, state) {

@@ -14,14 +14,11 @@ import 'package:familytrusts/src/domain/children_lookup/children_lookup_failure.
     as _i11;
 import 'package:familytrusts/src/domain/children_lookup/children_lookup_history.dart'
     as _i13;
-import 'package:familytrusts/src/domain/invitation/invitation.dart' as _i19;
-import 'package:familytrusts/src/domain/invitation/invitation_failure.dart'
-    as _i18;
 import 'package:familytrusts/src/domain/notification/event.dart' as _i17;
 import 'package:familytrusts/src/domain/notification/event_failure.dart'
     as _i16;
 import 'package:familytrusts/src/domain/notification/notifications_failure.dart'
-    as _i20;
+    as _i18;
 import 'package:familytrusts/src/domain/planning/planning.dart' as _i15;
 import 'package:familytrusts/src/domain/planning/planning_failure.dart' as _i14;
 import 'package:familytrusts/src/domain/user/user.dart' as _i10;
@@ -245,71 +242,45 @@ class MockMockNotificationRepository extends _i1.Mock
                   List<_i2.Either<_i16.EventFailure, _i17.Event>>>.empty())
           as _i4.Stream<List<_i2.Either<_i16.EventFailure, _i17.Event>>>);
   @override
-  _i4.Stream<List<_i2.Either<_i18.InvitationFailure, _i19.Invitation>>>
-      getInvitations(String? userId) => (super.noSuchMethod(
-          Invocation.method(#getInvitations, [userId]),
-          returnValue: Stream<
-              List<
-                  _i2.Either<_i18.InvitationFailure,
-                      _i19.Invitation>>>.empty()) as _i4
-          .Stream<List<_i2.Either<_i18.InvitationFailure, _i19.Invitation>>>);
-  @override
-  _i4.Stream<_i2.Either<_i20.NotificationsFailure, int>> getUnRedCount(
+  _i4.Stream<_i2.Either<_i18.NotificationsFailure, int>> getUnReadCount(
           String? userId) =>
-      (super.noSuchMethod(Invocation.method(#getUnRedCount, [userId]),
+      (super.noSuchMethod(Invocation.method(#getUnReadCount, [userId]),
               returnValue:
-                  Stream<_i2.Either<_i20.NotificationsFailure, int>>.empty())
-          as _i4.Stream<_i2.Either<_i20.NotificationsFailure, int>>);
+                  Stream<_i2.Either<_i18.NotificationsFailure, int>>.empty())
+          as _i4.Stream<_i2.Either<_i18.NotificationsFailure, int>>);
   @override
-  _i4.Future<_i2.Either<_i20.NotificationsFailure, _i2.Unit>> createEvent(
+  _i4.Future<_i2.Either<_i18.NotificationsFailure, _i2.Unit>> createEvent(
           String? userId, _i17.Event? event) =>
       (super.noSuchMethod(Invocation.method(#createEvent, [userId, event]),
               returnValue:
-                  Future<_i2.Either<_i20.NotificationsFailure, _i2.Unit>>.value(
-                      _FakeEither_1<_i20.NotificationsFailure, _i2.Unit>()))
-          as _i4.Future<_i2.Either<_i20.NotificationsFailure, _i2.Unit>>);
+                  Future<_i2.Either<_i18.NotificationsFailure, _i2.Unit>>.value(
+                      _FakeEither_1<_i18.NotificationsFailure, _i2.Unit>()))
+          as _i4.Future<_i2.Either<_i18.NotificationsFailure, _i2.Unit>>);
   @override
-  _i4.Future<_i2.Either<_i20.NotificationsFailure, _i2.Unit>> updateEvent(
+  _i4.Future<_i2.Either<_i18.NotificationsFailure, _i2.Unit>> updateEvent(
           String? userId, _i17.Event? event) =>
       (super.noSuchMethod(Invocation.method(#updateEvent, [userId, event]),
               returnValue:
-                  Future<_i2.Either<_i20.NotificationsFailure, _i2.Unit>>.value(
-                      _FakeEither_1<_i20.NotificationsFailure, _i2.Unit>()))
-          as _i4.Future<_i2.Either<_i20.NotificationsFailure, _i2.Unit>>);
+                  Future<_i2.Either<_i18.NotificationsFailure, _i2.Unit>>.value(
+                      _FakeEither_1<_i18.NotificationsFailure, _i2.Unit>()))
+          as _i4.Future<_i2.Either<_i18.NotificationsFailure, _i2.Unit>>);
   @override
-  _i4.Future<_i2.Either<_i20.NotificationsFailure, _i2.Unit>> deleteEvent(
+  _i4.Future<_i2.Either<_i18.NotificationsFailure, _i2.Unit>> deleteEvent(
           String? userId, _i17.Event? event) =>
       (super.noSuchMethod(Invocation.method(#deleteEvent, [userId, event]),
               returnValue:
-                  Future<_i2.Either<_i20.NotificationsFailure, _i2.Unit>>.value(
-                      _FakeEither_1<_i20.NotificationsFailure, _i2.Unit>()))
-          as _i4.Future<_i2.Either<_i20.NotificationsFailure, _i2.Unit>>);
+                  Future<_i2.Either<_i18.NotificationsFailure, _i2.Unit>>.value(
+                      _FakeEither_1<_i18.NotificationsFailure, _i2.Unit>()))
+          as _i4.Future<_i2.Either<_i18.NotificationsFailure, _i2.Unit>>);
   @override
-  _i4.Future<_i2.Either<_i20.NotificationsFailure, _i2.Unit>> createInvitation(
-          _i19.Invitation? invitation) =>
-      (super.noSuchMethod(Invocation.method(#createInvitation, [invitation]),
-              returnValue:
-                  Future<_i2.Either<_i20.NotificationsFailure, _i2.Unit>>.value(
-                      _FakeEither_1<_i20.NotificationsFailure, _i2.Unit>()))
-          as _i4.Future<_i2.Either<_i20.NotificationsFailure, _i2.Unit>>);
-  @override
-  _i4.Future<_i2.Either<_i20.NotificationsFailure, _i2.Unit>> deleteInvitation(
-          {_i10.User? from, _i10.User? to}) =>
-      (super.noSuchMethod(
-              Invocation.method(#deleteInvitation, [], {#from: from, #to: to}),
-              returnValue:
-                  Future<_i2.Either<_i20.NotificationsFailure, _i2.Unit>>.value(
-                      _FakeEither_1<_i20.NotificationsFailure, _i2.Unit>()))
-          as _i4.Future<_i2.Either<_i20.NotificationsFailure, _i2.Unit>>);
-  @override
-  _i4.Future<_i2.Either<_i20.NotificationsFailure, _i2.Unit>>
+  _i4.Future<_i2.Either<_i18.NotificationsFailure, _i2.Unit>>
       createEventForChildrenLookup(
               _i12.ChildrenLookup? childrenLookup, _i17.Event? event) =>
           (super.noSuchMethod(
               Invocation.method(
                   #createEventForChildrenLookup, [childrenLookup, event]),
               returnValue:
-                  Future<_i2.Either<_i20.NotificationsFailure, _i2.Unit>>.value(
-                      _FakeEither_1<_i20.NotificationsFailure, _i2.Unit>())) as _i4
-              .Future<_i2.Either<_i20.NotificationsFailure, _i2.Unit>>);
+                  Future<_i2.Either<_i18.NotificationsFailure, _i2.Unit>>.value(
+                      _FakeEither_1<_i18.NotificationsFailure, _i2.Unit>())) as _i4
+              .Future<_i2.Either<_i18.NotificationsFailure, _i2.Unit>>);
 }
