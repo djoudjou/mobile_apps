@@ -1,6 +1,5 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:familytrusts/generated/locale_keys.g.dart';
-import 'package:familytrusts/injection.dart';
 import 'package:familytrusts/src/application/notifications/tab/bloc.dart';
 import 'package:familytrusts/src/domain/notification/notification_tab.dart';
 import 'package:familytrusts/src/domain/user/user.dart';
@@ -13,18 +12,47 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
-class NotificationsPage extends StatefulWidget {
+class NotificationsPageTab extends StatelessWidget {
   final User user;
   final User? spouse;
 
-  const NotificationsPage({Key? key, required this.user, this.spouse})
-      : super(key: key);
+  const NotificationsPageTab({
+    Key? key,
+    required this.user,
+    this.spouse,
+  }) : super(key: key);
 
   @override
-  _NotificationsPageState createState() => _NotificationsPageState();
+  Widget build(BuildContext context) {
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider(
+          create: (context) => NotificationTabBloc(),
+        ),
+      ],
+      child: NotificationsPageTabStateFull(
+        user: user,
+        spouse: spouse,
+      ),
+    );
+  }
 }
 
-class _NotificationsPageState extends State<NotificationsPage>
+class NotificationsPageTabStateFull extends StatefulWidget {
+  final User user;
+  final User? spouse;
+
+  const NotificationsPageTabStateFull({
+    Key? key,
+    required this.user,
+    this.spouse,
+  }) : super(key: key);
+
+  @override
+  _NotificationsPageTabState createState() => _NotificationsPageTabState();
+}
+
+class _NotificationsPageTabState extends State<NotificationsPageTabStateFull>
     with SingleTickerProviderStateMixin {
   TabController? _tabController;
 
@@ -43,7 +71,9 @@ class _NotificationsPageState extends State<NotificationsPage>
       vsync: this,
     )..addListener(
         () {
-          final notificationTabBloc = getIt<NotificationTabBloc>();
+          final notificationTabBloc = BlocProvider.of<NotificationTabBloc>(
+            context,
+          );
           if (_tabController?.index == 0) {
             notificationTabBloc.add(const NotificationTabEvent.gotoDemands());
           } else if (_tabController?.index == 1) {
@@ -109,8 +139,9 @@ class _NotificationsPageState extends State<NotificationsPage>
                       notificationTabBloc
                           .add(const NotificationTabEvent.gotoInvitations());
                     } else if (index == 2) {
-                      notificationTabBloc
-                          .add(const NotificationTabEvent.gotoNotifications());
+                      notificationTabBloc.add(
+                        const NotificationTabEvent.gotoNotifications(),
+                      );
                     }
                   },
                   isScrollable: true,

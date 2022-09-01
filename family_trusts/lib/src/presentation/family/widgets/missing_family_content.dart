@@ -10,9 +10,9 @@ import 'package:familytrusts/src/domain/user/value_objects.dart';
 import 'package:familytrusts/src/helper/alert_helper.dart';
 import 'package:familytrusts/src/helper/log_mixin.dart';
 import 'package:familytrusts/src/presentation/core/empty_content.dart';
+import 'package:familytrusts/src/presentation/core/join_family_proposal_widget.dart';
 import 'package:familytrusts/src/presentation/core/loading_content.dart';
 import 'package:familytrusts/src/presentation/core/my_text.dart';
-import 'package:familytrusts/src/presentation/family/widgets/join_family_proposal_widget.dart';
 import 'package:familytrusts/src/presentation/routes/router.gr.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -27,7 +27,7 @@ class MissingFamilyContent extends StatelessWidget with LogMixin {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<JoinProposalBloc, JoinProposalState>(
+    return BlocBuilder<IssuerJoinProposalBloc, IssuerJoinProposalState>(
       builder: (joinProposalBlocContext, state) {
         return Container(
           width: double.infinity,
@@ -135,8 +135,8 @@ class MissingFamilyContent extends StatelessWidget with LogMixin {
                 LocaleKeys.join_proposal_send_confirm
                     .tr(args: [selectedFamily.displayName]),
                 onConfirmCallback: () {
-                  context.read<JoinProposalBloc>().add(
-                        JoinProposalEvent.send(
+                  context.read<IssuerJoinProposalBloc>().add(
+                        IssuerJoinProposalEvent.send(
                           connectedUser: user,
                           family: selectedFamily,
                         ),
@@ -161,30 +161,9 @@ class MissingFamilyContent extends StatelessWidget with LogMixin {
     return JoinFamilyProposalWidget(
       cardWidth: MediaQuery.of(context).size.width * .7,
       joinProposal: joinProposal,
-      displayCancelButton: true,
+      asIssuer: true,
+      asFamily: false,
       connectedUser: user,
-    );
-  }
-
-  Widget buildArchivedJoinFamilyProposals(
-    List<JoinProposal> archives,
-    BuildContext joinProposalBlocContext,
-  ) {
-    return ListView.separated(
-      shrinkWrap: true,
-      key: const PageStorageKey<String>('join_proposals_passed'),
-      padding: const EdgeInsets.all(8),
-      itemCount: archives.length,
-      itemBuilder: (BuildContext context, int index) {
-        final joinProposal = archives[index];
-        return JoinFamilyProposalWidget(
-          cardWidth: MediaQuery.of(context).size.width * .7,
-          joinProposal: joinProposal,
-          displayCancelButton: false,
-          connectedUser: user,
-        );
-      },
-      separatorBuilder: (BuildContext context, int index) => const Divider(),
     );
   }
 }

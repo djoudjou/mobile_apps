@@ -51,6 +51,25 @@ class _JoinProposalRestClient implements JoinProposalRestClient {
   }
 
   @override
+  Future<List<JoinFamilyProposalDTO>> findPendingByFamilyId(familyId) async {
+    const _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _headers = <String, dynamic>{};
+    final _data = <String, dynamic>{};
+    final _result = await _dio.fetch<List<dynamic>>(
+        _setStreamType<List<JoinFamilyProposalDTO>>(
+            Options(method: 'GET', headers: _headers, extra: _extra)
+                .compose(_dio.options, '/proposals/family/${familyId}',
+                    queryParameters: queryParameters, data: _data)
+                .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
+    var value = _result.data!
+        .map((dynamic i) =>
+            JoinFamilyProposalDTO.fromJson(i as Map<String, dynamic>))
+        .toList();
+    return value;
+  }
+
+  @override
   Future<JoinFamilyProposalDTO> create(createJoinFamilyProposalDTO) async {
     const _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};

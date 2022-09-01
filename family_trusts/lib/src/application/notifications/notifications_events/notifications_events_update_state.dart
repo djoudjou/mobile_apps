@@ -10,16 +10,16 @@ class NotificationsEventsUpdateState with _$NotificationsEventsUpdateState {
     required bool markAsReadInProgress,
     required bool isDeleting,
     required Option<Either<NotificationsFailure, Unit>>
-        markAsReadfailureOrSuccessOption,
+        markAsReadFailureOrSuccessOption,
     required Option<Either<NotificationsFailure, Unit>>
-        deletefailureOrSuccessOption,
+        deleteFailureOrSuccessOption,
   }) = _NotificationsEventsUpdateState;
 
   factory NotificationsEventsUpdateState.initial() =>
       NotificationsEventsUpdateState(
         markAsReadInProgress: false,
         isDeleting: false,
-        markAsReadfailureOrSuccessOption: none(),
-        deletefailureOrSuccessOption: none(),
+        markAsReadFailureOrSuccessOption: none(),
+        deleteFailureOrSuccessOption: none(),
       );
 }

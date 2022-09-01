@@ -7,7 +7,10 @@ import 'package:familytrusts/src/application/home/tab/bloc.dart';
 import 'package:familytrusts/src/application/home/user/bloc.dart';
 import 'package:familytrusts/src/application/messages/bloc.dart';
 import 'package:familytrusts/src/application/notifications/unseen/notifications_unseen_bloc.dart';
+import 'package:familytrusts/src/domain/error/i_error_service.dart';
 import 'package:familytrusts/src/domain/home/app_tab.dart';
+import 'package:familytrusts/src/domain/messages/i_messages_repository.dart';
+import 'package:familytrusts/src/domain/notification/i_familyevent_repository.dart';
 import 'package:familytrusts/src/domain/notification/notifications_failure.dart';
 import 'package:familytrusts/src/presentation/ask/ask_page_tab.dart';
 import 'package:familytrusts/src/presentation/core/error_scaffold.dart';
@@ -15,7 +18,7 @@ import 'package:familytrusts/src/presentation/core/loading_scaffold.dart';
 import 'package:familytrusts/src/presentation/core/page/my_base_page.dart';
 import 'package:familytrusts/src/presentation/demands/demands_page_tab.dart';
 import 'package:familytrusts/src/presentation/home/widgets/my_bottom_navigation_bar.dart';
-import 'package:familytrusts/src/presentation/notifications/notifications_page.dart';
+import 'package:familytrusts/src/presentation/notifications/notifications_page_tab.dart';
 import 'package:familytrusts/src/presentation/profile/profile_page_tab.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -34,21 +37,25 @@ class HomePage extends MyBasePage {
     return MultiBlocProvider(
       providers: [
         BlocProvider(
-          create: (context) => getIt<NotificationsUnseenBloc>()
-            ..add(SimpleLoaderEvent.startLoading(connectedUserId)),
+          create: (context) =>
+              NotificationsUnseenBloc(getIt<IFamilyEventRepository>())
+                ..add(SimpleLoaderEvent.startLoading(connectedUserId)),
         ),
         BlocProvider(
-          create: (context) => getIt<MessagesBloc>(),
+          create: (context) => MessagesBloc(
+            getIt<IMessagesRepository>(),
+            getIt<IErrorService>(),
+          )..add(const MessagesEvent.init()),
         ),
         BlocProvider(
           create: (context) =>
-              getIt<TabBloc>()..add(TabEvent.init(currentTab, connectedUserId)),
+              TabBloc()..add(TabEvent.init(currentTab, connectedUserId)),
         ),
       ],
       child: MultiBlocListener(
         listeners: [
           BlocListener<MessagesBloc, MessagesState>(
-            listener: (context, state) {
+            listener: (contextMessagesBloc, state) {
               state.map(
                 initial: (_) => null,
                 tokenSaved: (tokenSaved) =>
@@ -61,13 +68,13 @@ class HomePage extends MyBasePage {
                     message: value.message.body,
                     backgroundGradient: LinearGradient(
                       colors: [
-                        Theme.of(context).primaryColor,
-                        Theme.of(context).primaryColorLight
+                        Theme.of(contextMessagesBloc).primaryColor,
+                        Theme.of(contextMessagesBloc).primaryColorLight
                       ],
                     ),
-                    backgroundColor: Theme.of(context).primaryColor,
+                    backgroundColor: Theme.of(contextMessagesBloc).primaryColor,
                     duration: const Duration(seconds: 5),
-                  ).show(context);
+                  ).show(contextMessagesBloc);
                   //showSuccessMessage(value.message.body, context);
                 },
                 errorReceived: (ErrorReceived value) {
@@ -78,7 +85,7 @@ class HomePage extends MyBasePage {
           ),
         ],
         child: BlocBuilder<UserBloc, UserState>(
-          builder: (context, state) {
+          builder: (contextUserBloc, state) {
             return state.map(
               userInitial: (UserInitial value) => LoadingScaffold(),
               userNotFound: (UserNotFound value) => ErrorScaffold(),
@@ -90,7 +97,7 @@ class HomePage extends MyBasePage {
                 final spouse = value.spouse;
 
                 return BlocBuilder<NotificationsUnseenBloc, SimpleLoaderState>(
-                  builder: (context, state) {
+                  builder: (contextNotificationsUnseenBloc, state) {
                     final int count = state.maybeMap(
                       simpleSuccessEventState: (simpleSuccessEventState) {
                         final Either<NotificationsFailure, int> nbUnReadResult =
@@ -103,7 +110,7 @@ class HomePage extends MyBasePage {
                     );
 
                     return BlocBuilder<TabBloc, TabState>(
-                      builder: (context, state) {
+                      builder: (contextTabBloc, state) {
                         return Scaffold(
                           key: _scaffoldKey,
                           body: SafeArea(
@@ -114,7 +121,7 @@ class HomePage extends MyBasePage {
                                   DemandsPageTab(user: user, spouse: spouse),
                               //lookup: (_) => LookupScreen(),
                               notification: (_) =>
-                                  NotificationsPage(user: user, spouse: spouse),
+                                  NotificationsPageTab(user: user, spouse: spouse),
                               me: (_) => ProfilePageTab(
                                 connectedUser: user,
                                 spouse: spouse,
@@ -133,22 +140,22 @@ class HomePage extends MyBasePage {
                             onTabSelected: (tab) {
                               switch (tab) {
                                 case AppTab.me:
-                                  context
+                                  contextTabBloc
                                       .read<TabBloc>()
                                       .add(const TabEvent.gotoMe());
                                   break;
                                 case AppTab.ask:
-                                  context
+                                  contextTabBloc
                                       .read<TabBloc>()
                                       .add(const TabEvent.gotoAsk());
                                   break;
                                 case AppTab.myDemands:
-                                  context
+                                  contextTabBloc
                                       .read<TabBloc>()
                                       .add(const TabEvent.gotoMyDemands());
                                   break;
                                 case AppTab.notification:
-                                  context
+                                  contextTabBloc
                                       .read<TabBloc>()
                                       .add(const TabEvent.gotoNotification());
                                   break;
@@ -174,5 +181,22 @@ class HomePage extends MyBasePage {
         ),
       ),
     );
+  }
+
+  @override
+  void refresh(BuildContext context) {
+    BlocProvider.of<NotificationsUnseenBloc>(
+      context,
+    ).add(
+      SimpleLoaderEvent.startLoading(connectedUserId),
+    );
+
+    BlocProvider.of<MessagesBloc>(
+      context,
+    ).add(const MessagesEvent.init());
+
+    BlocProvider.of<TabBloc>(
+      context,
+    ).add(TabEvent.init(currentTab, connectedUserId));
   }
 }

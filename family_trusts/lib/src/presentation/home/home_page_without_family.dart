@@ -26,14 +26,14 @@ class HomePageWithoutFamily extends MyBasePage {
     return MultiBlocProvider(
       providers: [
         BlocProvider(
-          create: (context) => JoinProposalBloc(
+          create: (context) => IssuerJoinProposalBloc(
             getIt<IJoinProposalRepository>(),
-          )..add(JoinProposalEvent.loadProposals(connectedUser: connectedUser)),
+          )..add(IssuerJoinProposalEvent.loadProposals(connectedUser: connectedUser)),
         ),
       ],
       child: MultiBlocListener(
         listeners: [
-          BlocListener<JoinProposalBloc, JoinProposalState>(
+          BlocListener<IssuerJoinProposalBloc, IssuerJoinProposalState>(
             listener: (joinProposalBlocContext, state) {
               if (state is JoinProposalsLoadFailure) {
                 showErrorMessage(
@@ -46,7 +46,6 @@ class HomePageWithoutFamily extends MyBasePage {
                 showProgressMessage(
                   LocaleKeys.join_proposal_send_inProgress.tr(),
                   joinProposalBlocContext,
-                  onDismissed: () => refresh(joinProposalBlocContext),
                 );
               }
               if (state is JoinProposalSendSuccess) {
@@ -68,7 +67,6 @@ class HomePageWithoutFamily extends MyBasePage {
                 showProgressMessage(
                   LocaleKeys.join_proposal_cancel_inProgress.tr(),
                   joinProposalBlocContext,
-                  onDismissed: () => refresh(joinProposalBlocContext),
                 );
               }
               if (state is JoinProposalCancelSuccess) {
@@ -102,12 +100,14 @@ class HomePageWithoutFamily extends MyBasePage {
     );
   }
 
+  @override
   void refresh(BuildContext context) {
-    return BlocProvider.of<JoinProposalBloc>(
-                  context,
-                ).add(
-                  JoinProposalEvent.loadProposals(
-                      connectedUser: connectedUser),
-                );
+    BlocProvider.of<IssuerJoinProposalBloc>(
+      context,
+    ).add(
+      IssuerJoinProposalEvent.loadProposals(
+        connectedUser: connectedUser,
+      ),
+    );
   }
 }

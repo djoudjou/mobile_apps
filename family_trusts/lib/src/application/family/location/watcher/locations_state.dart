@@ -11,7 +11,7 @@ class LocationsState with _$LocationsState {
   const factory LocationsState.loading() = LocationsLoading;
 
   const factory LocationsState.locationsLoaded({
-    required Either<LocationFailure, List<Either<LocationFailure, Location>>>
+    required Either<LocationFailure, List<Location>>
         locations,
   }) = LocationsLoaded;
 

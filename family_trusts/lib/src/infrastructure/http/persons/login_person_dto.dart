@@ -1,4 +1,3 @@
-
 import 'dart:core';
 
 import 'package:json_annotation/json_annotation.dart';
@@ -11,6 +10,8 @@ class LoginPersonDTO {
 
   LoginPersonDTO({this.token});
 
-  factory LoginPersonDTO.fromJson(Map<String, dynamic> json) => _$LoginPersonDTOFromJson(json);
+  factory LoginPersonDTO.fromJson(Map<String, dynamic> json) =>
+      _$LoginPersonDTOFromJson(json);
+
   Map<String, dynamic> toJson() => _$LoginPersonDTOToJson(this);
 }

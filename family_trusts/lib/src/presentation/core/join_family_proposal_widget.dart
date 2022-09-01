@@ -1,37 +1,35 @@
-import 'package:badges/badges.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:familytrusts/generated/locale_keys.g.dart';
-import 'package:familytrusts/src/application/children_lookup/bloc.dart';
-import 'package:familytrusts/src/application/join_proposal/join_proposal_bloc.dart';
-import 'package:familytrusts/src/application/join_proposal/join_proposal_event.dart';
-import 'package:familytrusts/src/domain/children_lookup/children_lookup.dart';
-import 'package:familytrusts/src/domain/children_lookup/value_objects.dart';
+import 'package:familytrusts/src/application/join_proposal/family_join_proposal_bloc.dart';
+import 'package:familytrusts/src/application/join_proposal/family_join_proposal_event.dart';
+import 'package:familytrusts/src/application/join_proposal/issuer_join_proposal_bloc.dart';
+import 'package:familytrusts/src/application/join_proposal/issuer_join_proposal_event.dart';
 import 'package:familytrusts/src/domain/join_proposal/join_proposal.dart';
 import 'package:familytrusts/src/domain/join_proposal/value_objects.dart';
 import 'package:familytrusts/src/domain/user/user.dart';
 import 'package:familytrusts/src/helper/alert_helper.dart';
 import 'package:familytrusts/src/helper/constants.dart';
-import 'package:familytrusts/src/infrastructure/http/join_proposal/join_proposal_dto.dart';
 import 'package:familytrusts/src/presentation/core/avatar_widget.dart';
 import 'package:familytrusts/src/presentation/core/my_button.dart';
 import 'package:familytrusts/src/presentation/core/my_text.dart';
 import 'package:familytrusts/src/presentation/core/separator.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:quiver/strings.dart' as quiver;
 
 class JoinFamilyProposalWidget extends StatelessWidget {
   const JoinFamilyProposalWidget({
     Key? key,
     required this.cardWidth,
     required this.joinProposal,
-    required this.displayCancelButton,
+    required this.asIssuer,
+    required this.asFamily,
     required this.connectedUser,
   }) : super(key: key);
 
   final double cardWidth;
   final JoinProposal joinProposal;
-  final bool displayCancelButton;
+  final bool asIssuer;
+  final bool asFamily;
   final User connectedUser;
 
   @override
@@ -42,32 +40,22 @@ class JoinFamilyProposalWidget extends StatelessWidget {
     switch (joinProposal.state!.getOrCrash()) {
       case JoinProposalStateEnum.accepted:
         message = LocaleKeys.join_proposal_details_accepted_text.tr();
-        badgeColor = Theme
-            .of(context)
-            .accentColor;
+        badgeColor = Theme.of(context).accentColor;
         break;
       case JoinProposalStateEnum.canceled:
-        badgeColor = Theme
-            .of(context)
-            .primaryColorLight;
+        badgeColor = Theme.of(context).primaryColorLight;
         message = LocaleKeys.join_proposal_details_canceled_text.tr();
         break;
       case JoinProposalStateEnum.waiting:
         message = LocaleKeys.join_proposal_details_waiting_text.tr();
-        badgeColor = Theme
-            .of(context)
-            .primaryColor;
+        badgeColor = Theme.of(context).primaryColor;
         break;
       case JoinProposalStateEnum.declined:
-        badgeColor = Theme
-            .of(context)
-            .primaryColorLight;
+        badgeColor = Theme.of(context).primaryColorLight;
         message = LocaleKeys.join_proposal_details_declined_text.tr();
         break;
       case JoinProposalStateEnum.rejected:
-        badgeColor = Theme
-            .of(context)
-            .primaryColorLight;
+        badgeColor = Theme.of(context).primaryColorLight;
         message = LocaleKeys.join_proposal_details_rejected_text.tr();
         break;
     }
@@ -81,34 +69,51 @@ class JoinFamilyProposalWidget extends StatelessWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
-                MyAvatar(
-                  defaultImage: logoFamilyImages,
-                  onTapCallback: () {},
-                  radius: 60,
-                  imageTag: "JOIN_PROPOSAL_${joinProposal.id ?? "XX"}",
-                ),
+                if (asFamily) ...[
+                  Column(
+                    children: [
+                      MyAvatar(
+                        imageTag: "TAG_PROFILE_${joinProposal.issuer?.id}",
+                        photoUrl: joinProposal.issuer?.photoUrl,
+                        radius: 40,
+                        defaultImage: defaultUserImages,
+                        onTapCallback: () {},
+                      ),
+                      MyText(joinProposal.issuer!.displayName),
+                    ],
+                  ),
+                ],
+                if (asIssuer) ...[
+                  MyAvatar(
+                    defaultImage: logoFamilyImages,
+                    onTapCallback: () {},
+                    radius: 60,
+                    imageTag: "JOIN_PROPOSAL_${joinProposal.id ?? "XX"}",
+                  ),
+                ],
                 const MyHorizontalSeparator(),
                 Container(
                   //color: Colors.red,
                   //width: MediaQuery.of(context).size.width/3,
                   child: Column(
                     children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          MyText(
-                            LocaleKeys.join_proposal_details_family_label
-                                .tr(),
-                          ),
-                          const MyText(" : "),
-                          const MyHorizontalSeparator(),
-                          MyText(
-                            joinProposal.family!.displayName,
-                            style: FontStyle.italic,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ],
-                      ),
+                      if (asIssuer) ...[
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            MyText(
+                              LocaleKeys.join_proposal_details_family_label.tr(),
+                            ),
+                            const MyText(" : "),
+                            const MyHorizontalSeparator(),
+                            MyText(
+                              joinProposal.family!.displayName,
+                              style: FontStyle.italic,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ],
+                        ),
+                      ],
                       Row(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -126,7 +131,6 @@ class JoinFamilyProposalWidget extends StatelessWidget {
                           ),
                         ],
                       ),
-
                       Row(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -145,23 +149,24 @@ class JoinFamilyProposalWidget extends StatelessWidget {
                           ),
                         ],
                       ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          MyText(
-                            LocaleKeys.join_proposal_details_status_label
-                                .tr(),
-                          ),
-                          const MyText(" : "),
-                          const MyHorizontalSeparator(),
-                          MyText(
-                            message,
-                            style: FontStyle.italic,
-                            fontWeight: FontWeight.bold,
-                            maxLines: 2,
-                          ),
-                        ],
-                      ),
+                      if (asIssuer) ...[
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            MyText(
+                              LocaleKeys.join_proposal_details_status_label.tr(),
+                            ),
+                            const MyText(" : "),
+                            const MyHorizontalSeparator(),
+                            MyText(
+                              message,
+                              style: FontStyle.italic,
+                              fontWeight: FontWeight.bold,
+                              maxLines: 2,
+                            ),
+                          ],
+                        ),
+                      ],
                       Row(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -174,7 +179,6 @@ class JoinFamilyProposalWidget extends StatelessWidget {
                           ),
                         ],
                       ),
-
                     ],
                   ),
                 ),
@@ -183,27 +187,71 @@ class JoinFamilyProposalWidget extends StatelessWidget {
             if (joinProposal.member != null) ...[
               MyAvatar(
                 imageTag:
-                "TAG_JP_${joinProposal.id}_${joinProposal.member?.id}",
+                    "TAG_JP_${joinProposal.id}_${joinProposal.member?.id}",
                 photoUrl: joinProposal.member?.photoUrl,
                 radius: 60,
                 onTapCallback: () {},
                 defaultImage: defaultUserImages,
               ),
             ],
-            if(displayCancelButton) ...[
+            if (asIssuer) ...[
               MyButton(
-                message:
-                LocaleKeys.join_proposal_cancel_button.tr(),
+                message: LocaleKeys.join_proposal_cancel_button.tr(),
                 onPressed: () async {
                   await AlertHelper().confirm(
                     context,
-                    LocaleKeys.join_proposal_cancel_confirm.tr(args: [joinProposal.family!.displayName]),
+                    LocaleKeys.join_proposal_cancel_confirm
+                        .tr(args: [joinProposal.family!.displayName]),
                     onConfirmCallback: () {
-                      BlocProvider.of<JoinProposalBloc>(
+                      BlocProvider.of<IssuerJoinProposalBloc>(
                         context,
                       ).add(
-                        JoinProposalEvent.cancel(connectedUser: connectedUser,
-                          joinProposal: joinProposal,),
+                        IssuerJoinProposalEvent.cancel(
+                          connectedUser: connectedUser,
+                          joinProposal: joinProposal,
+                        ),
+                      );
+                    },
+                  );
+                },
+              )
+            ],
+            if (asFamily) ...[
+              MyButton(
+                message: LocaleKeys.join_proposal_accept_button.tr(),
+                onPressed: () async {
+                  await AlertHelper().confirm(
+                    context,
+                    LocaleKeys.join_proposal_accept_confirm
+                        .tr(args: [joinProposal.family!.displayName]),
+                    onConfirmCallback: () {
+                      BlocProvider.of<FamilyJoinProposalBloc>(
+                        context,
+                      ).add(
+                        FamilyJoinProposalEvent.accept(
+                          connectedUser: connectedUser,
+                          joinProposal: joinProposal,
+                        ),
+                      );
+                    },
+                  );
+                },
+              ),
+              MyButton(
+                message: LocaleKeys.join_proposal_decline_button.tr(),
+                onPressed: () async {
+                  await AlertHelper().confirm(
+                    context,
+                    LocaleKeys.join_proposal_decline_confirm
+                        .tr(args: [joinProposal.family!.displayName]),
+                    onConfirmCallback: () {
+                      BlocProvider.of<FamilyJoinProposalBloc>(
+                        context,
+                      ).add(
+                        FamilyJoinProposalEvent.decline(
+                          connectedUser: connectedUser,
+                          joinProposal: joinProposal,
+                        ),
                       );
                     },
                   );

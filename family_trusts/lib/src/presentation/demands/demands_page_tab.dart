@@ -2,6 +2,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:familytrusts/generated/locale_keys.g.dart';
 import 'package:familytrusts/injection.dart';
 import 'package:familytrusts/src/application/demands/bloc.dart';
+import 'package:familytrusts/src/domain/children_lookup/i_children_lookup_repository.dart';
 import 'package:familytrusts/src/domain/user/user.dart';
 import 'package:familytrusts/src/helper/snackbar_helper.dart';
 import 'package:familytrusts/src/presentation/core/error_content.dart';
@@ -26,27 +27,27 @@ class DemandsPageTab extends StatelessWidget {
     return MultiBlocProvider(
       providers: [
         BlocProvider(
-          create: (context) => getIt<DemandsBloc>()
+          create: (context) => DemandsBloc(getIt<IChildrenLookupRepository>())
             ..add(DemandsEvent.loadDemands(user.family!.id)),
         ),
       ],
       child: MultiBlocListener(
         listeners: [
           BlocListener<DemandsBloc, DemandsState>(
-            listener: (context, state) {
+            listener: (contextDemandsBloc, state) {
               state.maybeMap(
                 demandsLoaded: (s) {
                   s.demands.fold(
                     (notificationFailure) => showErrorMessage(
                       LocaleKeys.global_serverError.tr(),
-                      context,
+                      contextDemandsBloc,
                     ),
                     (_) => null,
                   );
                 },
                 demandsNotLoaded: (s) => showErrorMessage(
                   LocaleKeys.global_serverError.tr(),
-                  context,
+                  contextDemandsBloc,
                 ),
                 orElse: () => null,
               );
@@ -54,7 +55,7 @@ class DemandsPageTab extends StatelessWidget {
           ),
         ],
         child: BlocBuilder<DemandsBloc, DemandsState>(
-          builder: (context, state) {
+          builder: (contextDemandsBloc, state) {
             return DefaultTabController(
               length: 2, // This is the number of tabs.
               child: Scaffold(
@@ -96,9 +97,11 @@ class DemandsPageTab extends StatelessWidget {
                         (demands) => <Widget>[
                           DemandsInProgressTab(
                             childrenLookups: demands.inProgressChildrenLookups,
+                            connectedUser: user,
                           ),
                           DemandsPassedTab(
                             childrenLookups: demands.passedChildrenLookups,
+                            connectedUser: user,
                           ),
                         ],
                       );
@@ -110,6 +113,14 @@ class DemandsPageTab extends StatelessWidget {
           },
         ),
       ),
+    );
+  }
+
+  void refresh(BuildContext context) {
+    BlocProvider.of<DemandsBloc>(
+      context,
+    ).add(
+      DemandsEvent.loadDemands(user.family!.id),
     );
   }
 }

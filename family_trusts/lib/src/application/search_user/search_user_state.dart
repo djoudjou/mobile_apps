@@ -10,7 +10,7 @@ part 'search_user_state.freezed.dart';
 class SearchUserState with _$SearchUserState {
   const factory SearchUserState({
     required bool isSubmitting,
-    required Option<Either<SearchUserFailure, Stream<List<User>>>>
+    required Option<Either<SearchUserFailure, List<User>>>
         searchUserFailureOrSuccessOption,
   }) = _SearchUserState;
 

@@ -3,15 +3,11 @@ import 'dart:async';
 import 'package:bloc_concurrency/bloc_concurrency.dart';
 import 'package:dartz/dartz.dart';
 import 'package:familytrusts/src/application/family/location/form/bloc.dart';
-import 'package:familytrusts/src/domain/core/value_objects.dart';
 import 'package:familytrusts/src/domain/family/i_family_repository.dart';
 import 'package:familytrusts/src/domain/family/locations/location_failure.dart';
 import 'package:familytrusts/src/domain/family/locations/location_success.dart';
 import 'package:familytrusts/src/domain/family/locations/value_objects.dart';
 import 'package:familytrusts/src/domain/family/value_objects.dart';
-import 'package:familytrusts/src/domain/notification/event.dart';
-import 'package:familytrusts/src/domain/notification/i_notification_repository.dart';
-import 'package:familytrusts/src/domain/notification/value_objects.dart';
 import 'package:familytrusts/src/domain/user/user.dart';
 import 'package:familytrusts/src/domain/user/value_objects.dart';
 import 'package:familytrusts/src/helper/analytics_svc.dart';
@@ -23,107 +19,55 @@ import 'package:quiver/strings.dart' as quiver;
 @injectable
 class LocationFormBloc extends Bloc<LocationFormEvent, LocationFormState> {
   final IFamilyRepository _familyRepository;
-  final INotificationRepository _notificationRepository;
   final AnalyticsSvc _analyticsSvc;
 
   LocationFormBloc(
     this._familyRepository,
-    this._notificationRepository,
     this._analyticsSvc,
   ) : super(LocationFormState.initial()) {
-    on<LocationFormEvent>(
-      (event, emit) => mapEventToState(event, emit),
+    on<LocationInit>(
+      _mapLocationInit,
       transformer: restartable(),
     );
-  }
 
-  Future<void> mapEventToState(
-    LocationFormEvent event,
-    Emitter<LocationFormState> emit,
-  ) async {
-    event.map(
-      pictureUrlChanged: (PictureUrlChanged e) {
-        emit(
-          state.copyWith(
-            photoUrl: e.pickedFileUrl,
-            failureOrSuccessOption: none(),
-          ),
-        );
-      },
-      picturePathChanged: (PicturePathChanged e) {
-        emit(
-          state.copyWith(
-            imagePath: e.pickedFilePath,
-            failureOrSuccessOption: none(),
-          ),
-        );
-      },
-      latLngChanged: (LatLngChanged e) {
-        emit(
-          state.copyWith(
-            gpsPosition: GpsPosition.fromPosition(
-              latitude: e.position.latitude,
-              longitude: e.position.longitude,
-            ),
-            failureOrSuccessOption: none(),
-          ),
-        );
-      },
-      titleChanged: (TitleChanged e) {
-        emit(
-          state.copyWith(
-            title: Name(e.title),
-            failureOrSuccessOption: none(),
-          ),
-        );
-      },
-      addressChanged: (AddresChanged e) {
-        emit(
-          state.copyWith(
-            address: Address(e.address),
-            failureOrSuccessOption: none(),
-          ),
-        );
-      },
-      noteChanged: (NoteChanged e) {
-        emit(
-          state.copyWith(
-            note: NoteBody(e.note),
-            failureOrSuccessOption: none(),
-          ),
-        );
-      },
-      init: (LocationInit e) async {
-        final location = e.location;
-        Position? position = await Geolocator.getLastKnownPosition();
-        // if position is null it will look to geolocator
-        position ??= await Geolocator.getCurrentPosition(
-          desiredAccuracy: LocationAccuracy.high,
-        );
+    on<NoteChanged>(
+      _mapNoteChanged,
+      transformer: restartable(),
+    );
 
-        final LocationFormState newState = state.copyWith(
-          id: e.location.id,
-          familyId: e.familyId,
-          photoUrl: location.photoUrl,
-          address: location.address,
-          title: location.title,
-          note: location.note,
-          isInitializing: false,
-          currentPosition: GpsPosition.fromPosition(
-            latitude: position.latitude,
-            longitude: position.longitude,
-          ),
-          gpsPosition: e.location.gpsPosition,
-          failureOrSuccessOption: none(),
-        );
-        emit(newState);
-      },
-      saveLocation: (event) {
-        _mapSaveLocationToState(event, emit);
-      },
-      deleteLocation: (event) {
-        _mapDeleteLocationToState(event, emit);
-      },
+    on<TitleChanged>(
+      _mapTitleChanged,
+      transformer: restartable(),
+    );
+
+    on<AddresChanged>(
+      _mapAddressChanged,
+      transformer: restartable(),
+    );
+
+    on<LatLngChanged>(
+      _mapLatLngChanged,
+      transformer: restartable(),
+    );
+
+    on<PicturePathChanged>(
+      _mapPicturePathChanged,
+      transformer: restartable(),
+    );
+
+    on<PictureUrlChanged>(
+      _mapPictureUrlChanged,
+      transformer: restartable(),
+    );
+
+    on<SaveLocation>(
+      _mapSaveLocationToState,
+      transformer: restartable(),
+    );
+
+    on<DeleteLocation>(
+      _mapDeleteLocationToState,
+      transformer: restartable(),
     );
   }
 
@@ -144,7 +88,7 @@ class LocationFormBloc extends Bloc<LocationFormEvent, LocationFormState> {
 
       final Either<LocationFailure, Unit> result =
           await _familyRepository.addUpdateLocation(
-            familyId: user.family!.id!,
+        familyId: user.family!.id!,
         location: event.location,
         pickedFilePath: event.pickedFilePath,
       );
@@ -178,30 +122,6 @@ class LocationFormBloc extends Bloc<LocationFormEvent, LocationFormState> {
           },
         ),
       );
-
-      if (result.isRight()) {
-        final eventLocation = Event(
-          date: TimestampVo.now(),
-          seen: false,
-          from: user,
-          to: user,
-          type: quiver.isNotBlank(event.location.id)
-              ? EventType.childUpdated()
-              : EventType.childAdded(),
-          subject: event.location.title.getOrCrash(),
-          fromConnectedUser: true,
-        );
-        await _notificationRepository.createEvent(
-          user.id!,
-          eventLocation,
-        );
-        if (quiver.isNotBlank(user.spouse)) {
-          await _notificationRepository.createEvent(
-            user.spouse!,
-            eventLocation,
-          );
-        }
-      }
     } catch (_) {
       emit(
         state.copyWith(
@@ -232,7 +152,7 @@ class LocationFormBloc extends Bloc<LocationFormEvent, LocationFormState> {
       final User user = event.connectedUser;
       final Either<LocationFailure, Unit> result =
           await _familyRepository.deleteLocation(
-            familyId: user.family!.id!,
+        familyId: user.family!.id!,
         location: event.location,
       );
       emit(
@@ -253,10 +173,6 @@ class LocationFormBloc extends Bloc<LocationFormEvent, LocationFormState> {
           },
         ),
       );
-
-      if (result.isRight()) {
-        await createDeleteEvent(user, event);
-      }
     } catch (e) {
       _analyticsSvc.debug("error during location suppression $e");
       emit(
@@ -269,26 +185,107 @@ class LocationFormBloc extends Bloc<LocationFormEvent, LocationFormState> {
     }
   }
 
-  Future<void> createDeleteEvent(User user, DeleteLocation event) async {
-    final eventLocationDeleted = Event(
-      date: TimestampVo.now(),
-      seen: false,
-      from: user,
-      to: user,
-      subject: event.location.title.getOrCrash(),
-      type: EventType.childRemoved(),
-      fromConnectedUser: true,
-    );
-    await _notificationRepository.createEvent(
-      user.id!,
-      eventLocationDeleted,
+  Future<FutureOr<void>> _mapLocationInit(
+    LocationInit event,
+    Emitter<LocationFormState> emit,
+  ) async {
+    final location = event.location;
+    Position? position = await Geolocator.getLastKnownPosition();
+    // if position is null it will look to geolocator
+    position ??= await Geolocator.getCurrentPosition(
+      desiredAccuracy: LocationAccuracy.high,
     );
 
-    if (quiver.isNotBlank(user.spouse)) {
-      await _notificationRepository.createEvent(
-        user.spouse!,
-        eventLocationDeleted,
-      );
-    }
+    final LocationFormState newState = state.copyWith(
+      id: event.location.id,
+      familyId: event.familyId,
+      photoUrl: location.photoUrl,
+      address: location.address,
+      title: location.title,
+      note: location.note,
+      isInitializing: false,
+      currentPosition: GpsPosition.fromPosition(
+        latitude: position.latitude,
+        longitude: position.longitude,
+      ),
+      gpsPosition: event.location.gpsPosition,
+      failureOrSuccessOption: none(),
+    );
+    emit(newState);
+  }
+
+  FutureOr<void> _mapNoteChanged(
+    NoteChanged event,
+    Emitter<LocationFormState> emit,
+  ) {
+    emit(
+      state.copyWith(
+        note: NoteBody(event.note),
+        failureOrSuccessOption: none(),
+      ),
+    );
+  }
+
+  FutureOr<void> _mapPictureUrlChanged(
+    PictureUrlChanged event,
+    Emitter<LocationFormState> emit,
+  ) {
+    emit(
+      state.copyWith(
+        photoUrl: event.pickedFileUrl,
+        failureOrSuccessOption: none(),
+      ),
+    );
+  }
+
+  FutureOr<void> _mapPicturePathChanged(
+    PicturePathChanged event,
+    Emitter<LocationFormState> emit,
+  ) {
+    emit(
+      state.copyWith(
+        imagePath: event.pickedFilePath,
+        failureOrSuccessOption: none(),
+      ),
+    );
+  }
+
+  FutureOr<void> _mapLatLngChanged(
+    LatLngChanged event,
+    Emitter<LocationFormState> emit,
+  ) {
+    emit(
+      state.copyWith(
+        gpsPosition: GpsPosition.fromPosition(
+          latitude: event.position.latitude,
+          longitude: event.position.longitude,
+        ),
+        failureOrSuccessOption: none(),
+      ),
+    );
+  }
+
+  FutureOr<void> _mapTitleChanged(
+    TitleChanged event,
+    Emitter<LocationFormState> emit,
+  ) {
+    emit(
+      state.copyWith(
+        title: Name(event.title),
+        failureOrSuccessOption: none(),
+      ),
+    );
+  }
+
+  FutureOr<void> _mapAddressChanged(
+    AddresChanged event,
+    Emitter<LocationFormState> emit,
+  ) {
+    emit(
+      state.copyWith(
+        address: Address(event.address),
+        failureOrSuccessOption: none(),
+      ),
+    );
   }
 }

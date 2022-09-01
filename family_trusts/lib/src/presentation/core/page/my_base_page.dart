@@ -41,7 +41,7 @@ abstract class MyBasePage extends StatelessWidget with LogMixin {
               final User user = state.user;
 
               if (user.notInFamily()) {
-                // navigation ver
+                // navigation vers
                 AutoRouter.of(userBlocContext).replace(
                   HomePageWithoutFamilyRoute(
                     connectedUser: user,
@@ -77,5 +77,7 @@ abstract class MyBasePage extends StatelessWidget with LogMixin {
       child: myBuild(context),
     );
   }
+
+  void refresh(BuildContext context);
 
 }

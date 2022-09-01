@@ -19,6 +19,11 @@ abstract class JoinProposalRestClient {
     @Path("personId") String personId,
   );
 
+  @GET("/proposals/family/{familyId}")
+  Future<List<JoinFamilyProposalDTO>> findPendingByFamilyId(
+    @Path("familyId") String familyId,
+  );
+
   @POST("/proposals")
   Future<JoinFamilyProposalDTO> create(
     @Body() CreateJoinFamilyProposalDTO createJoinFamilyProposalDTO,

@@ -97,5 +97,31 @@ class ApiJoinProposalRepository
     }
   }
 
+  @override
+  Future<Either<JoinProposalFailure, Unit>> acceptProposal(User connectedUser, String joinProposalId) {
+    // TODO: implement acceptProposal
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<Either<JoinProposalFailure, Unit>> declineProposal(User connectedUser, String joinProposalId) {
+    // TODO: implement declineProposal
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<Either<JoinProposalFailure, List<JoinProposal>>> findPendingProposalsByFamily(Family family) async {
+    try {
+      final List<JoinFamilyProposalDTO> joinFamilyProposals = await _apiService
+          .getJoinProposalRestClient()
+          .findPendingByFamilyId(family.id!);
+
+      return right(joinFamilyProposals.map((f) => f.toDomain()).toList());
+    } catch (e) {
+      log("error in findPendingProposalsByFamily method : $e");
+      return left(const JoinProposalFailure.serverError());
+    }
+  }
+
 
 }

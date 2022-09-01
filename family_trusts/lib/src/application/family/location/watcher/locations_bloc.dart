@@ -2,75 +2,46 @@ import 'dart:async';
 
 import 'package:bloc/bloc.dart';
 import 'package:bloc_concurrency/bloc_concurrency.dart';
+import 'package:dartz/dartz.dart';
 import 'package:familytrusts/src/application/family/location/watcher/bloc.dart';
 import 'package:familytrusts/src/domain/family/i_family_repository.dart';
+import 'package:familytrusts/src/domain/family/locations/location.dart';
+import 'package:familytrusts/src/domain/family/locations/location_failure.dart';
 import 'package:injectable/injectable.dart';
 import 'package:quiver/strings.dart' as quiver;
 
 @injectable
 class LocationsBloc extends Bloc<LocationsEvent, LocationsState> {
   final IFamilyRepository _familyRepository;
-  StreamSubscription? _locationsSubscription;
 
   LocationsBloc(
     this._familyRepository,
   ) : super(const LocationsState.loading()) {
-    on<LocationsEvent>(
-      (event, emit) => mapEventToState(event, emit),
+    on<LoadLocations>(
+      _mapLoadLocationsToState,
       transformer: restartable(),
     );
   }
 
-  void mapEventToState(
-    LocationsEvent event,
-    Emitter<LocationsState> emit,
-  ) {
-    event.map(
-      loadLocations: (event) {
-        _mapLoadLocationsToState(event, emit);
-      },
-      locationsUpdated: (event) {
-        _mapLocationsUpdatedToState(event, emit);
-      },
-    );
-  }
-
-  void _mapLoadLocationsToState(
+  Future<void> _mapLoadLocationsToState(
     LoadLocations event,
     Emitter<LocationsState> emit,
-  ) {
+  ) async {
     if (quiver.isNotBlank(event.familyId)) {
       emit(const LocationsState.loading());
-      //await Future.delayed(const Duration(seconds: 10));
-      /*
-      TODO ADJ no more stream
-      _locationsSubscription?.cancel();
-      _locationsSubscription =
-          _familyRepository.getLocations(event.familyId!).listen(
-        (event) {
-          add(LocationsUpdated(locations: event));
-        },
-        onError: (_) {
-          _locationsSubscription?.cancel();
-        },
-      );
 
-       */
+      final Either<LocationFailure, List<Location>> result =
+          await _familyRepository.getLocations(event.familyId!);
+
+      emit(
+        result.fold(
+          (failure) => LocationsState.locationsLoaded(locations: left(failure)),
+          (locations) =>
+              LocationsState.locationsLoaded(locations: right(locations)),
+        ),
+      );
     } else {
       emit(const LocationsState.locationsNotLoaded());
     }
-  }
-
-  void _mapLocationsUpdatedToState(
-    LocationsUpdated event,
-    Emitter<LocationsState> emit,
-  ) {
-    emit(LocationsState.locationsLoaded(locations: event.locations));
-  }
-
-  @override
-  Future<void> close() {
-    _locationsSubscription?.cancel();
-    return super.close();
   }
 }

@@ -25,7 +25,7 @@ class TrustedUserForm extends StatelessWidget with LogMixin {
 
   @override
   Widget build(BuildContext context) {
-    context.read<ProfilTabBloc>().add(const ProfilTabEvent.gotoTrustedUsers());
+    context.read<ProfileTabBloc>().add(const ProfileTabEvent.gotoTrustedUsers());
     return BlocConsumer<TrustedUserFormBloc, TrustedUserFormState>(
       listener: (context, state) {
         switch (state.state) {
@@ -167,45 +167,34 @@ class TrustedUserForm extends StatelessWidget with LogMixin {
             (failure) => Center(
               child: MyText(LocaleKeys.global_serverError.tr()),
             ),
-            (result) => Expanded(
-              child: StreamBuilder<List<User>>(
-                stream: result,
-                builder: (ctx, snapshot) {
-                  if (!snapshot.hasData) {
-                    return const EmptyContent();
-                  } else {
-                    final List<User> users = snapshot.data!;
-
-                    return users.isEmpty
-                        ? const EmptyContent()
-                        : ListView.builder(
-                            itemBuilder: (context, index) {
-                              final User selectedUser = users[index];
-                              return InkWell(
-                                onTap: () async {
-                                  await AlertHelper().confirm(
-                                    context,
-                                    LocaleKeys.profile_sendTrustProposal
-                                        .tr(args: [selectedUser.displayName]),
-                                    onConfirmCallback: () {
-                                      context.read<TrustedUserFormBloc>().add(
-                                            TrustedUserFormEvent.addTrustedUser(
-                                              currentUser: connectedUser,
-                                              userToAdd: selectedUser,
-                                              time: TimestampVo.now(),
-                                            ),
-                                          );
-                                    },
-                                  );
-                                },
-                                child: TrustedUserCard(user: selectedUser),
-                              );
-                            },
-                            itemCount: users.length,
-                          );
-                  }
-                },
-              ),
+            (users) => Expanded(
+              child: users.isEmpty
+                  ? const EmptyContent()
+                  : ListView.builder(
+                      itemBuilder: (context, index) {
+                        final User selectedUser = users[index];
+                        return InkWell(
+                          onTap: () async {
+                            await AlertHelper().confirm(
+                              context,
+                              LocaleKeys.profile_sendTrustProposal
+                                  .tr(args: [selectedUser.displayName]),
+                              onConfirmCallback: () {
+                                context.read<TrustedUserFormBloc>().add(
+                                      TrustedUserFormEvent.addTrustedUser(
+                                        currentUser: connectedUser,
+                                        userToAdd: selectedUser,
+                                        time: TimestampVo.now(),
+                                      ),
+                                    );
+                              },
+                            );
+                          },
+                          child: TrustedUserCard(user: selectedUser),
+                        );
+                      },
+                      itemCount: users.length,
+                    ),
             ),
           ),
         );

@@ -16,7 +16,7 @@ class PlanningBloc
   PlanningBloc(this._childrenLookupRepository) : super();
 
   @override
-  Stream<Either<PlanningFailure, Planning>> load(StartLoading event) {
+  Future<Either<PlanningFailure, Planning>> load(StartLoading event) {
     return _childrenLookupRepository.getPlanning(userId:event.userId!);
   }
 }

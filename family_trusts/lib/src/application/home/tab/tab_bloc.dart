@@ -41,12 +41,16 @@ class TabBloc extends Bloc<TabEvent, TabState> {
   }
 
   FutureOr<void> _mapGotoMyDemands(
-      GotoMyDemands event, Emitter<TabState> emit) {
+    GotoMyDemands event,
+    Emitter<TabState> emit,
+  ) {
     emit(const TabState.myDemands());
   }
 
   FutureOr<void> _mapGotoNotification(
-      GotoNotification event, Emitter<TabState> emit) {
+    GotoNotification event,
+    Emitter<TabState> emit,
+  ) {
     emit(const TabState.notification());
   }
 

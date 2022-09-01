@@ -4,8 +4,6 @@ import 'package:familytrusts/generated/locale_keys.g.dart';
 import 'package:familytrusts/src/application/auth/authentication_bloc.dart';
 import 'package:familytrusts/src/application/auth/authentication_event.dart';
 import 'package:familytrusts/src/application/home/user/bloc.dart';
-import 'package:familytrusts/src/application/home/user/user_bloc.dart';
-import 'package:familytrusts/src/application/home/user/user_state.dart';
 import 'package:familytrusts/src/application/register/bloc.dart';
 import 'package:familytrusts/src/domain/home/app_tab.dart';
 import 'package:familytrusts/src/domain/user/user.dart';
@@ -75,7 +73,6 @@ class RegisterForm extends StatelessWidget with LogMixin {
                   registerBlocContext
                       .read<AuthenticationBloc>()
                       .add(const AuthenticationEvent.authCheckRequested());
-
                 },
               ),
             );

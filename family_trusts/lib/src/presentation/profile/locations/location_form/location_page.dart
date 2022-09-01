@@ -3,9 +3,11 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:familytrusts/generated/locale_keys.g.dart';
 import 'package:familytrusts/injection.dart';
 import 'package:familytrusts/src/application/family/location/form/bloc.dart';
+import 'package:familytrusts/src/domain/family/i_family_repository.dart';
 import 'package:familytrusts/src/domain/family/locations/location.dart';
 import 'package:familytrusts/src/domain/family/locations/value_objects.dart';
 import 'package:familytrusts/src/domain/user/user.dart';
+import 'package:familytrusts/src/helper/analytics_svc.dart';
 import 'package:familytrusts/src/helper/log_mixin.dart';
 import 'package:familytrusts/src/helper/snackbar_helper.dart';
 import 'package:familytrusts/src/presentation/core/my_apps_bars.dart';
@@ -34,8 +36,11 @@ class LocationPage extends StatelessWidget with LogMixin {
     return MultiBlocProvider(
       providers: [
         BlocProvider<LocationFormBloc>(
-          create: (context) => getIt<LocationFormBloc>()
-            ..add(LocationFormEvent.init(currentUser.family!.id, locationToEdit)),
+          create: (context) => LocationFormBloc(
+            getIt<IFamilyRepository>(),
+            getIt<AnalyticsSvc>(),
+          )..add(
+              LocationFormEvent.init(currentUser.family!.id, locationToEdit)),
         ),
       ],
       child: BlocConsumer<LocationFormBloc, LocationFormState>(

@@ -23,6 +23,5 @@ class ChildrenLookup with _$ChildrenLookup {
     required RendezVous rendezVous,
     required NoteBody noteBody,
     required TimestampVo creationDate,
-    required List<String> trustedUsers,
   }) = _ChildrenLookup;
 }

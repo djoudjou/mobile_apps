@@ -19,74 +19,70 @@ class SearchLocationBloc
   SearchLocationBloc() : super(SearchLocationState.initial()) {
     _googleGeocoding = getIt<GoogleGeocoding>();
 
-    on<SearchLocationEvent>(
-      (event, emit) => mapEventToState(event, emit),
+    on<AddressLookupChanged>(
+      (event, emit) => _mapAddressLookupChanged,
       transformer: debounce(bounceDuration),
     );
   }
 
-  Future<void> mapEventToState(
-    SearchLocationEvent event,
+  Future<void> _mapAddressLookupChanged(
+    AddressLookupChanged event,
     Emitter<SearchLocationState> emit,
   ) async {
-    event.map(
-      addressLookupChanged: (e) async {
-        if (quiver.isNotBlank(e.addressLookupText) &&
-            e.addressLookupText.isNotEmpty) {
-          emit(
-            state.copyWith(
-              searchLocationFailureOrSuccessOption: none(),
-              isSubmitting: true,
-            ),
+    if (quiver.isNotBlank(event.addressLookupText) &&
+        event.addressLookupText.isNotEmpty) {
+      emit(
+        state.copyWith(
+          searchLocationFailureOrSuccessOption: none(),
+          isSubmitting: true,
+        ),
+      );
+
+      try {
+        final GeocodingResponse? response =
+            await _googleGeocoding.geocoding.get(
+          event.addressLookupText,
+          <Component>[],
+          language: "fr",
+          region: "fr",
+        );
+
+        Either<SearchLocationFailure, List<ComplexAddress>>?
+            searchLocationFailureOrSuccessOption;
+        if (response == null || (response.results?.isEmpty ?? true)) {
+          searchLocationFailureOrSuccessOption = null;
+        } else {
+          searchLocationFailureOrSuccessOption = right(
+            response.results!
+                .map(
+                  (geocodingResult) => ComplexAddress(
+                    position: LatLng(
+                      geocodingResult.geometry!.location!.lat!,
+                      geocodingResult.geometry!.location!.lng!,
+                    ),
+                    address: geocodingResult.formattedAddress,
+                  ),
+                )
+                .toList(),
           );
-
-          try {
-            final GeocodingResponse? response =
-                await _googleGeocoding.geocoding.get(
-              e.addressLookupText,
-              <Component>[],
-              language: "fr",
-              region: "fr",
-            );
-
-            Either<SearchLocationFailure, List<ComplexAddress>>?
-                searchLocationFailureOrSuccessOption;
-            if (response == null || (response.results?.isEmpty ?? true)) {
-              searchLocationFailureOrSuccessOption = null;
-            } else {
-              searchLocationFailureOrSuccessOption = right(
-                response.results!
-                    .map(
-                      (geocodingResult) => ComplexAddress(
-                        position: LatLng(
-                          geocodingResult.geometry!.location!.lat!,
-                          geocodingResult.geometry!.location!.lng!,
-                        ),
-                        address: geocodingResult.formattedAddress,
-                      ),
-                    )
-                    .toList(),
-              );
-            }
-
-            emit(
-              state.copyWith(
-                searchLocationFailureOrSuccessOption:
-                    optionOf(searchLocationFailureOrSuccessOption),
-                isSubmitting: false,
-              ),
-            );
-          } catch (e) {
-            emit(
-              state.copyWith(
-                searchLocationFailureOrSuccessOption:
-                    some(left(const SearchLocationFailure.serverError())),
-                isSubmitting: false,
-              ),
-            );
-          }
         }
-      },
-    );
+
+        emit(
+          state.copyWith(
+            searchLocationFailureOrSuccessOption:
+                optionOf(searchLocationFailureOrSuccessOption),
+            isSubmitting: false,
+          ),
+        );
+      } catch (e) {
+        emit(
+          state.copyWith(
+            searchLocationFailureOrSuccessOption:
+                some(left(const SearchLocationFailure.serverError())),
+            isSubmitting: false,
+          ),
+        );
+      }
+    }
   }
 }

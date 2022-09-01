@@ -71,7 +71,7 @@ class AskPageTab extends StatelessWidget {
   void gotoChildrenLookup(BuildContext context) {
     AutoRouter.of(context).push(
       ChildrenLookupPageRoute(
-        currentUserId: user.id!,
+        connectedUser: user,
         currentFamilyId: user.family?.id,
       ),
     );

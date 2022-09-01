@@ -1,4 +1,3 @@
-
 import 'dart:core';
 
 import 'package:json_annotation/json_annotation.dart';
@@ -11,6 +10,8 @@ class RegisterPersonResponseDTO {
 
   RegisterPersonResponseDTO({this.personId});
 
-  factory RegisterPersonResponseDTO.fromJson(Map<String, dynamic> json) => _$RegisterPersonResponseDTOFromJson(json);
+  factory RegisterPersonResponseDTO.fromJson(Map<String, dynamic> json) =>
+      _$RegisterPersonResponseDTOFromJson(json);
+
   Map<String, dynamic> toJson() => _$RegisterPersonResponseDTOToJson(this);
 }

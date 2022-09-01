@@ -14,7 +14,7 @@ class AlertHelper {
     String title, {
     OnOkClickCallback? onConfirmCallback,
   }) async {
-    final MyText _title = MyText(
+    final MyText titleWidget = MyText(
       title,
       color: Colors.black,
       maxLines: 3,
@@ -26,14 +26,14 @@ class AlertHelper {
       builder: (BuildContext context) {
         return (Theme.of(context).platform == TargetPlatform.iOS)
             ? CupertinoAlertDialog(
-                title: _title,
+                title: titleWidget,
                 actions: <Widget>[
                   _ok(context, onConfirmCallback),
                   _nok(context),
                 ],
               )
             : AlertDialog(
-                title: _title,
+                title: titleWidget,
                 actions: <Widget>[
                   _ok(context, onConfirmCallback),
                   _nok(context),

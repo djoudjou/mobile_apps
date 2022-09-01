@@ -18,4 +18,9 @@ class SignInPage extends MyBasePage {
       body: SignInForm(),
     );
   }
+
+  @override
+  void refresh(BuildContext context) {
+    // TODO: implement refresh
+  }
 }

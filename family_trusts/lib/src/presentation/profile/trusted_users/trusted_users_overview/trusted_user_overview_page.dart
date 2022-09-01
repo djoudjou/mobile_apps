@@ -2,6 +2,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:familytrusts/generated/locale_keys.g.dart';
 import 'package:familytrusts/injection.dart';
 import 'package:familytrusts/src/application/family/trusted/bloc.dart';
+import 'package:familytrusts/src/domain/family/i_family_repository.dart';
 import 'package:familytrusts/src/domain/user/user.dart';
 import 'package:familytrusts/src/helper/constants.dart';
 import 'package:familytrusts/src/helper/snackbar_helper.dart';
@@ -28,8 +29,11 @@ class ProfileTrusted extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider<TrustedUserWatcherBloc>(
-      create: (BuildContext context) => getIt<TrustedUserWatcherBloc>()
-        ..add(TrustedUserWatcherEvent.loadTrustedUsers(connectedUser.family!.id)),
+      create: (BuildContext context) => TrustedUserWatcherBloc(
+        getIt<IFamilyRepository>(),
+      )..add(
+          TrustedUserWatcherEvent.loadTrustedUsers(connectedUser.family!.id),
+        ),
       child: Builder(
         builder: (context) =>
             BlocConsumer<TrustedUserWatcherBloc, TrustedUserWatcherState>(

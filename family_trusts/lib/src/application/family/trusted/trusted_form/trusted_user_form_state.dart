@@ -12,7 +12,7 @@ class TrustedUserFormState with _$TrustedUserFormState {
 
   const factory TrustedUserFormState({
     required TrustedUserFormStateEnum state,
-    required Option<Either<SearchUserFailure, Stream<List<User>>>> searchUserFailureOrSuccessOption,
+    required Option<Either<SearchUserFailure, List<User>>> searchUserFailureOrSuccessOption,
     required Option<Either<TrustedUserFailure, Unit>> addTrustedUserFailureOrSuccessOption,
   }) = _TrustedUserFormState;
 

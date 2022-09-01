@@ -8,46 +8,31 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 abstract class SimpleLoaderBloc<Type>
     extends Bloc<SimpleLoaderEvent, SimpleLoaderState> with LogMixin {
-  StreamSubscription? _itemsSubscription;
-
   SimpleLoaderBloc() : super(const SimpleLoaderState.simpleInitialState()) {
-    on<SimpleLoaderEvent>(
-      (event, emit) => mapEventToState(event, emit),
-      transformer: restartable(),
-    );
+    on<StartLoading>(_mapStartLoading, transformer: sequential());
+    on<ItemsUpdated>(_mapItemsUpdated, transformer: sequential());
   }
 
-  Future<void> mapEventToState(
-    SimpleLoaderEvent event,
+  Future<FutureOr<void>> _mapStartLoading(
+    StartLoading event,
     Emitter<SimpleLoaderState> emit,
   ) async {
-    event.map(
-      startLoading: (startLoading) {
-        emit(const SimpleLoaderState.simpleLoadingState());
-        try {
-          _itemsSubscription?.cancel();
-          _itemsSubscription = load(startLoading).listen(
-            (data) {
-              add(SimpleLoaderEvent.itemsUpdated(data));
-            },
-            onError: (_) => _itemsSubscription?.cancel(),
-          );
-        } catch (e) {
-          log("Erreur technique > $e");
-          emit(const SimpleLoaderState.simpleErrorEventState());
-        }
-      },
-      itemsUpdated: (itemsUpdated) {
-        emit(SimpleLoaderState.simpleSuccessEventState(itemsUpdated.events));
-      },
-    );
+    emit(const SimpleLoaderState.simpleLoadingState());
+    try {
+      final Type data = await load(event);
+      add(SimpleLoaderEvent.itemsUpdated(data));
+    } catch (e) {
+      log("Erreur technique > $e");
+      emit(const SimpleLoaderState.simpleErrorEventState());
+    }
   }
 
-  @override
-  Future<void> close() {
-    _itemsSubscription?.cancel();
-    return super.close();
+  FutureOr<void> _mapItemsUpdated(
+    ItemsUpdated event,
+    Emitter<SimpleLoaderState> emit,
+  ) {
+    emit(SimpleLoaderState.simpleSuccessEventState(event.events));
   }
 
-  Stream<Type> load(StartLoading event);
+  Future<Type> load(StartLoading event);
 }

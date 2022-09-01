@@ -7,6 +7,7 @@ import 'package:familytrusts/src/domain/children_lookup/children_lookup.dart';
 import 'package:familytrusts/src/domain/children_lookup/value_objects.dart';
 import 'package:familytrusts/src/domain/core/value_objects.dart';
 import 'package:familytrusts/src/domain/home/app_tab.dart';
+import 'package:familytrusts/src/domain/user/user.dart';
 import 'package:familytrusts/src/helper/constants.dart';
 import 'package:familytrusts/src/helper/date_helper.dart';
 import 'package:familytrusts/src/helper/log_mixin.dart';
@@ -23,9 +24,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class ChildrenLookupForm extends StatefulWidget {
-  final String connectedUserId;
+  final User connectedUser;
 
-  const ChildrenLookupForm({Key? key, required this.connectedUserId})
+  const ChildrenLookupForm({Key? key, required this.connectedUser})
       : super(key: key);
 
   @override
@@ -85,7 +86,7 @@ class _ChildrenLookupFormState extends State<ChildrenLookupForm> with LogMixin {
                   AutoRouter.of(context).replace(
                     HomePageRoute(
                       currentTab: AppTab.myDemands,
-                      connectedUserId: widget.connectedUserId,
+                      connectedUserId: widget.connectedUser.id!,
                     ),
                   );
                 },
@@ -256,13 +257,8 @@ class _ChildrenLookupFormState extends State<ChildrenLookupForm> with LogMixin {
         (eitherLocations) => eitherLocations.fold(
           (failure) => const ErrorContent(),
           (locations) => Column(
-            children: locations.map(
-              (eitherLocation) {
-                return eitherLocation.fold(
-                  (failure) => Container(
-                    color: Colors.red,
-                    child: const MyVerticalSeparator(),
-                  ),
+            children: locations
+                .map(
                   (location) => Column(
                     children: [
                       Row(
@@ -304,9 +300,8 @@ class _ChildrenLookupFormState extends State<ChildrenLookupForm> with LogMixin {
                       ],
                     ],
                   ),
-                );
-              },
-            ).toList(),
+                )
+                .toList(),
           ),
         ),
       ),
@@ -330,13 +325,8 @@ class _ChildrenLookupFormState extends State<ChildrenLookupForm> with LogMixin {
         (eitherChildren) => eitherChildren.fold(
           (failure) => const ErrorContent(),
           (children) => Column(
-            children: children.map(
-              (eitherChild) {
-                return eitherChild.fold(
-                  (failure) => Container(
-                    color: Colors.red,
-                    child: const MyVerticalSeparator(),
-                  ),
+            children: children
+                .map(
                   (child) => Column(
                     children: [
                       Row(
@@ -373,9 +363,8 @@ class _ChildrenLookupFormState extends State<ChildrenLookupForm> with LogMixin {
                       ],
                     ],
                   ),
-                );
-              },
-            ).toList(),
+                )
+                .toList(),
           ),
         ),
       ),
@@ -388,6 +377,7 @@ class _ChildrenLookupFormState extends State<ChildrenLookupForm> with LogMixin {
       child: Container(
         width: MediaQuery.of(context).size.width * .9,
         child: ChildrenLookupWidget(
+          connectedUser: widget.connectedUser,
           cardWidth: cardWidth,
           childrenLookup: ChildrenLookup(
             id: "",
@@ -395,7 +385,6 @@ class _ChildrenLookupFormState extends State<ChildrenLookupForm> with LogMixin {
             location: state.locationsStep.selectedLocation,
             rendezVous: state.rendezVousStep.rendezVous,
             noteBody: state.notesStep.noteBody,
-            trustedUsers: [],
             state: MissionState.waiting(),
             creationDate: TimestampVo.now(),
           ),

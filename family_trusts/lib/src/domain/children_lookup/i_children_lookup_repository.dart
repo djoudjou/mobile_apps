@@ -2,39 +2,43 @@ import 'dart:async';
 
 import 'package:dartz/dartz.dart';
 import 'package:familytrusts/src/domain/children_lookup/children_lookup.dart';
+import 'package:familytrusts/src/domain/children_lookup/children_lookup_details.dart';
 import 'package:familytrusts/src/domain/children_lookup/children_lookup_failure.dart';
 import 'package:familytrusts/src/domain/children_lookup/children_lookup_history.dart';
 import 'package:familytrusts/src/domain/planning/planning.dart';
 import 'package:familytrusts/src/domain/planning/planning_failure.dart';
+import 'package:familytrusts/src/domain/user/user.dart';
 
 abstract class IChildrenLookupRepository {
-  Stream<List<Either<ChildrenLookupFailure, ChildrenLookup>>>
-      getChildrenLookupsByFamilyId({
+  Future<Either<ChildrenLookupFailure, List<ChildrenLookup>>>
+      getPassedChildrenLookupsByFamilyId({
     required String familyId,
   });
 
-  Stream<List<Either<ChildrenLookupFailure, ChildrenLookup>>>
-      getChildrenLookupsByTrustedId({required String trustedUserId});
+  Future<Either<ChildrenLookupFailure, List<ChildrenLookup>>>
+      getInProgressChildrenLookupsByFamilyId({
+    required String familyId,
+  });
 
-  Stream<List<Either<ChildrenLookupFailure, ChildrenLookupHistory>>>
+  Future<Either<ChildrenLookupFailure, List<ChildrenLookupHistory>>>
       getChildrenLookupHistories({
     required String childrenLookupId,
   });
 
-  Future<Either<ChildrenLookupFailure, Unit>> addChildrenLookupHistory({
+  Future<Either<ChildrenLookupFailure, ChildrenLookupDetails>> findChildrenLookupDetailsById({
     required String childrenLookupId,
-    required ChildrenLookupHistory childrenLookupHistory,
   });
 
-  Future<Either<ChildrenLookupFailure, Unit>> addUpdateChildrenLookup({
+  Future<Either<ChildrenLookupFailure, Unit>> createChildrenLookup({
     required ChildrenLookup childrenLookup,
   });
 
-  Stream<Either<ChildrenLookupFailure, ChildrenLookup>> watchChildrenLookup({
-    required String childrenLookupId,
+  Future<Either<PlanningFailure, Planning>> getPlanning({
+    required String userId,
   });
 
-  Stream<Either<PlanningFailure, Planning>> getPlanning({
-    required String userId,
+  Future<Either<ChildrenLookupFailure,Unit>> cancel({
+    required ChildrenLookup childrenLookup,
+    required User connectedUser,
   });
 }

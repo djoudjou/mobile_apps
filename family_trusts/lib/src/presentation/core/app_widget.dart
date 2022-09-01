@@ -6,6 +6,8 @@ import 'package:familytrusts/src/application/core/simple_navigator_observer.dart
 import 'package:familytrusts/src/application/home/user/user_bloc.dart';
 import 'package:familytrusts/src/application/messages/bloc.dart';
 import 'package:familytrusts/src/domain/auth/i_auth_facade.dart';
+import 'package:familytrusts/src/domain/error/i_error_service.dart';
+import 'package:familytrusts/src/domain/messages/i_messages_repository.dart';
 import 'package:familytrusts/src/domain/user/i_user_repository.dart';
 import 'package:familytrusts/src/helper/constants.dart';
 import 'package:familytrusts/src/helper/log_mixin.dart';
@@ -118,21 +120,16 @@ class AppWidget extends StatelessWidget with LogMixin {
     return MultiBlocProvider(
       providers: [
         BlocProvider(
-          create: (context) =>
-              getIt<MessagesBloc>()..add(const MessagesEvent.init()),
+          create: (context) => MessagesBloc(
+            getIt<IMessagesRepository>(),
+            getIt<IErrorService>(),
+          )..add(const MessagesEvent.init()),
         ),
         BlocProvider(
           create: (context) => AuthenticationBloc(
             getIt<IAuthFacade>(),
           )..add(const AuthenticationEvent.authCheckRequested()),
         ),
-        //BlocProvider(
-        //  create: (context) =>
-        //      getIt<ProfilTabBloc>()..add(const ProfilTabEvent.gotoChildren()),
-        //),
-        //BlocProvider(
-        //  create: (context) => getIt<NotificationTabBloc>(),
-        //),
         BlocProvider(
           create: (context) => UserBloc(
             getIt<IAuthFacade>(),

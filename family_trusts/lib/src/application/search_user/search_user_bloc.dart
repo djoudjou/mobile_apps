@@ -19,50 +19,42 @@ class SearchUserBloc extends Bloc<SearchUserEvent, SearchUserState> {
 
   SearchUserBloc(this._userRepository, this._authFacade)
       : super(SearchUserState.initial()) {
-    on<SearchUserEvent>(
-      (event, emit) => mapEventToState(event, emit),
+    on<UserLookupChanged>(
+      _mapUserLookupChanged,
       transformer: debounce(duration),
     );
   }
 
-  void mapEventToState(
-    SearchUserEvent event,
+  Future<FutureOr<void>> _mapUserLookupChanged(
+    UserLookupChanged event,
     Emitter<SearchUserState> emit,
-  ) {
-    event.map(
-      userLookupChanged: (e) async {
-        if (quiver.isNotBlank(e.userLookupText) &&
-            e.userLookupText.isNotEmpty) {
-          emit(
-            state.copyWith(
-              searchUserFailureOrSuccessOption: none(),
-              isSubmitting: true,
-            ),
-          );
+  ) async {
+    if (quiver.isNotBlank(event.userLookupText) &&
+        event.userLookupText.isNotEmpty) {
+      emit(
+        state.copyWith(
+          searchUserFailureOrSuccessOption: none(),
+          isSubmitting: true,
+        ),
+      );
 
-          final String userId = _authFacade.getSignedInUserId().toNullable()!;
+      final String userId = _authFacade.getSignedInUserId().toNullable()!;
 
-          /* todo plus de stream
-          final Either<SearchUserFailure, Stream<List<User>>> result =
-              await _userRepository.searchUsers(
-            e.userLookupText,
-            excludedUsers: [userId],
-          );
+      final Either<SearchUserFailure, List<User>> result = await _userRepository
+          .searchUsers(event.userLookupText, excludedUsers: [userId]);
 
-          final Option<Either<SearchUserFailure, Stream<List<User>>>>
-              searchUserFailureOrSuccessOption = optionOf(result);
-
-          emit(
-            state.copyWith(
-              searchUserFailureOrSuccessOption:
-                  searchUserFailureOrSuccessOption,
-              isSubmitting: false,
-            ),
-          );
-
-           */
-        }
-      },
-    );
+      emit(
+        result.fold(
+          (failure) => state.copyWith(
+            searchUserFailureOrSuccessOption: some(left(failure)),
+            isSubmitting: false,
+          ),
+          (users) => state.copyWith(
+            searchUserFailureOrSuccessOption: some(right(users)),
+            isSubmitting: false,
+          ),
+        ),
+      );
+    }
   }
 }

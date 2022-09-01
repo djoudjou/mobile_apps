@@ -4,6 +4,7 @@ import 'package:familytrusts/generated/locale_keys.g.dart';
 import 'package:familytrusts/injection.dart';
 import 'package:familytrusts/src/application/demands/bloc.dart';
 import 'package:familytrusts/src/domain/children_lookup/children_lookup.dart';
+import 'package:familytrusts/src/domain/children_lookup/i_children_lookup_repository.dart';
 import 'package:familytrusts/src/domain/user/user.dart';
 import 'package:familytrusts/src/presentation/core/children_lookup/children_lookup_widget.dart';
 import 'package:familytrusts/src/presentation/core/error_content.dart';
@@ -15,14 +16,14 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 class DemandsTab extends StatelessWidget {
   final User connectedUser;
-  final _key = const PageStorageKey<String>('childrenLookup');
+  static const _key = PageStorageKey<String>('childrenLookup');
 
-  DemandsTab({Key? key, required this.connectedUser}) : super(key: key);
+  const DemandsTab({Key? key, required this.connectedUser}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return BlocProvider<DemandsBloc>(
-      create: (context) => getIt<DemandsBloc>()
+      create: (context) => DemandsBloc(getIt<IChildrenLookupRepository>())
         ..add(DemandsEvent.loadDemands(connectedUser.family!.id)),
       child: BlocConsumer<DemandsBloc, DemandsState>(
         listener: (context, state) {},
@@ -76,6 +77,7 @@ class DemandsTab extends StatelessWidget {
                         onTap: () {
                           context.pushRoute(
                             ChildrenLookupDetailsPageRoute(
+                              connectedUser: connectedUser,
                               childrenLookup: childrenLookup,
                             ),
                           );
@@ -83,6 +85,7 @@ class DemandsTab extends StatelessWidget {
                         child: ChildrenLookupWidget(
                           cardWidth: MediaQuery.of(context).size.width * .7,
                           childrenLookup: childrenLookup,
+                          connectedUser: connectedUser,
                         ),
                       );
                     },

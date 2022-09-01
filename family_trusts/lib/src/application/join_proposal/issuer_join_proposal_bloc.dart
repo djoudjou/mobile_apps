@@ -11,19 +11,19 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:injectable/injectable.dart';
 
 @injectable
-class JoinProposalBloc extends Bloc<JoinProposalEvent, JoinProposalState> {
+class IssuerJoinProposalBloc extends Bloc<IssuerJoinProposalEvent, IssuerJoinProposalState> {
   final IJoinProposalRepository _joinProposalRepository;
 
-  JoinProposalBloc(
+  IssuerJoinProposalBloc(
     this._joinProposalRepository,
-  ) : super(const JoinProposalState.initial()) {
+  ) : super(const IssuerJoinProposalState.initial()) {
     on<Send>(_mapSend, transformer: sequential());
     on<Cancel>(_mapCancel, transformer: sequential());
     on<LoadProposals>(_mapLoadProposals, transformer: sequential());
   }
 
-  FutureOr<void> _mapSend(Send event, Emitter<JoinProposalState> emit) async {
-    emit(const JoinProposalState.joinProposalSendInProgress());
+  FutureOr<void> _mapSend(Send event, Emitter<IssuerJoinProposalState> emit) async {
+    emit(const IssuerJoinProposalState.joinProposalSendInProgress());
 
     final Either<JoinProposalFailure, Unit> resultSendProposal =
         await _joinProposalRepository.sendProposal(
@@ -35,18 +35,18 @@ class JoinProposalBloc extends Bloc<JoinProposalEvent, JoinProposalState> {
       resultSendProposal.fold(
         (failure) {
           // TODO ADJ handle specific error message
-          return const JoinProposalState.joinProposalSendFailure("");
+          return const IssuerJoinProposalState.joinProposalSendFailure("");
         },
-        (success) => const JoinProposalState.joinProposalSendSuccess(),
+        (success) => const IssuerJoinProposalState.joinProposalSendSuccess(),
       ),
     );
   }
 
   FutureOr<void> _mapCancel(
     Cancel event,
-    Emitter<JoinProposalState> emit,
+    Emitter<IssuerJoinProposalState> emit,
   ) async {
-    emit(const JoinProposalState.joinProposalCancelInProgress());
+    emit(const IssuerJoinProposalState.joinProposalCancelInProgress());
 
     final Either<JoinProposalFailure, Unit> resultCancelProposal =
         await _joinProposalRepository.cancelProposal(
@@ -58,18 +58,18 @@ class JoinProposalBloc extends Bloc<JoinProposalEvent, JoinProposalState> {
       resultCancelProposal.fold(
         (failure) {
           // TODO ADJ handle specific error message
-          return const JoinProposalState.joinProposalCancelFailure("");
+          return const IssuerJoinProposalState.joinProposalCancelFailure("");
         },
-        (success) => const JoinProposalState.joinProposalCancelSuccess(),
+        (success) => const IssuerJoinProposalState.joinProposalCancelSuccess(),
       ),
     );
   }
 
   FutureOr<void> _mapLoadProposals(
     LoadProposals event,
-    Emitter<JoinProposalState> emit,
+    Emitter<IssuerJoinProposalState> emit,
   ) async {
-    emit(const JoinProposalState.joinProposalsLoadInProgress());
+    emit(const IssuerJoinProposalState.joinProposalsLoadInProgress());
 
     final Either<JoinProposalFailure, List<JoinProposal>>
         resultFindArchivedProposals =
@@ -86,7 +86,7 @@ class JoinProposalBloc extends Bloc<JoinProposalEvent, JoinProposalState> {
     if (resultFindPendingProposal.isLeft() ||
         resultFindArchivedProposals.isLeft()) {
       // TODO ADJ handle specific error message
-      emit(const JoinProposalState.joinProposalsLoadFailure(""));
+      emit(const IssuerJoinProposalState.joinProposalsLoadFailure(""));
     } else {
       final Option<JoinProposal> pendingJoinProposal =
           resultFindPendingProposal.getOrElse(() => none());
@@ -94,7 +94,7 @@ class JoinProposalBloc extends Bloc<JoinProposalEvent, JoinProposalState> {
           resultFindArchivedProposals.getOrElse(() => List.empty());
 
       emit(
-        JoinProposalState.joinProposalsLoaded(
+        IssuerJoinProposalState.joinProposalsLoaded(
           hasPendingProposals: pendingJoinProposal.isSome(),
           archives: archivedJoinProposals,
           optionPendingJoinProposal: pendingJoinProposal,

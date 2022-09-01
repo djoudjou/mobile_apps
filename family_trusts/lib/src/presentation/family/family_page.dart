@@ -120,4 +120,9 @@ class FamilyPage extends MyBasePage {
       ),
     );
   }
+
+  @override
+  void refresh(BuildContext context) {
+    // TODO: implement refresh
+  }
 }

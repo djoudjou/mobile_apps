@@ -2,6 +2,8 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:familytrusts/generated/locale_keys.g.dart';
 import 'package:familytrusts/injection.dart';
 import 'package:familytrusts/src/application/family/children/bloc.dart';
+import 'package:familytrusts/src/domain/family/child.dart';
+import 'package:familytrusts/src/domain/family/i_family_repository.dart';
 import 'package:familytrusts/src/domain/user/user.dart';
 import 'package:familytrusts/src/helper/constants.dart';
 import 'package:familytrusts/src/helper/snackbar_helper.dart';
@@ -17,7 +19,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 class ProfileChildren extends StatelessWidget {
   final double radius;
   final User connectedUser;
-  final _key = const PageStorageKey<String>('children');
+  static const _key = PageStorageKey<String>('children');
 
   const ProfileChildren({
     Key? key,
@@ -28,8 +30,9 @@ class ProfileChildren extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (BuildContext context) => getIt<ChildrenBloc>()
-        ..add(ChildrenEvent.loadChildren(connectedUser.family!.id)),
+      create: (BuildContext context) => ChildrenBloc(
+        getIt<IFamilyRepository>(),
+      )..add(ChildrenEvent.loadChildren(connectedUser.family!.id)),
       child: MultiBlocListener(
         listeners: [
           BlocListener<ChildrenBloc, ChildrenState>(
@@ -75,42 +78,41 @@ class ProfileChildren extends StatelessWidget {
                         separatorBuilder: (BuildContext context, int index) =>
                             const Divider(),
                         itemBuilder: (BuildContext context, int index) {
-                          return eitherChildren[index].fold(
-                            (error) => const MyHorizontalSeparator(),
-                            (child) => Container(
-                              //color: Colors.green,
-                              width: MediaQuery.of(context).size.width,
-                              child: Row(
-                                //mainAxisAlignment: MainAxisAlignment.start,
-                                children: <Widget>[
-                                  MyAvatar(
-                                    imageTag: "TAG_CHILD_${child.id}",
-                                    photoUrl: child.photoUrl,
-                                    radius: radius / 2,
-                                    onTapCallback: () => gotoEditChild(
-                                      currentUser: connectedUser,
-                                      context: context,
-                                      editing: true,
-                                      child: child,
-                                    ),
-                                    defaultImage: defaultUserImages,
+                          final Child child = eitherChildren[index];
+
+                          return Container(
+                            //color: Colors.green,
+                            width: MediaQuery.of(context).size.width,
+                            child: Row(
+                              //mainAxisAlignment: MainAxisAlignment.start,
+                              children: <Widget>[
+                                MyAvatar(
+                                  imageTag: "TAG_CHILD_${child.id}",
+                                  photoUrl: child.photoUrl,
+                                  radius: radius / 2,
+                                  onTapCallback: () => gotoEditChild(
+                                    currentUser: connectedUser,
+                                    context: context,
+                                    editing: true,
+                                    child: child,
                                   ),
-                                  const MyHorizontalSeparator(),
-                                  InkWell(
-                                    onTap: () => gotoEditChild(
-                                      currentUser: connectedUser,
-                                      context: context,
-                                      editing: true,
-                                      child: child,
-                                    ),
-                                    child: MyText(
-                                      child.displayName,
-                                      alignment: TextAlign.start,
-                                      maxLines: 3,
-                                    ),
+                                  defaultImage: defaultUserImages,
+                                ),
+                                const MyHorizontalSeparator(),
+                                InkWell(
+                                  onTap: () => gotoEditChild(
+                                    currentUser: connectedUser,
+                                    context: context,
+                                    editing: true,
+                                    child: child,
                                   ),
-                                ],
-                              ),
+                                  child: MyText(
+                                    child.displayName,
+                                    alignment: TextAlign.start,
+                                    maxLines: 3,
+                                  ),
+                                ),
+                              ],
                             ),
                           );
                         },

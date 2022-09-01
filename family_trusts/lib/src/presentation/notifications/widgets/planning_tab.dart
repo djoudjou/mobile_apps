@@ -3,6 +3,7 @@ import 'package:familytrusts/injection.dart';
 import 'package:familytrusts/src/application/core/loader/simple_loader_event.dart';
 import 'package:familytrusts/src/application/core/loader/simple_loader_state.dart';
 import 'package:familytrusts/src/application/planning/bloc.dart';
+import 'package:familytrusts/src/domain/children_lookup/i_children_lookup_repository.dart';
 import 'package:familytrusts/src/domain/planning/planning.dart';
 import 'package:familytrusts/src/domain/planning/planning_entry.dart';
 import 'package:familytrusts/src/domain/planning/planning_failure.dart';
@@ -28,7 +29,7 @@ class PlanningTab extends StatelessWidget with LogMixin {
   @override
   Widget build(BuildContext context) {
     return BlocProvider<PlanningBloc>(
-      create: (context) => getIt<PlanningBloc>()
+      create: (context) => PlanningBloc(getIt<IChildrenLookupRepository>())
         ..add(SimpleLoaderEvent.startLoading(connectedUser.id)),
       child: BlocConsumer<PlanningBloc, SimpleLoaderState>(
         listener: (context, state) {},

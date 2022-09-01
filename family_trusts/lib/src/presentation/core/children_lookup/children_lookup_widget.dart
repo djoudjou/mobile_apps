@@ -4,6 +4,7 @@ import 'package:familytrusts/generated/locale_keys.g.dart';
 import 'package:familytrusts/src/application/children_lookup/bloc.dart';
 import 'package:familytrusts/src/domain/children_lookup/children_lookup.dart';
 import 'package:familytrusts/src/domain/children_lookup/value_objects.dart';
+import 'package:familytrusts/src/domain/user/user.dart';
 import 'package:familytrusts/src/helper/constants.dart';
 import 'package:familytrusts/src/presentation/core/avatar_widget.dart';
 import 'package:familytrusts/src/presentation/core/my_button.dart';
@@ -18,10 +19,12 @@ class ChildrenLookupWidget extends StatelessWidget {
     Key? key,
     required this.cardWidth,
     required this.childrenLookup,
+    required this.connectedUser,
   }) : super(key: key);
 
   final double cardWidth;
   final ChildrenLookup childrenLookup;
+  final User connectedUser;
 
   @override
   Widget build(BuildContext context) {
@@ -119,7 +122,7 @@ class ChildrenLookupWidget extends StatelessWidget {
                 MyButton(
                   onPressed: () {
                     BlocProvider.of<ChildrenLookupBloc>(context)
-                        .add(const ChildrenLookupEvent.submitted());
+                        .add(ChildrenLookupEvent.submitted(connectedUser));
                   },
                   message: LocaleKeys.ask_childlookup_confirm_confirm.tr(),
                 ),

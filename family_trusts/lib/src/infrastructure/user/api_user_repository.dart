@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:dartz/dartz.dart';
+import 'package:familytrusts/src/domain/search_user/search_user_failure.dart';
 import 'package:familytrusts/src/domain/user/i_user_repository.dart';
 import 'package:familytrusts/src/domain/user/user.dart';
 import 'package:familytrusts/src/domain/user/user_failure.dart';
@@ -84,9 +85,12 @@ class ApiUserRepository with LogMixin implements IUserRepository {
       final PersonDTO result =
           await _apiService.getPersonRestClient().findPersonById(id);
 
-      final List<FamilyDTO> families = await _apiService.getFamilyRestClient().findMatchingFamiliesByMemberIdQuery(id);
+      final List<FamilyDTO> families = await _apiService
+          .getFamilyRestClient()
+          .findMatchingFamiliesByMemberIdQuery(id);
 
-      final User user = result.toDomain(families.isNotEmpty?families.first:null);
+      final User user =
+          result.toDomain(families.isNotEmpty ? families.first : null);
 
       return right(user);
     } catch (e) {
@@ -97,7 +101,9 @@ class ApiUserRepository with LogMixin implements IUserRepository {
 
   @override
   Future<Either<UserFailure, Unit>> saveToken(
-      String userId, String token,) async {
+    String userId,
+    String token,
+  ) async {
     try {
       await _apiService
           .getPersonRestClient()
@@ -106,6 +112,26 @@ class ApiUserRepository with LogMixin implements IUserRepository {
     } catch (e) {
       log("error in saveToken method : $e");
       return left(const UserFailure.unexpected());
+    }
+  }
+
+  @override
+  Future<Either<SearchUserFailure, List<User>>> searchUsers(
+    String userLookupText, {
+    List<String>? excludedUsers,
+  }) async {
+    try {
+      final List<PersonDTO> result =
+          await _apiService.getPersonRestClient().findAll();
+
+      final List<PersonDTO> filtered = (excludedUsers != null)
+          ? result.where((p) => !excludedUsers.contains(p.personId)).toList()
+          : result;
+
+      return right(filtered.map((p) => p.toDomain(null)).toList());
+    } catch (e) {
+      log("error in searchUsers method : $e");
+      return left(const SearchUserFailure.serverError());
     }
   }
 }

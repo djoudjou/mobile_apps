@@ -83,45 +83,38 @@ class SearchUserForm extends StatelessWidget {
           (searchUserFailure) => Center(
             child: MyText(LocaleKeys.global_serverError.tr()),
           ),
-          (result) {
-            return Expanded(
-              child: StreamBuilder<List<User>>(
-                stream: result,
-                builder: (ctx, snapshot) {
-                  if (!snapshot.hasData) {
-                    return const EmptyContent();
-                  } else {
-                    final List<User> users = snapshot.data!;
-
-                    return ListView.builder(
-                      itemBuilder: (context, index) {
-                        final User selectedUser = users[index];
-                        return InkWell(
-                          onTap: () async {
-                            await AlertHelper().confirm(
-                              context,
-                              LocaleKeys.profile_sendTrustProposal
-                                  .tr(args: [selectedUser.displayName]),
-                              onConfirmCallback: () {
-                                //context.read<TrustedUserWatcherBloc>().add(
-                                //  TrustedUserWatcherEvent.addTrustedUser(
-                                //    currentUser: connectedUser,
-                                //    userToAdd: selectedUser,
-                                //  ),
-                                //);
-                                AutoRouter.of(context).pop();
-                              },
-                            );
+          (users) {
+            if (users.isEmpty) {
+              return const EmptyContent();
+            } else {
+              return Expanded(
+                child: ListView.builder(
+                  itemBuilder: (context, index) {
+                    final User selectedUser = users[index];
+                    return InkWell(
+                      onTap: () async {
+                        await AlertHelper().confirm(
+                          context,
+                          LocaleKeys.profile_sendTrustProposal
+                              .tr(args: [selectedUser.displayName]),
+                          onConfirmCallback: () {
+                            //context.read<TrustedUserWatcherBloc>().add(
+                            //  TrustedUserWatcherEvent.addTrustedUser(
+                            //    currentUser: connectedUser,
+                            //    userToAdd: selectedUser,
+                            //  ),
+                            //);
+                            AutoRouter.of(context).pop();
                           },
-                          child: SearchUserCard(user: selectedUser),
                         );
                       },
-                      itemCount: users.length,
+                      child: SearchUserCard(user: selectedUser),
                     );
-                  }
-                },
-              ),
-            );
+                  },
+                  itemCount: users.length,
+                ),
+              );
+            }
           },
         ),
       );

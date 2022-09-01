@@ -58,7 +58,7 @@ class _ProfileContentState extends State<ProfileContent>
     const double radius = 60;
     return MultiBlocListener(
       listeners: [
-        BlocListener<ProfilTabBloc, ProfilTabState>(
+        BlocListener<ProfileTabBloc, ProfileTabState>(
           listener: (context, state) {
             switch (state.current) {
               case ProfilTab.children:
@@ -74,7 +74,7 @@ class _ProfileContentState extends State<ProfileContent>
           },
         ),
       ],
-      child: BlocBuilder<ProfilTabBloc, ProfilTabState>(
+      child: BlocBuilder<ProfileTabBloc, ProfileTabState>(
         builder: (profileContext, state) {
           switch (state.current) {
             case ProfilTab.children:
@@ -97,14 +97,14 @@ class _ProfileContentState extends State<ProfileContent>
                 pageTitle: LocaleKeys.family_title.tr(),
                 bottom: TabBar(
                   onTap: (index) {
-                    final profileTabBloc = profileContext.read<ProfilTabBloc>();
+                    final profileTabBloc = profileContext.read<ProfileTabBloc>();
                     if (index == 0) {
-                      profileTabBloc.add(const ProfilTabEvent.gotoChildren());
+                      profileTabBloc.add(const ProfileTabEvent.gotoChildren());
                     } else if (index == 1) {
                       profileTabBloc
-                          .add(const ProfilTabEvent.gotoTrustedUsers());
+                          .add(const ProfileTabEvent.gotoTrustedUsers());
                     } else if (index == 2) {
-                      profileTabBloc.add(const ProfilTabEvent.gotoLocations());
+                      profileTabBloc.add(const ProfileTabEvent.gotoLocations());
                     }
                   },
                   isScrollable: true,

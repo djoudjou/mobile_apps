@@ -27,4 +27,5 @@ abstract class FamilyRestClient {
     @Path("familyId") String familyId,
     @Path("memberId") String memberId,
   );
+
 }

@@ -2,9 +2,12 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:familytrusts/generated/locale_keys.g.dart';
 import 'package:familytrusts/injection.dart';
 import 'package:familytrusts/src/application/user_form/bloc.dart';
+import 'package:familytrusts/src/domain/family/i_family_repository.dart';
+import 'package:familytrusts/src/domain/user/i_user_repository.dart';
 import 'package:familytrusts/src/domain/user/user.dart';
 import 'package:familytrusts/src/domain/user/value_objects.dart';
 import 'package:familytrusts/src/helper/alert_helper.dart';
+import 'package:familytrusts/src/helper/analytics_svc.dart';
 import 'package:familytrusts/src/helper/constants.dart';
 import 'package:familytrusts/src/helper/snackbar_helper.dart';
 import 'package:familytrusts/src/helper/validators.dart';
@@ -61,8 +64,11 @@ class _UserPageState extends State<UserPage> {
         context: context,
       ),
       body: BlocProvider<UserFormBloc>(
-        create: (context) => getIt<UserFormBloc>()
-          ..add(
+        create: (context) => UserFormBloc(
+          getIt<IUserRepository>(),
+          getIt<IFamilyRepository>(),
+          getIt<AnalyticsSvc>(),
+        )..add(
             UserFormEvent.init(
               connectedUser: widget.connectedUser,
               userToEdit: widget.userToEdit,

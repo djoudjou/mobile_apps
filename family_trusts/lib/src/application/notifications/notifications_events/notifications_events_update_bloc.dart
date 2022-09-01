@@ -5,35 +5,19 @@ import 'package:bloc_concurrency/bloc_concurrency.dart';
 import 'package:dartz/dartz.dart';
 import 'package:familytrusts/src/application/notifications/notifications_events/notifications_events_update_event.dart';
 import 'package:familytrusts/src/application/notifications/notifications_events/notifications_events_update_state.dart';
-import 'package:familytrusts/src/domain/notification/i_notification_repository.dart';
+import 'package:familytrusts/src/domain/notification/i_familyevent_repository.dart';
 import 'package:familytrusts/src/domain/notification/notifications_failure.dart';
 import 'package:injectable/injectable.dart';
 
 @injectable
 class NotificationsEventsUpdateBloc extends Bloc<NotificationsEventsUpdateEvent,
     NotificationsEventsUpdateState> {
-  final INotificationRepository _notificationRepository;
+  final IFamilyEventRepository _notificationRepository;
 
   NotificationsEventsUpdateBloc(this._notificationRepository)
       : super(NotificationsEventsUpdateState.initial()) {
-    on<NotificationsEventsUpdateEvent>(
-      (event, emit) => mapEventToState(event, emit),
-      transformer: sequential(),
-    );
-  }
-
-  void mapEventToState(
-    NotificationsEventsUpdateEvent event,
-    Emitter<NotificationsEventsUpdateState> emit,
-  ) {
-    event.map(
-      markAsRead: (event) {
-        _mapMarkAsReadToState(event, emit);
-      },
-      deleteEvent: (DeleteEvent event) {
-        _mapDeleteNotificationToState(event, emit);
-      },
-    );
+    on<MarkAsRead>(_mapMarkAsReadToState, transformer: sequential());
+    on<DeleteEvent>(_mapDeleteNotificationToState, transformer: sequential());
   }
 
   FutureOr<void> _mapMarkAsReadToState(
@@ -44,23 +28,23 @@ class NotificationsEventsUpdateBloc extends Bloc<NotificationsEventsUpdateEvent,
       emit(
         state.copyWith(
           markAsReadInProgress: true,
-          markAsReadfailureOrSuccessOption: none(),
+          markAsReadFailureOrSuccessOption: none(),
         ),
       );
       final Either<NotificationsFailure, Unit> result =
-          await _notificationRepository.updateEvent(
+          await _notificationRepository.markAsReadEvent(
         event.currentUser.id!,
-        event.notification.copyWith(seen: true),
+        event.notification,
       );
       emit(
         result.fold(
           (l) => state.copyWith(
             markAsReadInProgress: false,
-            markAsReadfailureOrSuccessOption: some(left(l)),
+            markAsReadFailureOrSuccessOption: some(left(l)),
           ),
           (r) => state.copyWith(
             markAsReadInProgress: false,
-            markAsReadfailureOrSuccessOption: some(right(unit)),
+            markAsReadFailureOrSuccessOption: some(right(unit)),
           ),
         ),
       );
@@ -68,7 +52,7 @@ class NotificationsEventsUpdateBloc extends Bloc<NotificationsEventsUpdateEvent,
       emit(
         state.copyWith(
           markAsReadInProgress: false,
-          markAsReadfailureOrSuccessOption:
+          markAsReadFailureOrSuccessOption:
               some(left(const NotificationsFailure.unexpected())),
         ),
       );
@@ -83,7 +67,7 @@ class NotificationsEventsUpdateBloc extends Bloc<NotificationsEventsUpdateEvent,
       emit(
         state.copyWith(
           isDeleting: true,
-          deletefailureOrSuccessOption: none(),
+          deleteFailureOrSuccessOption: none(),
         ),
       );
       final Either<NotificationsFailure, Unit> result =
@@ -96,11 +80,11 @@ class NotificationsEventsUpdateBloc extends Bloc<NotificationsEventsUpdateEvent,
         result.fold(
           (l) => state.copyWith(
             isDeleting: false,
-            deletefailureOrSuccessOption: some(left(l)),
+            deleteFailureOrSuccessOption: some(left(l)),
           ),
           (r) => state.copyWith(
             isDeleting: false,
-            deletefailureOrSuccessOption: some(right(unit)),
+            deleteFailureOrSuccessOption: some(right(unit)),
           ),
         ),
       );
@@ -108,7 +92,7 @@ class NotificationsEventsUpdateBloc extends Bloc<NotificationsEventsUpdateEvent,
       emit(
         state.copyWith(
           isDeleting: false,
-          deletefailureOrSuccessOption:
+          deleteFailureOrSuccessOption:
               some(left(const NotificationsFailure.unexpected())),
         ),
       );

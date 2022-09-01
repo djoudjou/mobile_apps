@@ -34,8 +34,7 @@ abstract class IFamilyRepository {
     required String childId,
   });
 
-  //Stream<Either<ChildrenFailure, List<Either<ChildrenFailure, Child>>>>
-  //    getChildren(String familyId);
+  Future<Either<ChildrenFailure, List<Child>>> getChildren(String familyId);
 
   Future<Either<ChildrenFailure, Unit>> deleteChild({
     required String familyId,
@@ -48,12 +47,13 @@ abstract class IFamilyRepository {
     String? pickedFilePath,
   });
 
-  //Stream<Either<UserFailure, List<TrustedUser>>> getTrustedUsers(
-  //   String familyId,
-  //);
+  Future<Either<UserFailure, List<TrustedUser>>> getTrustedUsers(
+    String familyId,
+  );
 
   Future<Either<UserFailure, List<TrustedUser>>> getFutureTrustedUsers(
-      String familyId,);
+    String familyId,
+  );
 
   Future<Either<UserFailure, Unit>> addTrustedUser({
     required String familyId,
@@ -70,8 +70,7 @@ abstract class IFamilyRepository {
     required String locationId,
   });
 
-  //Stream<Either<LocationFailure, List<Either<LocationFailure, Location>>>>
-  //    getLocations(String familyId);
+  Future<Either<LocationFailure, List<Location>>> getLocations(String familyId);
 
   Future<Either<LocationFailure, Unit>> addUpdateLocation({
     required String familyId,

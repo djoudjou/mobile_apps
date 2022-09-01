@@ -5,6 +5,7 @@ import 'package:familytrusts/generated/locale_keys.g.dart';
 import 'package:familytrusts/injection.dart';
 import 'package:familytrusts/src/application/family/children/bloc.dart';
 import 'package:familytrusts/src/domain/family/child.dart';
+import 'package:familytrusts/src/domain/family/i_family_repository.dart';
 import 'package:familytrusts/src/domain/family/value_objects.dart';
 import 'package:familytrusts/src/domain/user/user.dart';
 import 'package:familytrusts/src/domain/user/value_objects.dart';
@@ -69,7 +70,7 @@ class _ChildPageState extends State<ChildPage> {
     final textTheme = Theme.of(context).textTheme;
 
     return BlocProvider(
-      create: (context) => getIt<ChildrenFormBloc>(),
+      create: (context) => ChildrenFormBloc(getIt<IFamilyRepository>()),
       child: Builder(
         builder: (context) => Scaffold(
           appBar: MyAppBar(

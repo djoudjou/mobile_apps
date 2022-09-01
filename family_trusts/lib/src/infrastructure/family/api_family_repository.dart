@@ -158,4 +158,22 @@ class ApiFamilyRepository with LogMixin implements IFamilyRepository {
       return left(const FamilyFailure.unexpected());
     }
   }
+
+  @override
+  Future<Either<ChildrenFailure, List<Child>>> getChildren(String familyId) {
+    // TODO: implement getChildren
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<Either<LocationFailure, List<Location>>> getLocations(String familyId) {
+    // TODO: implement getLocations
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<Either<UserFailure, List<TrustedUser>>> getTrustedUsers(String familyId) {
+    // TODO: implement getTrustedUsers
+    throw UnimplementedError();
+  }
 }

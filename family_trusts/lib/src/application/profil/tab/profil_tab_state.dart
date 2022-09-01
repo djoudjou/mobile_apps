@@ -4,9 +4,9 @@ import 'package:freezed_annotation/freezed_annotation.dart';
 part 'profil_tab_state.freezed.dart';
 
 @freezed
-abstract class ProfilTabState with _$ProfilTabState {
-  const factory ProfilTabState({required ProfilTab current}) = _ProfilTabState;
+abstract class ProfileTabState with _$ProfileTabState {
+  const factory ProfileTabState({required ProfilTab current}) = _ProfileTabState;
 
-  factory ProfilTabState.initial() =>
-      const ProfilTabState(current: ProfilTab.trustedUsers);
+  factory ProfileTabState.initial() =>
+      const ProfileTabState(current: ProfilTab.trustedUsers);
 }

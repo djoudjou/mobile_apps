@@ -10,7 +10,7 @@ class ChildrenState with _$ChildrenState {
   const factory ChildrenState.childrenLoading() = ChildrenLoading;
 
   const factory ChildrenState.childrenLoaded({
-    required Either<ChildrenFailure, List<Either<ChildrenFailure, Child>>>
+    required Either<ChildrenFailure, List<Child>>
         eitherChildren,
   }) = ChildrenLoaded;
 

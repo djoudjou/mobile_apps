@@ -18,7 +18,9 @@ class SearchFamilyPage extends MyBasePage {
   Widget myBuild(BuildContext context) {
     return Scaffold(
       appBar: MyAppBar(
-          context: context, pageTitle: LocaleKeys.search_family_title.tr()),
+        context: context,
+        pageTitle: LocaleKeys.search_family_title.tr(),
+      ),
       body: Center(
         child: BlocProvider<SearchFamilyBloc>(
           create: (context) => SearchFamilyBloc(getIt<IFamilyRepository>()),
@@ -26,5 +28,10 @@ class SearchFamilyPage extends MyBasePage {
         ),
       ),
     );
+  }
+
+  @override
+  void refresh(BuildContext context) {
+    // TODO: implement refresh
   }
 }

@@ -21,7 +21,7 @@ class ChildrenStep with _$ChildrenStep {
   const factory ChildrenStep({
     required bool isActive,
     required
-        Option<Either<ChildrenFailure, List<Either<ChildrenFailure, Child>>>>
+        Option<Either<ChildrenFailure, List<Child>>>
             optionEitherChildren,
     Child? selectedChild,
   }) = _ChildrenStep;
@@ -32,7 +32,7 @@ class LocationsStep with _$LocationsStep {
   const factory LocationsStep({
     required bool isActive,
     required
-        Option<Either<LocationFailure, List<Either<LocationFailure, Location>>>>
+        Option<Either<LocationFailure, List<Location>>>
             optionEitherLocations,
     Location? selectedLocation,
   }) = _LocationsStep;
