@@ -215,7 +215,7 @@
 
     "decline": {
       "button" : "Décliner la demande ?",
-      "confirm" : "Décliner la demande de rejoindre la famille '{}' ?",
+      "confirm" : "Décliner la demande de '{}' ?",
 
       "failed": "Erreur lors de la déclinaison de la demande",
       "inProgress": "Déclinaison en cours...",

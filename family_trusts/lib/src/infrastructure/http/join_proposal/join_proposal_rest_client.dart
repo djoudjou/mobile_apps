@@ -34,4 +34,16 @@ abstract class JoinProposalRestClient {
     @Path("joinFamilyProposalId") String joinFamilyProposalId,
     @Path("issuerId") String issuerId,
   );
+
+  @PUT("/proposals/{joinFamilyProposalId}/decline/{memberId}")
+  Future<JoinFamilyProposalDTO> decline(
+    @Path("joinFamilyProposalId") String joinFamilyProposalId,
+    @Path("memberId") String memberId,
+  );
+
+  @PUT("/proposals/{joinFamilyProposalId}/accept/{memberId}")
+  Future<JoinFamilyProposalDTO> accept(
+    @Path("joinFamilyProposalId") String joinFamilyProposalId,
+    @Path("memberId") String memberId,
+  );
 }

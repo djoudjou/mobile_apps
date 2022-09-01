@@ -194,20 +194,46 @@ class CodegenLoader extends AssetLoader{
   },
   "join_proposal": {
     "loadingFailed": "Erreur lors de la récupération des propositions \n merci de contacter le support",
-    "summary": "Invitation envoyée à la famille {} le {}",
+    "summary": "Invitation envoyée à la famille '{}' {}",
+    "details": {
+      "family_label": "Famille",
+      "status_label": "Status",
+      "creation_date_label": "Envoyé",
+      "expiration_date_label": "Expire",
+      "member_label": "Personne ayant répondu",
+      "accepted_text": "Acceptée",
+      "canceled_text": "Annulée",
+      "waiting_text": "En attente",
+      "declined_text": "Refusée",
+      "rejected_text": "Rejetée"
+    },
     "send": {
       "button": "Envoyer une invitation",
-      "confirm": "Envoyer l'invitation à la famille {}?",
+      "confirm": "Envoyer l'invitation à la famille '{}'?",
       "failed": "Erreur lors de l'envoie de l'invitation \n merci d'essayer ultérieurement",
       "inProgress": "Envoie de l'invitation en cours ...",
       "success": "invitation envoyée"
     },
     "cancel": {
       "button": "Annuler la demande ?",
-      "confirm": "Annuler l'invitation pour la famille {} ?",
-      "failed": "Erreur lors de la déclinaison de l'invitation",
-      "inProgress": "Déclinaison de l'invitation en cours...",
-      "success": "Invitation déclinée avec succès"
+      "confirm": "Annuler la demande de rejoindre la famille '{}' ?",
+      "failed": "Erreur lors de l'annulation de la demande",
+      "inProgress": "Demande d'annulation en cours...",
+      "success": "Demande annulée avec succès"
+    },
+    "decline": {
+      "button": "Décliner la demande ?",
+      "confirm": "Décliner la demande de rejoindre la famille '{}' ?",
+      "failed": "Erreur lors de la déclinaison de la demande",
+      "inProgress": "Déclinaison en cours...",
+      "success": "Demande déclinée avec succès"
+    },
+    "accept": {
+      "button": "Accepter la demande ?",
+      "confirm": "Accepter la demande de rejoindre la famille '{}' ?",
+      "failed": "Erreur lors de l'acceptation de la demande",
+      "inProgress": "Acceptation de la demande en cours...",
+      "success": "Demande acceptée avec succès"
     },
     "acceptFailed": "Erreur lors de l'acceptation de l'invitation",
     "acceptInProgress": "Acceptation de l'invitation en cours ...",
@@ -247,95 +273,7 @@ class CodegenLoader extends AssetLoader{
     "accept": "Accepter",
     "decline": "Décliner",
     "markAsRead": "Marquer comme lu",
-    "moveToTrash": "Supprimer le message",
-    "spouseProposal": {
-      "fromConnectedUser": "Vous avez envoyé une demande de mise en relation à {}",
-      "notFromConnectedUser": "{} vous a envoyé une demande de mise en relation"
-    },
-    "spouseProposalCanceled": {
-      "fromConnectedUser": "Vous avez annulé votre demande de mise en relation à {}",
-      "notFromConnectedUser": "{} a annulé sa proposition de mise en relation"
-    },
-    "spouseProposalDeclined": {
-      "fromConnectedUser": "Votre proposition de mise en relation a été décliné par {}",
-      "notFromConnectedUser": "Vous avez décliné la proposition de mise en relation de {}"
-    },
-    "spouseProposalAccepted": {
-      "fromConnectedUser": "Votre demande de mise en relation avec {} a été accepté",
-      "notFromConnectedUser": "Vous avez accepté la demande de mise en relation de {}"
-    },
-    "trustProposal": {
-      "fromConnectedUser": "Vous avez demandé à {} d'intégrer votre cercle de confiance",
-      "notFromConnectedUser": "{} vous a demandé d'intégrer votre cercle de confiance"
-    },
-    "trustProposalCanceled": {
-      "fromConnectedUser": "Vous avez annulé votre proposition d'ajout dans votre cercle de confiance à {}",
-      "notFromConnectedUser": "{} a annulé sa proposition d'ajout dans son cercle de confiance"
-    },
-    "trustProposalDeclined": {
-      "fromConnectedUser": "Vous avez décliné la proposition d'ajout dans le cercle de confiance de {}",
-      "notFromConnectedUser": "{} a décliné votre proposition d'ajout dans votre cercle de confiance"
-    },
-    "childAdded": {
-      "fromConnectedUser": "Vous avez ajouté {}",
-      "notFromConnectedUser": "{} a ajouté {}"
-    },
-    "childRemoved": {
-      "fromConnectedUser": "Vous avez retiré {}",
-      "notFromConnectedUser": "{} a retiré {}"
-    },
-    "childUpdated": {
-      "fromConnectedUser": "Vous avez mis à jour {}",
-      "notFromConnectedUser": "{} a mis à jour {}"
-    },
-    "spouseRemoved": {
-      "fromConnectedUser": "Vous avez mis fin à la relation avec {}",
-      "notFromConnectedUser": "{} mis fin à la relation avec vous"
-    },
-    "trustRemoved": {
-      "fromConnectedUser": "Vous avez retiré {} de votre cercle de confiance",
-      "notFromConnectedUser": "{} a retiré {} de votre cercle de confiance"
-    },
-    "trustAdded": {
-      "fromConnectedUser": "Vous avez ajouté {} dans votre cercle de confiance",
-      "notFromConnectedUser": "{} a ajouté {} dans votre cercle de confiance"
-    },
-    "trustProposalAccepted": {
-      "fromConnectedUser": "Vous avez accepté la demande d'ajout dans le cercle de confiance de {}",
-      "notFromConnectedUser": "{} vous a accepté dans son cercle de confiance"
-    },
-    "locationAdded": {
-      "fromConnectedUser": "Vous avez ajouté le lieu {}",
-      "notFromConnectedUser": "{} a ajouté le lieu {}"
-    },
-    "locationUpdated": {
-      "fromConnectedUser": "Vous avez mis à jour le lieu {}",
-      "notFromConnectedUser": "{} a mis à jour le lieu {}"
-    },
-    "locationRemoved": {
-      "fromConnectedUser": "Vous avez supprimé le lieu {} ",
-      "notFromConnectedUser": "{} a supprimé le lieu {}"
-    },
-    "childrenLookupAdded": {
-      "fromConnectedUser": "Vous avez créé la demande '{}'",
-      "notFromConnectedUser": "{} a créé la demande {}"
-    },
-    "childrenLookupAccepted": {
-      "fromConnectedUser": "Vous avez accepté la demande '{}'",
-      "notFromConnectedUser": "{} a accepté la demande {}"
-    },
-    "childrenLookupDecline": {
-      "fromConnectedUser": "Vous avez décliné la demande '{}'",
-      "notFromConnectedUser": "{} a décliné la demande {}"
-    },
-    "childrenLookupEnded": {
-      "fromConnectedUser": "Vous avez réalisé la demande '{}'",
-      "notFromConnectedUser": "{} a réalisé la demande {}"
-    },
-    "childrenLookupCanceled": {
-      "fromConnectedUser": "Vous avez annulé la demande '{}'",
-      "notFromConnectedUser": "{} a annulé la demande {}"
-    }
+    "moveToTrash": "Supprimer le message"
   },
   "profile": {
     "title": "Profile",

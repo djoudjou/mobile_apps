@@ -98,15 +98,29 @@ class ApiJoinProposalRepository
   }
 
   @override
-  Future<Either<JoinProposalFailure, Unit>> acceptProposal(User connectedUser, String joinProposalId) {
-    // TODO: implement acceptProposal
-    throw UnimplementedError();
+  Future<Either<JoinProposalFailure, Unit>> acceptProposal(User connectedUser, String joinProposalId) async {
+    try {
+      await _apiService
+          .getJoinProposalRestClient()
+          .accept(joinProposalId, connectedUser.id!);
+      return right(unit);
+    } catch (e) {
+      log("error in acceptProposal method : $e");
+      return left(const JoinProposalFailure.serverError());
+    }
   }
 
   @override
-  Future<Either<JoinProposalFailure, Unit>> declineProposal(User connectedUser, String joinProposalId) {
-    // TODO: implement declineProposal
-    throw UnimplementedError();
+  Future<Either<JoinProposalFailure, Unit>> declineProposal(User connectedUser, String joinProposalId) async {
+    try {
+      await _apiService
+          .getJoinProposalRestClient()
+          .decline(joinProposalId, connectedUser.id!);
+      return right(unit);
+    } catch (e) {
+      log("error in declineProposal method : $e");
+      return left(const JoinProposalFailure.serverError());
+    }
   }
 
   @override
