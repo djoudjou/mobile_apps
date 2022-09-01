@@ -15,6 +15,11 @@ abstract class IJoinProposalRepository {
     String joinProposalId,
   );
 
-  Future<Either<JoinProposalFailure, List<JoinProposal>>> findAllByUser(
-      User connectedUser);
+  Future<Either<JoinProposalFailure, Option<JoinProposal>>> findPendingByUser(
+    User connectedUser,
+  );
+
+  Future<Either<JoinProposalFailure, List<JoinProposal>>> findArchivedByUser(
+    User connectedUser,
+  );
 }

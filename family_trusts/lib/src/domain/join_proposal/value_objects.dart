@@ -11,47 +11,48 @@ enum JoinProposalStateEnum {
   canceled,
 }
 
-class JoinProposalState extends ValueObject<JoinProposalStateEnum> {
+class JoinProposalStatus extends ValueObject<JoinProposalStateEnum> {
   @override
   final Either<ValueFailure<JoinProposalStateEnum>, JoinProposalStateEnum>
       value;
 
-  factory JoinProposalState(JoinProposalStateEnum input) {
-    return JoinProposalState._(right(input));
+  factory JoinProposalStatus(JoinProposalStateEnum input) {
+    return JoinProposalStatus._(right(input));
   }
 
-  factory JoinProposalState.waiting() {
-    return JoinProposalState(JoinProposalStateEnum.waiting);
+  factory JoinProposalStatus.waiting() {
+    return JoinProposalStatus(JoinProposalStateEnum.waiting);
   }
 
-  factory JoinProposalState.accepted() {
-    return JoinProposalState(JoinProposalStateEnum.accepted);
+  factory JoinProposalStatus.accepted() {
+    return JoinProposalStatus(JoinProposalStateEnum.accepted);
   }
 
-  factory JoinProposalState.rejected() {
-    return JoinProposalState(JoinProposalStateEnum.rejected);
+  factory JoinProposalStatus.rejected() {
+    return JoinProposalStatus(JoinProposalStateEnum.rejected);
   }
 
-  factory JoinProposalState.declined() {
-    return JoinProposalState(JoinProposalStateEnum.declined);
+  factory JoinProposalStatus.declined() {
+    return JoinProposalStatus(JoinProposalStateEnum.declined);
   }
 
-  factory JoinProposalState.canceled() {
-    return JoinProposalState(JoinProposalStateEnum.canceled);
+  factory JoinProposalStatus.canceled() {
+    return JoinProposalStatus(JoinProposalStateEnum.canceled);
   }
 
-  factory JoinProposalState.fromValue(String text) {
+  factory JoinProposalStatus.fromValue(String text) {
     //assert(text != null);
     final JoinProposalStateEnum? val =
         EnumToString.fromString(JoinProposalStateEnum.values, text);
 
     return (val == null)
-        ? JoinProposalState._(
-            left(ValueFailure.invalidEnumValue(failedValue: text)))
-        : JoinProposalState._(right(val));
+        ? JoinProposalStatus._(
+            left(ValueFailure.invalidEnumValue(failedValue: text)),
+          )
+        : JoinProposalStatus._(right(val));
   }
 
-  const JoinProposalState._(this.value);
+  const JoinProposalStatus._(this.value);
 
   String get toText => EnumToString.convertToString(getOrCrash());
 }

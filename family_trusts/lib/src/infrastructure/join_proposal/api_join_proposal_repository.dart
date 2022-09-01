@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:dartz/dartz.dart';
+import 'package:dio/dio.dart';
 import 'package:familytrusts/src/domain/family/family.dart';
 import 'package:familytrusts/src/domain/join_proposal/i_join_proposal_repository.dart';
 import 'package:familytrusts/src/domain/join_proposal/join_proposal.dart';
@@ -40,18 +41,36 @@ class ApiJoinProposalRepository
   }
 
   @override
-  Future<Either<JoinProposalFailure, List<JoinProposal>>> findAllByUser(
+  Future<Either<JoinProposalFailure, List<JoinProposal>>> findArchivedByUser(
     User connectedUser,
   ) async {
     try {
       final List<JoinFamilyProposalDTO> joinFamilyProposals = await _apiService
           .getJoinProposalRestClient()
-          .findByPersonId(connectedUser.id!);
+          .findArchivedByPersonId(connectedUser.id!);
 
       return right(joinFamilyProposals.map((f) => f.toDomain()).toList());
     } catch (e) {
-      log("error in findAllByUser method : $e");
+      log("error in findArchivedByUser method : $e");
       return left(const JoinProposalFailure.serverError());
+    }
+  }
+
+  @override
+  Future<Either<JoinProposalFailure, Option<JoinProposal>>> findPendingByUser(User connectedUser) async {
+    try {
+      final JoinFamilyProposalDTO joinFamilyProposal = await _apiService
+          .getJoinProposalRestClient()
+          .findPendingByPersonId(connectedUser.id!);
+
+      return right(some(joinFamilyProposal.toDomain()));
+    } catch (e) {
+      if(e is DioError && e.response?.statusCode == 404) {
+        return right(none());
+      } else {
+        log("error in findPendingByUser method : $e");
+        return left(const JoinProposalFailure.serverError());
+      }
     }
   }
 
@@ -77,4 +96,6 @@ class ApiJoinProposalRepository
       return left(const JoinProposalFailure.serverError());
     }
   }
+
+
 }

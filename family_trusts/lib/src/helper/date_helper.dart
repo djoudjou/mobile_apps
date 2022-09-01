@@ -12,7 +12,10 @@ String getPrintableDateFromTimestamp(int timestamp) {
 
   DateFormat format;
 
-  if (now.difference(datePost).inDays > 0) {
+  if (now.difference(datePost).inDays < 0) {
+    format = DateFormat.yMMMd(staticFr);
+    return "le ${format.format(datePost)}";
+  } else if (now.difference(datePost).inDays > 0) {
     format = DateFormat.yMMMd(staticFr);
     return "le ${format.format(datePost)}";
   } else if (now.difference(datePost).inHours > 0) {

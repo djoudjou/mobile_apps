@@ -1,3 +1,3 @@
 TODO :
  - ne renvoyer que les propositions "en cours"
- - 
+ -

@@ -1,3 +1,4 @@
+import 'package:dartz/dartz.dart';
 import 'package:familytrusts/src/domain/join_proposal/join_proposal.dart';
 import 'package:flutter/foundation.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
@@ -30,8 +31,9 @@ class JoinProposalState with _$JoinProposalState {
       JoinProposalsLoadInProgress;
 
   const factory JoinProposalState.joinProposalsLoaded({
-    required bool hasProposals,
-    required List<JoinProposal> joinProposals,
+    required bool hasPendingProposals,
+    required Option<JoinProposal> optionPendingJoinProposal,
+    required List<JoinProposal> archives,
   }) = JoinProposalsLoaded;
 
   const factory JoinProposalState.joinProposalsLoadFailure(String error) =

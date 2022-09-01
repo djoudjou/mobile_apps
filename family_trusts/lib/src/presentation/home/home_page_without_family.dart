@@ -39,44 +39,50 @@ class HomePageWithoutFamily extends MyBasePage {
                 showErrorMessage(
                   LocaleKeys.join_proposal_loadingFailed.tr(),
                   joinProposalBlocContext,
+                  onDismissed: () => refresh(joinProposalBlocContext),
                 );
               }
               if (state is JoinProposalSendInProgress) {
                 showProgressMessage(
                   LocaleKeys.join_proposal_send_inProgress.tr(),
                   joinProposalBlocContext,
+                  onDismissed: () => refresh(joinProposalBlocContext),
                 );
               }
               if (state is JoinProposalSendSuccess) {
                 showSuccessMessage(
                   LocaleKeys.join_proposal_send_success.tr(),
                   joinProposalBlocContext,
+                  onDismissed: () => refresh(joinProposalBlocContext),
                 );
               }
               if (state is JoinProposalSendFailure) {
                 showErrorMessage(
                   LocaleKeys.join_proposal_send_failed.tr(),
                   joinProposalBlocContext,
+                  onDismissed: () => refresh(joinProposalBlocContext),
                 );
               }
-
 
               if (state is JoinProposalCancelInProgress) {
                 showProgressMessage(
                   LocaleKeys.join_proposal_cancel_inProgress.tr(),
                   joinProposalBlocContext,
+                  onDismissed: () => refresh(joinProposalBlocContext),
                 );
               }
               if (state is JoinProposalCancelSuccess) {
                 showSuccessMessage(
                   LocaleKeys.join_proposal_cancel_success.tr(),
                   joinProposalBlocContext,
+                  onDismissed: () => refresh(joinProposalBlocContext),
                 );
               }
               if (state is JoinProposalCancelFailure) {
                 showErrorMessage(
                   LocaleKeys.join_proposal_cancel_failed.tr(),
                   joinProposalBlocContext,
+                  onDismissed: () => refresh(joinProposalBlocContext),
                 );
               }
             },
@@ -94,5 +100,14 @@ class HomePageWithoutFamily extends MyBasePage {
         ),
       ),
     );
+  }
+
+  void refresh(BuildContext context) {
+    return BlocProvider.of<JoinProposalBloc>(
+                  context,
+                ).add(
+                  JoinProposalEvent.loadProposals(
+                      connectedUser: connectedUser),
+                );
   }
 }

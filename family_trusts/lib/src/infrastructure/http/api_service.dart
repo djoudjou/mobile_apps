@@ -17,7 +17,8 @@ class ApiService {
   static Future<ApiService> init(IAuthFacade authFacade) async {
     await dotenv.load(
       mergeWith: {
-        'API_URL': 'http://192.168.50.204:9004',
+        //'API_URL': 'http://192.168.50.204:9004',
+        'API_URL' : 'https://familytrusts-staging.herokuapp.com',
       },
     );
     final baseUrl = dotenv.env[baseUrlEnvVar];

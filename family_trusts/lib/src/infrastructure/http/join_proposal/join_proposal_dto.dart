@@ -3,6 +3,7 @@ import 'dart:core';
 import 'package:familytrusts/src/domain/core/value_objects.dart';
 import 'package:familytrusts/src/domain/family/family.dart';
 import 'package:familytrusts/src/domain/join_proposal/join_proposal.dart';
+import 'package:familytrusts/src/domain/join_proposal/value_objects.dart';
 import 'package:familytrusts/src/domain/user/value_objects.dart';
 import 'package:familytrusts/src/infrastructure/http/custom_datetime_converter.dart';
 import 'package:familytrusts/src/infrastructure/http/join_proposal/member_dto.dart';
@@ -42,16 +43,18 @@ class JoinFamilyProposalDTO {
   Map<String, dynamic> toJson() => _$JoinFamilyProposalDTOToJson(this);
 
   JoinProposal toDomain() {
-
     return JoinProposal(
       id: joinFamilyProposalId,
       creationDate:
           TimestampVo.fromTimestamp(creationDate!.millisecondsSinceEpoch),
       expirationDate:
           TimestampVo.fromTimestamp(expirationDate!.millisecondsSinceEpoch),
+      lastUpdateDate:
+          TimestampVo.fromTimestamp(lastUpdateDate!.millisecondsSinceEpoch),
       family: Family(name: Name(familyName)),
       issuer: issuer!.toDomain(null),
       member: member?.toDomain(null),
+      state: JoinProposalStatus.fromValue(status!),
     );
   }
 }

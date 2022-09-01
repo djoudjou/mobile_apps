@@ -16,7 +16,7 @@ class _JoinProposalRestClient implements JoinProposalRestClient {
   String? baseUrl;
 
   @override
-  Future<List<JoinFamilyProposalDTO>> findByPersonId(personId) async {
+  Future<List<JoinFamilyProposalDTO>> findArchivedByPersonId(personId) async {
     const _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};
@@ -24,13 +24,29 @@ class _JoinProposalRestClient implements JoinProposalRestClient {
     final _result = await _dio.fetch<List<dynamic>>(
         _setStreamType<List<JoinFamilyProposalDTO>>(
             Options(method: 'GET', headers: _headers, extra: _extra)
-                .compose(_dio.options, '/proposals/person/${personId}',
+                .compose(_dio.options, '/proposals/person/${personId}/archived',
                     queryParameters: queryParameters, data: _data)
                 .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
     var value = _result.data!
         .map((dynamic i) =>
             JoinFamilyProposalDTO.fromJson(i as Map<String, dynamic>))
         .toList();
+    return value;
+  }
+
+  @override
+  Future<JoinFamilyProposalDTO> findPendingByPersonId(personId) async {
+    const _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _headers = <String, dynamic>{};
+    final _data = <String, dynamic>{};
+    final _result = await _dio.fetch<Map<String, dynamic>>(
+        _setStreamType<JoinFamilyProposalDTO>(
+            Options(method: 'GET', headers: _headers, extra: _extra)
+                .compose(_dio.options, '/proposals/person/${personId}/pending',
+                    queryParameters: queryParameters, data: _data)
+                .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
+    final value = JoinFamilyProposalDTO.fromJson(_result.data!);
     return value;
   }
 

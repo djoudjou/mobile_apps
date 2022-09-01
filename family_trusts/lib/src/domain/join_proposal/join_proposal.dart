@@ -16,8 +16,9 @@ class JoinProposal with _$JoinProposal {
     User? issuer,
     User? member,
     Family? family,
-    JoinProposalState? state,
+    JoinProposalStatus? state,
     required TimestampVo creationDate,
     required TimestampVo expirationDate,
+    required TimestampVo lastUpdateDate,
   }) = _JoinProposal;
 }

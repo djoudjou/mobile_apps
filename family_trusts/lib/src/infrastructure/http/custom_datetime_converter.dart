@@ -1,4 +1,3 @@
-import 'package:intl/intl.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 class CustomDateTimeConverter implements JsonConverter<DateTime, String> {
@@ -6,8 +5,11 @@ class CustomDateTimeConverter implements JsonConverter<DateTime, String> {
 
   @override
   DateTime fromJson(String json) {
-    final DateFormat format = DateFormat("dd/MM/yyyy HH:mm:ss");
-    return format.parse(json.split(".").first);
+    if (json.contains("+")) {
+      return DateTime.parse(json.replaceFirst("+", "-"));
+    } else {
+      return DateTime.parse(json.replaceFirst("-", "+"));
+    }
   }
 
   @override

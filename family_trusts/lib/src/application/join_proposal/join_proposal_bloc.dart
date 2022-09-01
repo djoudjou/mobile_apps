@@ -6,6 +6,7 @@ import 'package:familytrusts/src/application/join_proposal/bloc.dart';
 import 'package:familytrusts/src/domain/join_proposal/i_join_proposal_repository.dart';
 import 'package:familytrusts/src/domain/join_proposal/join_proposal.dart';
 import 'package:familytrusts/src/domain/join_proposal/join_proposal_failure.dart';
+import 'package:familytrusts/src/domain/join_proposal/value_objects.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:injectable/injectable.dart';
 
@@ -70,21 +71,40 @@ class JoinProposalBloc extends Bloc<JoinProposalEvent, JoinProposalState> {
   ) async {
     emit(const JoinProposalState.joinProposalsLoadInProgress());
 
-    final Either<JoinProposalFailure, List<JoinProposal>> resultFindProposal =
-        await _joinProposalRepository.findAllByUser(
+    final Either<JoinProposalFailure, List<JoinProposal>>
+        resultFindArchivedProposals =
+        await _joinProposalRepository.findArchivedByUser(
       event.connectedUser,
     );
 
-    emit(
-      resultFindProposal.fold((failure) {
-        // TODO ADJ handle specific error message
-        return const JoinProposalState.joinProposalsLoadFailure("");
-      }, (success) {
-        return JoinProposalState.joinProposalsLoaded(
-          hasProposals: success.isNotEmpty,
-          joinProposals: success,
-        );
-      }),
+    final Either<JoinProposalFailure, Option<JoinProposal>>
+        resultFindPendingProposal =
+        await _joinProposalRepository.findPendingByUser(
+      event.connectedUser,
     );
+
+    if (resultFindPendingProposal.isLeft() ||
+        resultFindArchivedProposals.isLeft()) {
+      // TODO ADJ handle specific error message
+      emit(const JoinProposalState.joinProposalsLoadFailure(""));
+    } else {
+      final Option<JoinProposal> pendingJoinProposal =
+          resultFindPendingProposal.getOrElse(() => none());
+      final List<JoinProposal> archivedJoinProposals =
+          resultFindArchivedProposals.getOrElse(() => List.empty());
+
+      emit(
+        JoinProposalState.joinProposalsLoaded(
+          hasPendingProposals: pendingJoinProposal.isSome(),
+          archives: archivedJoinProposals,
+          optionPendingJoinProposal: pendingJoinProposal,
+        ),
+      );
+    }
+  }
+
+  bool isWaiting(JoinProposal jp) {
+    return jp.state!.isValid() &&
+        jp.state!.getOrCrash() == JoinProposalStateEnum.waiting;
   }
 }

@@ -181,10 +181,23 @@
 
     "summary" : "Invitation envoyée à la famille '{}' {}",
 
+    "details" : {
+      "family_label" : "Famille",
+      "status_label" : "Status",
+      "creation_date_label" : "Envoyé",
+      "expiration_date_label" : "Expire",
+      "member_label" : "Personne ayant répondu",
+      "accepted_text": "Acceptée",
+      "canceled_text": "Annulée",
+      "waiting_text": "En attente",
+      "declined_text": "Refusée",
+      "rejected_text": "Rejetée"
+    },
+
     "send": {
       "button" : "Envoyer une invitation",
 
-      "confirm": "Envoyer l'invitation à la famille {}?",
+      "confirm": "Envoyer l'invitation à la famille '{}'?",
       "failed": "Erreur lors de l'envoie de l'invitation \n merci d'essayer ultérieurement",
 
       "inProgress": "Envoie de l'invitation en cours ...",
@@ -193,11 +206,11 @@
 
     "cancel": {
       "button" : "Annuler la demande ?",
-      "confirm" : "Annuler l'invitation pour la famille {} ?",
+      "confirm" : "Annuler la demande de rejoindre la famille '{}' ?",
 
-      "failed": "Erreur lors de la déclinaison de l'invitation",
-      "inProgress": "Déclinaison de l'invitation en cours...",
-      "success": "Invitation déclinée avec succès"
+      "failed": "Erreur lors de l'annulation de la demande",
+      "inProgress": "Demande d'annulation en cours...",
+      "success": "Demande annulée avec succès"
     },
 
 

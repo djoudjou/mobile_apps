@@ -15,6 +15,8 @@ const String notificationsImagesPath = "images/family.jpeg";
 const String defaultLocationImagesPath = "images/location.png";
 const String childrenLookupImagesPath = "images/recuperation_enfants.jpeg";
 
+const AssetImage logoFamilyImages = AssetImage(logoFamilyImagesPath);
+
 const AssetImage childrenLookupImages = AssetImage(childrenLookupImagesPath);
 const AssetImage logoImages = AssetImage(logoImagesPath);
 const AssetImage defaultChildImages = AssetImage(defaultChildImagesPath);

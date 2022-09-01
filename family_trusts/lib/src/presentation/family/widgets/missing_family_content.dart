@@ -9,8 +9,10 @@ import 'package:familytrusts/src/domain/user/user.dart';
 import 'package:familytrusts/src/domain/user/value_objects.dart';
 import 'package:familytrusts/src/helper/alert_helper.dart';
 import 'package:familytrusts/src/helper/log_mixin.dart';
+import 'package:familytrusts/src/presentation/core/empty_content.dart';
 import 'package:familytrusts/src/presentation/core/loading_content.dart';
 import 'package:familytrusts/src/presentation/core/my_text.dart';
+import 'package:familytrusts/src/presentation/family/widgets/join_family_proposal_widget.dart';
 import 'package:familytrusts/src/presentation/routes/router.gr.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -35,14 +37,25 @@ class MissingFamilyContent extends StatelessWidget with LogMixin {
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
               buildCreateFamily(joinProposalBlocContext),
-              if (state is JoinProposalsLoaded && state.hasProposals) ...[
-                buildJoinProposals(
-                  state.joinProposals,
-                  joinProposalBlocContext,
-                ),
+              if (state is JoinProposalsLoaded &&
+                  state.hasPendingProposals) ...[
+                state.optionPendingJoinProposal.fold(
+                  () => const EmptyContent(),
+                  (pendingJoinProposal) => buildJoinProposals(
+                    pendingJoinProposal,
+                    joinProposalBlocContext,
+                  ),
+                )
               ],
-              if (state is JoinProposalsLoaded && !state.hasProposals) ...[
+              if (state is JoinProposalsLoaded &&
+                  !state.hasPendingProposals) ...[
                 buidConnectToFamily(joinProposalBlocContext),
+                if (state.archives.isNotEmpty) ...[
+                  //buildArchivedJoinFamilyProposals(
+                  //  state.archives,
+                  //  joinProposalBlocContext,
+                  //),
+                ]
               ],
               if (state is JoinProposalsLoadInProgress) ...[
                 const LoadingContent(),
@@ -142,68 +155,36 @@ class MissingFamilyContent extends StatelessWidget with LogMixin {
   }
 
   Widget buildJoinProposals(
-    List<JoinProposal> proposals,
+    JoinProposal joinProposal,
     BuildContext context,
   ) {
-    final JoinProposal joinProposal = proposals.first;
-    return Card(
-      elevation: 8,
-      child: Container(
-        //color: Colors.red,
-        child: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Column(
-            children: <Widget>[
-              MyText(
-                LocaleKeys.join_proposal_summary.tr(
-                  args: [
-                    joinProposal.family!.displayName,
-                    joinProposal.creationDate.toPrintableDate,
-                  ],
-                ),
-                maxLines: 5,
-                style: FontStyle.italic,
-              ),
-              const Padding(
-                padding: EdgeInsets.only(top: 20),
-              ),
-              Container(
-                //width: double.infinity,
-                child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    onPrimary: Colors.black87,
-                    primary: Colors.red,
-                    minimumSize: const Size(88, 36),
-                    padding: const EdgeInsets.symmetric(horizontal: 16),
-                    shape: const RoundedRectangleBorder(
-                      borderRadius: BorderRadius.all(Radius.circular(30)),
-                    ),
-                  ),
-                  onPressed: () async {
-                    await AlertHelper().confirm(
-                      context,
-                      LocaleKeys.join_proposal_cancel_confirm
-                          .tr(args: [joinProposal.family!.displayName]),
-                      onConfirmCallback: () {
-                        BlocProvider.of<JoinProposalBloc>(context).add(
-                          JoinProposalEvent.cancel(
-                            connectedUser: user,
-                            joinProposal: joinProposal,
-                          ),
-                        );
-                      },
-                    );
-                  },
-                  child: MyText(
-                    LocaleKeys.join_proposal_cancel_button.tr(),
-                    color: Colors.white,
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
+    return JoinFamilyProposalWidget(
+      cardWidth: MediaQuery.of(context).size.width * .7,
+      joinProposal: joinProposal,
+      displayCancelButton: true,
+      connectedUser: user,
+    );
+  }
+
+  Widget buildArchivedJoinFamilyProposals(
+    List<JoinProposal> archives,
+    BuildContext joinProposalBlocContext,
+  ) {
+    return ListView.separated(
+      shrinkWrap: true,
+      key: const PageStorageKey<String>('join_proposals_passed'),
+      padding: const EdgeInsets.all(8),
+      itemCount: archives.length,
+      itemBuilder: (BuildContext context, int index) {
+        final joinProposal = archives[index];
+        return JoinFamilyProposalWidget(
+          cardWidth: MediaQuery.of(context).size.width * .7,
+          joinProposal: joinProposal,
+          displayCancelButton: false,
+          connectedUser: user,
+        );
+      },
+      separatorBuilder: (BuildContext context, int index) => const Divider(),
     );
   }
 }

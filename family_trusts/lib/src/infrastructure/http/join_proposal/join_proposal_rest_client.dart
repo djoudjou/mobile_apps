@@ -9,8 +9,13 @@ part 'join_proposal_rest_client.g.dart';
 abstract class JoinProposalRestClient {
   factory JoinProposalRestClient(Dio dio) = _JoinProposalRestClient;
 
-  @GET("/proposals/person/{personId}")
-  Future<List<JoinFamilyProposalDTO>> findByPersonId(
+  @GET("/proposals/person/{personId}/archived")
+  Future<List<JoinFamilyProposalDTO>> findArchivedByPersonId(
+    @Path("personId") String personId,
+  );
+
+  @GET("/proposals/person/{personId}/pending")
+  Future<JoinFamilyProposalDTO> findPendingByPersonId(
     @Path("personId") String personId,
   );
 
