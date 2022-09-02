@@ -2,7 +2,7 @@ import 'dart:core';
 
 import 'package:familytrusts/src/domain/family/family.dart';
 import 'package:familytrusts/src/domain/user/value_objects.dart';
-import 'package:familytrusts/src/infrastructure/http/persons/person_dto.dart';
+import 'package:familytrusts/src/infrastructure/http/join_proposal/member_dto.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 part 'family_dto.g.dart';
@@ -11,7 +11,7 @@ part 'family_dto.g.dart';
 class FamilyDTO {
   String? familyId;
   String? name;
-  List<PersonDTO>? members;
+  List<MemberDTO>? members;
 
   FamilyDTO({
     this.familyId,
@@ -29,5 +29,13 @@ class FamilyDTO {
       name: Name(name),
       id: familyId,
     );
+  }
+
+  String? getSpouse(String? personId) {
+    return members != null && personId != null
+        ? members!
+            .firstWhere((element) => element.memberId != personId)
+            .memberId
+        : null;
   }
 }

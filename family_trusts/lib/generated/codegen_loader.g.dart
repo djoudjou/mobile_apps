@@ -223,14 +223,14 @@ class CodegenLoader extends AssetLoader{
     },
     "decline": {
       "button": "Décliner la demande ?",
-      "confirm": "Décliner la demande de rejoindre la famille '{}' ?",
+      "confirm": "Décliner la demande de '{}' ?",
       "failed": "Erreur lors de la déclinaison de la demande",
       "inProgress": "Déclinaison en cours...",
       "success": "Demande déclinée avec succès"
     },
     "accept": {
       "button": "Accepter la demande ?",
-      "confirm": "Accepter la demande de rejoindre la famille '{}' ?",
+      "confirm": "Accepter la demande de '{}' ?",
       "failed": "Erreur lors de l'acceptation de la demande",
       "inProgress": "Acceptation de la demande en cours...",
       "success": "Demande acceptée avec succès"

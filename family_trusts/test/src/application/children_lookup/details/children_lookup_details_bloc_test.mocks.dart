@@ -9,18 +9,22 @@ import 'package:dartz/dartz.dart' as _i2;
 import 'package:familytrusts/src/domain/auth/auth_failure.dart' as _i5;
 import 'package:familytrusts/src/domain/auth/user_info.dart' as _i8;
 import 'package:familytrusts/src/domain/children_lookup/children_lookup.dart'
-    as _i12;
-import 'package:familytrusts/src/domain/children_lookup/children_lookup_failure.dart'
-    as _i11;
-import 'package:familytrusts/src/domain/children_lookup/children_lookup_history.dart'
     as _i13;
-import 'package:familytrusts/src/domain/notification/event.dart' as _i17;
+import 'package:familytrusts/src/domain/children_lookup/children_lookup_details.dart'
+    as _i15;
+import 'package:familytrusts/src/domain/children_lookup/children_lookup_failure.dart'
+    as _i12;
+import 'package:familytrusts/src/domain/children_lookup/children_lookup_history.dart'
+    as _i14;
+import 'package:familytrusts/src/domain/notification/event.dart' as _i19;
 import 'package:familytrusts/src/domain/notification/event_failure.dart'
-    as _i16;
-import 'package:familytrusts/src/domain/notification/notifications_failure.dart'
     as _i18;
-import 'package:familytrusts/src/domain/planning/planning.dart' as _i15;
-import 'package:familytrusts/src/domain/planning/planning_failure.dart' as _i14;
+import 'package:familytrusts/src/domain/notification/notifications_failure.dart'
+    as _i20;
+import 'package:familytrusts/src/domain/planning/planning.dart' as _i17;
+import 'package:familytrusts/src/domain/planning/planning_failure.dart' as _i16;
+import 'package:familytrusts/src/domain/search_user/search_user_failure.dart'
+    as _i11;
 import 'package:familytrusts/src/domain/user/user.dart' as _i10;
 import 'package:familytrusts/src/domain/user/user_failure.dart' as _i9;
 import 'package:familytrusts/src/domain/user/value_objects.dart' as _i6;
@@ -144,6 +148,17 @@ class MockMockUserRepository extends _i1.Mock
               returnValue: Future<_i2.Either<_i9.UserFailure, _i10.User>>.value(
                   _FakeEither_1<_i9.UserFailure, _i10.User>()))
           as _i4.Future<_i2.Either<_i9.UserFailure, _i10.User>>);
+  @override
+  _i4.Future<_i2.Either<_i11.SearchUserFailure, List<_i10.User>>> searchUsers(
+          String? userLookupText,
+          {List<String>? excludedUsers}) =>
+      (super.noSuchMethod(
+          Invocation.method(
+              #searchUsers, [userLookupText], {#excludedUsers: excludedUsers}),
+          returnValue:
+              Future<_i2.Either<_i11.SearchUserFailure, List<_i10.User>>>.value(
+                  _FakeEither_1<_i11.SearchUserFailure, List<_i10.User>>())) as _i4
+          .Future<_i2.Either<_i11.SearchUserFailure, List<_i10.User>>>);
 }
 
 /// A class which mocks [MockChildrenLookupRepository].
@@ -156,73 +171,68 @@ class MockMockChildrenLookupRepository extends _i1.Mock
   }
 
   @override
-  _i4.Stream<List<_i2.Either<_i11.ChildrenLookupFailure, _i12.ChildrenLookup>>>
-      getChildrenLookupsByFamilyId({String? familyId}) => (super.noSuchMethod(
-              Invocation.method(
-                  #getChildrenLookupsByFamilyId, [], {#familyId: familyId}),
-              returnValue:
-                  Stream<List<_i2.Either<_i11.ChildrenLookupFailure, _i12.ChildrenLookup>>>.empty())
-          as _i4.Stream<
-              List<_i2.Either<_i11.ChildrenLookupFailure, _i12.ChildrenLookup>>>);
+  _i4.Future<_i2.Either<_i12.ChildrenLookupFailure, List<_i13.ChildrenLookup>>>
+      getPassedChildrenLookupsByFamilyId({String? familyId}) => (super.noSuchMethod(
+          Invocation.method(
+              #getPassedChildrenLookupsByFamilyId, [], {#familyId: familyId}),
+          returnValue:
+              Future<_i2.Either<_i12.ChildrenLookupFailure, List<_i13.ChildrenLookup>>>.value(
+                  _FakeEither_1<_i12.ChildrenLookupFailure, List<_i13.ChildrenLookup>>())) as _i4
+          .Future<_i2.Either<_i12.ChildrenLookupFailure, List<_i13.ChildrenLookup>>>);
   @override
-  _i4.Stream<List<_i2.Either<_i11.ChildrenLookupFailure, _i12.ChildrenLookup>>>
-      getChildrenLookupsByTrustedId({String? trustedUserId}) => (super.noSuchMethod(
-              Invocation.method(#getChildrenLookupsByTrustedId, [],
-                  {#trustedUserId: trustedUserId}),
-              returnValue:
-                  Stream<List<_i2.Either<_i11.ChildrenLookupFailure, _i12.ChildrenLookup>>>.empty())
-          as _i4.Stream<
-              List<_i2.Either<_i11.ChildrenLookupFailure, _i12.ChildrenLookup>>>);
+  _i4.Future<_i2.Either<_i12.ChildrenLookupFailure, List<_i13.ChildrenLookup>>>
+      getInProgressChildrenLookupsByFamilyId({String? familyId}) => (super.noSuchMethod(
+          Invocation.method(#getInProgressChildrenLookupsByFamilyId, [],
+              {#familyId: familyId}),
+          returnValue: Future<_i2.Either<_i12.ChildrenLookupFailure, List<_i13.ChildrenLookup>>>.value(
+              _FakeEither_1<_i12.ChildrenLookupFailure, List<_i13.ChildrenLookup>>())) as _i4
+          .Future<_i2.Either<_i12.ChildrenLookupFailure, List<_i13.ChildrenLookup>>>);
   @override
-  _i4.Stream<List<_i2.Either<_i11.ChildrenLookupFailure, _i13.ChildrenLookupHistory>>>
+  _i4.Future<_i2.Either<_i12.ChildrenLookupFailure, List<_i14.ChildrenLookupHistory>>>
       getChildrenLookupHistories({String? childrenLookupId}) => (super.noSuchMethod(
               Invocation.method(#getChildrenLookupHistories, [],
                   {#childrenLookupId: childrenLookupId}),
-              returnValue:
-                  Stream<List<_i2.Either<_i11.ChildrenLookupFailure, _i13.ChildrenLookupHistory>>>.empty())
-          as _i4.Stream<
-              List<_i2.Either<_i11.ChildrenLookupFailure, _i13.ChildrenLookupHistory>>>);
+              returnValue: Future<_i2.Either<_i12.ChildrenLookupFailure, List<_i14.ChildrenLookupHistory>>>.value(
+                  _FakeEither_1<_i12.ChildrenLookupFailure, List<_i14.ChildrenLookupHistory>>()))
+          as _i4.Future<_i2.Either<_i12.ChildrenLookupFailure, List<_i14.ChildrenLookupHistory>>>);
   @override
-  _i4.Future<_i2.Either<_i11.ChildrenLookupFailure, _i2.Unit>>
-      addChildrenLookupHistory(
-              {String? childrenLookupId,
-              _i13.ChildrenLookupHistory? childrenLookupHistory}) =>
-          (super.noSuchMethod(
-              Invocation.method(#addChildrenLookupHistory, [], {
-                #childrenLookupId: childrenLookupId,
-                #childrenLookupHistory: childrenLookupHistory
-              }),
-              returnValue: Future<
-                      _i2.Either<_i11.ChildrenLookupFailure, _i2.Unit>>.value(
-                  _FakeEither_1<_i11.ChildrenLookupFailure, _i2.Unit>())) as _i4
-              .Future<_i2.Either<_i11.ChildrenLookupFailure, _i2.Unit>>);
+  _i4.Future<_i2.Either<_i12.ChildrenLookupFailure, _i15.ChildrenLookupDetails>>
+      findChildrenLookupDetailsById({String? childrenLookupId}) => (super.noSuchMethod(
+          Invocation.method(#findChildrenLookupDetailsById, [],
+              {#childrenLookupId: childrenLookupId}),
+          returnValue: Future<_i2.Either<_i12.ChildrenLookupFailure, _i15.ChildrenLookupDetails>>.value(
+              _FakeEither_1<_i12.ChildrenLookupFailure, _i15.ChildrenLookupDetails>())) as _i4
+          .Future<_i2.Either<_i12.ChildrenLookupFailure, _i15.ChildrenLookupDetails>>);
   @override
   _i4.Future<
-      _i2.Either<_i11.ChildrenLookupFailure, _i2.Unit>> addUpdateChildrenLookup(
-          {_i12.ChildrenLookup? childrenLookup}) =>
+      _i2.Either<_i12.ChildrenLookupFailure, _i2.Unit>> createChildrenLookup(
+          {_i13.ChildrenLookup? childrenLookup}) =>
       (super.noSuchMethod(
               Invocation.method(
-                  #addUpdateChildrenLookup, [], {#childrenLookup: childrenLookup}),
+                  #createChildrenLookup, [], {#childrenLookup: childrenLookup}),
               returnValue:
-                  Future<_i2.Either<_i11.ChildrenLookupFailure, _i2.Unit>>.value(
-                      _FakeEither_1<_i11.ChildrenLookupFailure, _i2.Unit>()))
-          as _i4.Future<_i2.Either<_i11.ChildrenLookupFailure, _i2.Unit>>);
+                  Future<_i2.Either<_i12.ChildrenLookupFailure, _i2.Unit>>.value(
+                      _FakeEither_1<_i12.ChildrenLookupFailure, _i2.Unit>()))
+          as _i4.Future<_i2.Either<_i12.ChildrenLookupFailure, _i2.Unit>>);
   @override
-  _i4.Stream<_i2.Either<_i11.ChildrenLookupFailure, _i12.ChildrenLookup>>
-      watchChildrenLookup({String? childrenLookupId}) => (super.noSuchMethod(
-          Invocation.method(
-              #watchChildrenLookup, [], {#childrenLookupId: childrenLookupId}),
-          returnValue: Stream<
-              _i2.Either<_i11.ChildrenLookupFailure, _i12.ChildrenLookup>>.empty()) as _i4
-          .Stream<_i2.Either<_i11.ChildrenLookupFailure, _i12.ChildrenLookup>>);
-  @override
-  _i4.Stream<_i2.Either<_i14.PlanningFailure, _i15.Planning>> getPlanning(
+  _i4.Future<_i2.Either<_i16.PlanningFailure, _i17.Planning>> getPlanning(
           {String? userId}) =>
       (super.noSuchMethod(
               Invocation.method(#getPlanning, [], {#userId: userId}),
-              returnValue: Stream<
-                  _i2.Either<_i14.PlanningFailure, _i15.Planning>>.empty())
-          as _i4.Stream<_i2.Either<_i14.PlanningFailure, _i15.Planning>>);
+              returnValue:
+                  Future<_i2.Either<_i16.PlanningFailure, _i17.Planning>>.value(
+                      _FakeEither_1<_i16.PlanningFailure, _i17.Planning>()))
+          as _i4.Future<_i2.Either<_i16.PlanningFailure, _i17.Planning>>);
+  @override
+  _i4.Future<_i2.Either<_i12.ChildrenLookupFailure, _i2.Unit>> cancel(
+          {_i13.ChildrenLookup? childrenLookup, _i10.User? connectedUser}) =>
+      (super.noSuchMethod(
+          Invocation.method(#cancel, [],
+              {#childrenLookup: childrenLookup, #connectedUser: connectedUser}),
+          returnValue:
+              Future<_i2.Either<_i12.ChildrenLookupFailure, _i2.Unit>>.value(
+                  _FakeEither_1<_i12.ChildrenLookupFailure, _i2.Unit>())) as _i4
+          .Future<_i2.Either<_i12.ChildrenLookupFailure, _i2.Unit>>);
 }
 
 /// A class which mocks [MockNotificationRepository].
@@ -235,52 +245,34 @@ class MockMockNotificationRepository extends _i1.Mock
   }
 
   @override
-  _i4.Stream<List<_i2.Either<_i16.EventFailure, _i17.Event>>> getEvents(
+  _i4.Future<_i2.Either<_i18.EventFailure, List<_i19.Event>>> getEvents(
           String? userId) =>
       (super.noSuchMethod(Invocation.method(#getEvents, [userId]),
-              returnValue: Stream<
-                  List<_i2.Either<_i16.EventFailure, _i17.Event>>>.empty())
-          as _i4.Stream<List<_i2.Either<_i16.EventFailure, _i17.Event>>>);
+              returnValue:
+                  Future<_i2.Either<_i18.EventFailure, List<_i19.Event>>>.value(
+                      _FakeEither_1<_i18.EventFailure, List<_i19.Event>>()))
+          as _i4.Future<_i2.Either<_i18.EventFailure, List<_i19.Event>>>);
   @override
-  _i4.Stream<_i2.Either<_i18.NotificationsFailure, int>> getUnReadCount(
+  _i4.Future<_i2.Either<_i20.NotificationsFailure, int>> getUnReadCount(
           String? userId) =>
       (super.noSuchMethod(Invocation.method(#getUnReadCount, [userId]),
-              returnValue:
-                  Stream<_i2.Either<_i18.NotificationsFailure, int>>.empty())
-          as _i4.Stream<_i2.Either<_i18.NotificationsFailure, int>>);
+          returnValue: Future<_i2.Either<_i20.NotificationsFailure, int>>.value(
+              _FakeEither_1<_i20.NotificationsFailure, int>())) as _i4
+          .Future<_i2.Either<_i20.NotificationsFailure, int>>);
   @override
-  _i4.Future<_i2.Either<_i18.NotificationsFailure, _i2.Unit>> createEvent(
-          String? userId, _i17.Event? event) =>
-      (super.noSuchMethod(Invocation.method(#createEvent, [userId, event]),
-              returnValue:
-                  Future<_i2.Either<_i18.NotificationsFailure, _i2.Unit>>.value(
-                      _FakeEither_1<_i18.NotificationsFailure, _i2.Unit>()))
-          as _i4.Future<_i2.Either<_i18.NotificationsFailure, _i2.Unit>>);
-  @override
-  _i4.Future<_i2.Either<_i18.NotificationsFailure, _i2.Unit>> updateEvent(
-          String? userId, _i17.Event? event) =>
-      (super.noSuchMethod(Invocation.method(#updateEvent, [userId, event]),
-              returnValue:
-                  Future<_i2.Either<_i18.NotificationsFailure, _i2.Unit>>.value(
-                      _FakeEither_1<_i18.NotificationsFailure, _i2.Unit>()))
-          as _i4.Future<_i2.Either<_i18.NotificationsFailure, _i2.Unit>>);
-  @override
-  _i4.Future<_i2.Either<_i18.NotificationsFailure, _i2.Unit>> deleteEvent(
-          String? userId, _i17.Event? event) =>
+  _i4.Future<_i2.Either<_i20.NotificationsFailure, _i2.Unit>> deleteEvent(
+          String? userId, _i19.Event? event) =>
       (super.noSuchMethod(Invocation.method(#deleteEvent, [userId, event]),
               returnValue:
-                  Future<_i2.Either<_i18.NotificationsFailure, _i2.Unit>>.value(
-                      _FakeEither_1<_i18.NotificationsFailure, _i2.Unit>()))
-          as _i4.Future<_i2.Either<_i18.NotificationsFailure, _i2.Unit>>);
+                  Future<_i2.Either<_i20.NotificationsFailure, _i2.Unit>>.value(
+                      _FakeEither_1<_i20.NotificationsFailure, _i2.Unit>()))
+          as _i4.Future<_i2.Either<_i20.NotificationsFailure, _i2.Unit>>);
   @override
-  _i4.Future<_i2.Either<_i18.NotificationsFailure, _i2.Unit>>
-      createEventForChildrenLookup(
-              _i12.ChildrenLookup? childrenLookup, _i17.Event? event) =>
-          (super.noSuchMethod(
-              Invocation.method(
-                  #createEventForChildrenLookup, [childrenLookup, event]),
+  _i4.Future<_i2.Either<_i20.NotificationsFailure, _i2.Unit>> markAsReadEvent(
+          String? userId, _i19.Event? event) =>
+      (super.noSuchMethod(Invocation.method(#markAsReadEvent, [userId, event]),
               returnValue:
-                  Future<_i2.Either<_i18.NotificationsFailure, _i2.Unit>>.value(
-                      _FakeEither_1<_i18.NotificationsFailure, _i2.Unit>())) as _i4
-              .Future<_i2.Either<_i18.NotificationsFailure, _i2.Unit>>);
+                  Future<_i2.Either<_i20.NotificationsFailure, _i2.Unit>>.value(
+                      _FakeEither_1<_i20.NotificationsFailure, _i2.Unit>()))
+          as _i4.Future<_i2.Either<_i20.NotificationsFailure, _i2.Unit>>);
 }

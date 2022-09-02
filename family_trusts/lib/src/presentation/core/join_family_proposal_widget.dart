@@ -223,7 +223,7 @@ class JoinFamilyProposalWidget extends StatelessWidget {
                   await AlertHelper().confirm(
                     context,
                     LocaleKeys.join_proposal_accept_confirm
-                        .tr(args: [joinProposal.family!.displayName]),
+                        .tr(args: [joinProposal.issuer!.displayName]),
                     onConfirmCallback: () {
                       BlocProvider.of<FamilyJoinProposalBloc>(
                         context,

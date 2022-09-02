@@ -12,7 +12,7 @@ import 'package:familytrusts/src/domain/family/child.dart';
 import 'package:familytrusts/src/domain/family/family.dart';
 import 'package:familytrusts/src/domain/family/locations/location.dart';
 import 'package:familytrusts/src/domain/family/value_objects.dart';
-import 'package:familytrusts/src/domain/notification/i_notification_repository.dart';
+import 'package:familytrusts/src/domain/notification/i_familyevent_repository.dart';
 import 'package:familytrusts/src/domain/user/i_user_repository.dart';
 import 'package:familytrusts/src/domain/user/user.dart';
 import 'package:familytrusts/src/domain/user/value_objects.dart';
@@ -30,7 +30,7 @@ class MockChildrenLookupRepository extends Mock
     implements IChildrenLookupRepository {}
 
 class MockNotificationRepository extends Mock
-    implements INotificationRepository {}
+    implements IFamilyEventRepository {}
 
 @GenerateMocks([
   MockAuthFacade,

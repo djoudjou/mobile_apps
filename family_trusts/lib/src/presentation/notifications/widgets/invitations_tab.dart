@@ -7,6 +7,7 @@ import 'package:familytrusts/src/application/join_proposal/family_join_proposal_
 import 'package:familytrusts/src/domain/join_proposal/i_join_proposal_repository.dart';
 import 'package:familytrusts/src/domain/user/user.dart';
 import 'package:familytrusts/src/helper/snackbar_helper.dart';
+import 'package:familytrusts/src/presentation/core/empty_content.dart';
 import 'package:familytrusts/src/presentation/core/join_family_proposal_widget.dart';
 import 'package:familytrusts/src/presentation/core/loading_content.dart';
 import 'package:familytrusts/src/presentation/core/my_text.dart';
@@ -102,6 +103,9 @@ class InvitationsTab extends StatelessWidget {
                 ),
               );
             } else {
+              if(state.pendingProposals.isEmpty) {
+                return const EmptyContent();
+              }
               return ListView.separated(
                 key: _key,
                 padding: const EdgeInsets.all(8),

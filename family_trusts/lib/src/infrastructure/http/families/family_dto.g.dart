@@ -10,7 +10,7 @@ FamilyDTO _$FamilyDTOFromJson(Map<String, dynamic> json) => FamilyDTO(
       familyId: json['familyId'] as String?,
       name: json['name'] as String?,
       members: (json['members'] as List<dynamic>?)
-          ?.map((e) => PersonDTO.fromJson(e as Map<String, dynamic>))
+          ?.map((e) => MemberDTO.fromJson(e as Map<String, dynamic>))
           .toList(),
     );
 

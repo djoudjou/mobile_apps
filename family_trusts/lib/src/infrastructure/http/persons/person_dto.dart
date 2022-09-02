@@ -41,10 +41,7 @@ class PersonDTO {
   Map<String, dynamic> toJson() => _$PersonDTOToJson(this);
 
   User toDomain(FamilyDTO? familyDTO) {
-    final PersonDTO? spouse = (familyDTO != null && familyDTO.members != null)
-        ? familyDTO.members
-            ?.firstWhere((element) => element.personId != personId)
-        : null;
+    final String? spouseId = familyDTO?.getSpouse(personId);
 
     return User(
       email: EmailAddress(email),
@@ -53,7 +50,7 @@ class PersonDTO {
       photoUrl: photoUrl,
       id: personId,
       family: familyDTO?.toDomain(),
-      spouse: spouse?.personId,
+      spouse: spouseId,
     );
   }
 }

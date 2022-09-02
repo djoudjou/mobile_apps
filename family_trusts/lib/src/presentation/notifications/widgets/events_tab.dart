@@ -11,6 +11,7 @@ import 'package:familytrusts/src/domain/notification/i_familyevent_repository.da
 import 'package:familytrusts/src/domain/user/user.dart';
 import 'package:familytrusts/src/helper/log_mixin.dart';
 import 'package:familytrusts/src/helper/snackbar_helper.dart';
+import 'package:familytrusts/src/presentation/core/empty_content.dart';
 import 'package:familytrusts/src/presentation/core/error_content.dart';
 import 'package:familytrusts/src/presentation/core/loading_content.dart';
 import 'package:familytrusts/src/presentation/core/my_text.dart';
@@ -94,60 +95,66 @@ class EventsTab extends StatelessWidget with LogMixin {
                         ),
                       ),
                     ),
-                    (events) => ListView.separated(
-                      key: _key,
-                      padding: const EdgeInsets.all(8),
-                      itemCount: events.length,
-                      itemBuilder: (BuildContext contextEvents, int index) {
-                        final event = events[index];
-                        return Dismissible(
-                          key: Key(event.id!),
-                          background: const EventDeleteWidget(),
-                          secondaryBackground: const EventDeleteWidget(),
-                          onDismissed: (DismissDirection direction) {
-                            contextEvents
-                                .read<NotificationsEventsUpdateBloc>()
-                                .add(
-                                  NotificationsEventsUpdateEvent.deleteEvent(
-                                    connectedUser,
-                                    event,
-                                  ),
-                                );
-                          },
-                          child: InkWell(
-                            onTap: (event.seen)
-                                ? null
-                                : () => contextEvents
-                                    .read<NotificationsEventsUpdateBloc>()
-                                    .add(
-                                      NotificationsEventsUpdateEvent.markAsRead(
-                                        connectedUser,
-                                        event,
+                    (events) => events.isEmpty
+                        ? const EmptyContent()
+                        : ListView.separated(
+                            key: _key,
+                            padding: const EdgeInsets.all(8),
+                            itemCount: events.length,
+                            itemBuilder:
+                                (BuildContext contextEvents, int index) {
+                              final event = events[index];
+                              return Dismissible(
+                                key: Key(event.id!),
+                                background: const EventDeleteWidget(),
+                                secondaryBackground: const EventDeleteWidget(),
+                                onDismissed: (DismissDirection direction) {
+                                  contextEvents
+                                      .read<NotificationsEventsUpdateBloc>()
+                                      .add(
+                                        NotificationsEventsUpdateEvent
+                                            .deleteEvent(
+                                          connectedUser,
+                                          event,
+                                        ),
+                                      );
+                                },
+                                child: InkWell(
+                                  onTap: (event.seen)
+                                      ? null
+                                      : () => contextEvents
+                                          .read<NotificationsEventsUpdateBloc>()
+                                          .add(
+                                            NotificationsEventsUpdateEvent
+                                                .markAsRead(
+                                              connectedUser,
+                                              event,
+                                            ),
+                                          ),
+                                  child: Container(
+                                    color: event.seen ? Colors.grey : null,
+                                    child: ListTile(
+                                      title: MyText(
+                                        event.dateText,
+                                        alignment: TextAlign.start,
+                                      ),
+                                      subtitle: MyText(
+                                        event.message,
+                                        style: event.seen
+                                            ? FontStyle.italic
+                                            : FontStyle.normal,
+                                        maxLines: 3,
+                                        alignment: TextAlign.start,
                                       ),
                                     ),
-                            child: Container(
-                              color: event.seen ? Colors.grey : null,
-                              child: ListTile(
-                                title: MyText(
-                                  event.dateText,
-                                  alignment: TextAlign.start,
+                                  ),
                                 ),
-                                subtitle: MyText(
-                                  event.message,
-                                  style: event.seen
-                                      ? FontStyle.italic
-                                      : FontStyle.normal,
-                                  maxLines: 3,
-                                  alignment: TextAlign.start,
-                                ),
-                              ),
-                            ),
+                              );
+                            },
+                            separatorBuilder:
+                                (BuildContext context, int index) =>
+                                    const Divider(),
                           ),
-                        );
-                      },
-                      separatorBuilder: (BuildContext context, int index) =>
-                          const Divider(),
-                    ),
                   );
                 },
                 simpleErrorEventState: (simpleErrorEventState) {

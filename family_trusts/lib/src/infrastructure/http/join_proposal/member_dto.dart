@@ -3,7 +3,6 @@ import 'dart:core';
 import 'package:familytrusts/src/domain/user/user.dart';
 import 'package:familytrusts/src/domain/user/value_objects.dart';
 import 'package:familytrusts/src/infrastructure/http/families/family_dto.dart';
-import 'package:familytrusts/src/infrastructure/http/persons/person_dto.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 part 'member_dto.g.dart';
@@ -30,10 +29,7 @@ class MemberDTO {
   Map<String, dynamic> toJson() => _$MemberDTOToJson(this);
 
   User toDomain(FamilyDTO? familyDTO) {
-    final PersonDTO? spouse = (familyDTO != null && familyDTO.members != null)
-        ? familyDTO.members
-            ?.firstWhere((element) => element.personId != memberId)
-        : null;
+    final String? spouseId = familyDTO?.getSpouse(memberId);
 
     return User(
       email: EmailAddress(email),
@@ -42,7 +38,7 @@ class MemberDTO {
       photoUrl: photoUrl,
       id: memberId,
       family: familyDTO?.toDomain(),
-      spouse: spouse?.personId,
+      spouse: spouseId,
     );
   }
 }
