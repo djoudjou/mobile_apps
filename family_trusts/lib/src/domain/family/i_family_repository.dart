@@ -8,7 +8,7 @@ import 'package:familytrusts/src/domain/family/family_failure.dart';
 import 'package:familytrusts/src/domain/family/locations/location.dart';
 import 'package:familytrusts/src/domain/family/locations/location_failure.dart';
 import 'package:familytrusts/src/domain/family/trusted_user/trusted.dart';
-import 'package:familytrusts/src/domain/user/user_failure.dart';
+import 'package:familytrusts/src/domain/family/trusted_user/trusted_failure.dart';
 
 abstract class IFamilyRepository {
   Future<Either<FamilyFailure, String>> create({
@@ -25,15 +25,6 @@ abstract class IFamilyRepository {
     required String familyName,
   });
 
-  Future<Either<FamilyFailure, Unit>> deleteFamily({
-    required String familyId,
-  });
-
-  Future<Either<ChildrenFailure, Child>> getChildById({
-    required String familyId,
-    required String childId,
-  });
-
   Future<Either<ChildrenFailure, List<Child>>> getChildren(String familyId);
 
   Future<Either<ChildrenFailure, Unit>> deleteChild({
@@ -47,28 +38,30 @@ abstract class IFamilyRepository {
     String? pickedFilePath,
   });
 
-  Future<Either<UserFailure, List<TrustedUser>>> getTrustedUsers(
+  Future<Either<TrustedUserFailure, List<TrustedUser>>> getTrustedUsers(
     String familyId,
   );
 
-  Future<Either<UserFailure, List<TrustedUser>>> getFutureTrustedUsers(
-    String familyId,
-  );
-
-  Future<Either<UserFailure, Unit>> addTrustedUser({
+  Future<Either<TrustedUserFailure, Unit>> addUpdateTrustedUser({
     required String familyId,
     required TrustedUser trustedUser,
   });
 
-  Future<Either<UserFailure, Unit>> deleteTrustedUser({
+  Future<Either<TrustedUserFailure, Unit>> deleteTrustedUser({
     required String familyId,
     required String trustedUserId,
   });
 
+  /*
+  Future<Either<ChildrenFailure, Child>> getChildById({
+    required String familyId,
+    required String childId,
+  });
   Future<Either<LocationFailure, Location>> getLocationById({
     required String familyId,
     required String locationId,
   });
+  */
 
   Future<Either<LocationFailure, List<Location>>> getLocations(String familyId);
 

@@ -28,8 +28,8 @@ class UserFormBloc extends Bloc<UserFormEvent, UserFormState> with LogMixin {
   ) : super(UserFormState.initial()) {
     on<Init>(_initialize, transformer: sequential());
     on<LeaveFamily>(_mapLeaveFamily, transformer: sequential());
-    on<NameChanged>(_mapNameChanged, transformer: debounce(duration));
-    on<SurnameChanged>(_mapSurnameChanged, transformer: debounce(duration));
+    on<FirstNameChanged>(_mapFirstNameChanged, transformer: debounce(duration));
+    on<LastNameChanged>(_mapLastNameChanged, transformer: debounce(duration));
     on<PictureChanged>(_mapPictureChanged, transformer: sequential());
     on<UserSubmitted>(_performSubmit, transformer: sequential());
   }
@@ -68,24 +68,24 @@ class UserFormBloc extends Bloc<UserFormEvent, UserFormState> with LogMixin {
     );
   }
 
-  FutureOr<void> _mapNameChanged(
-    NameChanged event,
+  FutureOr<void> _mapFirstNameChanged(
+    FirstNameChanged event,
     Emitter<UserFormState> emit,
   ) {
     emit(
       state.copyWith(
-        name: Name(event.name),
+        firstName: FirstName(event.firstName),
       ),
     );
   }
 
-  FutureOr<void> _mapSurnameChanged(
-    SurnameChanged event,
+  FutureOr<void> _mapLastNameChanged(
+    LastNameChanged event,
     Emitter<UserFormState> emit,
   ) {
     emit(
       state.copyWith(
-        surname: Surname(event.surname),
+        lastName: LastName(event.lastName),
       ),
     );
   }
@@ -122,8 +122,8 @@ class UserFormBloc extends Bloc<UserFormEvent, UserFormState> with LogMixin {
       state.copyWith(
         status: UserFormStateEnum.none,
         emailAddress: e.userToEdit.email,
-        surname: e.userToEdit.surname,
-        name: e.userToEdit.name,
+        firstName: e.userToEdit.firstName,
+        lastName: e.userToEdit.lastName,
         imagePath: e.userToEdit.photoUrl,
         submitUserEnable: submitUserEnable,
         disconnectUserEnable: disconnectUserEnable,

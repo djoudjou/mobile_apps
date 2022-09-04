@@ -190,11 +190,19 @@ class LocationFormBloc extends Bloc<LocationFormEvent, LocationFormState> {
     Emitter<LocationFormState> emit,
   ) async {
     final location = event.location;
-    Position? position = await Geolocator.getLastKnownPosition();
-    // if position is null it will look to geolocator
-    position ??= await Geolocator.getCurrentPosition(
-      desiredAccuracy: LocationAccuracy.high,
-    );
+
+    GpsPosition currentPosition;
+
+    try {
+      final Position position = await _determinePosition();
+      currentPosition = GpsPosition.fromPosition(
+        latitude: position.latitude,
+        longitude: position.longitude,
+      );
+    } catch (_) {
+      currentPosition =
+          GpsPosition.fromPosition(latitude: 48.8534, longitude: 2.3488);
+    }
 
     final LocationFormState newState = state.copyWith(
       id: event.location.id,
@@ -204,10 +212,7 @@ class LocationFormBloc extends Bloc<LocationFormEvent, LocationFormState> {
       title: location.title,
       note: location.note,
       isInitializing: false,
-      currentPosition: GpsPosition.fromPosition(
-        latitude: position.latitude,
-        longitude: position.longitude,
-      ),
+      currentPosition: currentPosition,
       gpsPosition: event.location.gpsPosition,
       failureOrSuccessOption: none(),
     );
@@ -287,5 +292,43 @@ class LocationFormBloc extends Bloc<LocationFormEvent, LocationFormState> {
         failureOrSuccessOption: none(),
       ),
     );
+  }
+
+  Future<Position> _determinePosition() async {
+    bool serviceEnabled;
+    LocationPermission permission;
+
+    // Test if location services are enabled.
+    serviceEnabled = await Geolocator.isLocationServiceEnabled();
+    if (!serviceEnabled) {
+      // Location services are not enabled don't continue
+      // accessing the position and request users of the
+      // App to enable the location services.
+      return Future.error('Location services are disabled.');
+    }
+
+    permission = await Geolocator.checkPermission();
+    if (permission == LocationPermission.denied) {
+      permission = await Geolocator.requestPermission();
+      if (permission == LocationPermission.denied) {
+        // Permissions are denied, next time you could try
+        // requesting permissions again (this is also where
+        // Android's shouldShowRequestPermissionRationale
+        // returned true. According to Android guidelines
+        // your App should show an explanatory UI now.
+        return Future.error('Location permissions are denied');
+      }
+    }
+
+    if (permission == LocationPermission.deniedForever) {
+      // Permissions are denied forever, handle appropriately.
+      return Future.error(
+        'Location permissions are permanently denied, we cannot request permissions.',
+      );
+    }
+
+    //Position? position = await Geolocator.getLastKnownPosition();
+
+    return Geolocator.getCurrentPosition();
   }
 }

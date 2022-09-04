@@ -11,11 +11,11 @@ class RegisterEvent with _$RegisterEvent {
   const factory RegisterEvent.registerPasswordChanged(String password) =
       RegisterPasswordChanged;
 
-  const factory RegisterEvent.registerNameChanged(String name) =
-      RegisterNameChanged;
+  const factory RegisterEvent.registerLastNameChanged(String lastName) =
+      RegisterLastNameChanged;
 
-  const factory RegisterEvent.registerSurnameChanged(String surname) =
-      RegisterSurnameChanged;
+  const factory RegisterEvent.registerFirstNameChanged(String firstName) =
+      RegisterFirstNameChanged;
 
   const factory RegisterEvent.registerSubmitted() = RegisterSubmitted;
 

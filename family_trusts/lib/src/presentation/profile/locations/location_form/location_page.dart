@@ -91,16 +91,17 @@ class LocationPage extends StatelessWidget with LogMixin {
                   updateSuccess: (_) => showSuccessMessage(
                     LocaleKeys.profile_updateLocationSuccess.tr(),
                     context,
+                    onDismissed: () => AutoRouter.of(context).pop("updated"),
                   ),
                   createSuccess: (_) => showSuccessMessage(
                     LocaleKeys.profile_addLocationSuccess.tr(),
                     context,
-                    onDismissed: () => AutoRouter.of(context).pop(),
+                    onDismissed: () => AutoRouter.of(context).pop("created"),
                   ),
                   deleteSucces: (_) => showSuccessMessage(
                     LocaleKeys.profile_deleteLocationSuccess.tr(),
                     context,
-                    onDismissed: () => AutoRouter.of(context).pop(),
+                    onDismissed: () => AutoRouter.of(context).pop("deleted"),
                   ),
                 );
               });

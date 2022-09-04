@@ -8,13 +8,27 @@ part of 'child_lookup_event_dto.dart';
 
 ChildLookupEventDTO _$ChildLookupEventDTOFromJson(Map<String, dynamic> json) =>
     ChildLookupEventDTO(
-      date_text: json['date_text'] as String?,
+      creationDate: _$JsonConverterFromJson<String, DateTime>(
+          json['creationDate'], const CustomDateTimeConverter().fromJson),
       message: json['message'] as String?,
     );
 
 Map<String, dynamic> _$ChildLookupEventDTOToJson(
         ChildLookupEventDTO instance) =>
     <String, dynamic>{
-      'date_text': instance.date_text,
+      'creationDate': _$JsonConverterToJson<String, DateTime>(
+          instance.creationDate, const CustomDateTimeConverter().toJson),
       'message': instance.message,
     };
+
+Value? _$JsonConverterFromJson<Json, Value>(
+  Object? json,
+  Value? Function(Json json) fromJson,
+) =>
+    json == null ? null : fromJson(json as Json);
+
+Json? _$JsonConverterToJson<Json, Value>(
+  Value? value,
+  Json? Function(Value value) toJson,
+) =>
+    value == null ? null : toJson(value);

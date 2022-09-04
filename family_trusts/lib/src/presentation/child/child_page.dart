@@ -44,8 +44,8 @@ class ChildPage extends StatefulWidget {
 class _ChildPageState extends State<ChildPage> {
   static final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
-  String? _name;
-  String? _surname;
+  String? _firstname;
+  String? _lastname;
   String? _imagePath;
 
   TextEditingController? dateCtl;
@@ -87,7 +87,7 @@ class _ChildPageState extends State<ChildPage> {
                 addChildSuccess: (_) => showSuccessMessage(
                   LocaleKeys.profile_addChildSuccess.tr(),
                   context,
-                  onDismissed: () => AutoRouter.of(context).pop(),
+                  onDismissed: () => AutoRouter.of(context).pop("Created"),
                 ),
                 addChildFailure: (_) => showErrorMessage(
                   LocaleKeys.profile_addChildFailure.tr(),
@@ -100,6 +100,7 @@ class _ChildPageState extends State<ChildPage> {
                 updateChildSuccess: (_) => showSuccessMessage(
                   LocaleKeys.profile_updateChildSuccess.tr(),
                   context,
+                  onDismissed: () => AutoRouter.of(context).pop("Updated"),
                 ),
                 updateChildFailure: (_) => showErrorMessage(
                   LocaleKeys.profile_updateChildFailure.tr(),
@@ -112,7 +113,7 @@ class _ChildPageState extends State<ChildPage> {
                 deleteChildSuccess: (_) => showSuccessMessage(
                   LocaleKeys.profile_deleteChildSuccess.tr(),
                   context,
-                  onDismissed: () => AutoRouter.of(context).pop(),
+                  onDismissed: () => AutoRouter.of(context).pop("Updated"),
                 ),
                 deleteChildFailure: (_) => showErrorMessage(
                   LocaleKeys.profile_deleteChildFailure.tr(),
@@ -147,33 +148,33 @@ class _ChildPageState extends State<ChildPage> {
                     ),
                     const MyVerticalSeparator(),
                     TextFormField(
-                      initialValue: widget.child.surname.getOrCrash(),
+                      initialValue: widget.child.firstName.getOrCrash(),
                       autofocus: !isEditing,
                       style: textTheme.headline5,
                       decoration: InputDecoration(
-                        labelText: LocaleKeys.form_surname_label.tr(),
+                        labelText: LocaleKeys.form_firstname_label.tr(),
                       ),
                       validator: (val) {
-                        return !Validators().isValidSurname(val)
-                            ? LocaleKeys.form_surname_error.tr()
+                        return !Validators().isValidFirstName(val)
+                            ? LocaleKeys.form_firstname_error.tr()
                             : null;
                       },
-                      onSaved: (value) => _surname = value,
+                      onSaved: (value) => _lastname = value,
                     ),
                     const MyVerticalSeparator(),
                     TextFormField(
-                      initialValue: widget.child.name.getOrCrash(),
+                      initialValue: widget.child.lastName.getOrCrash(),
                       autofocus: !isEditing,
                       style: textTheme.headline5,
                       decoration: InputDecoration(
-                        labelText: LocaleKeys.form_name_label.tr(),
+                        labelText: LocaleKeys.form_lastname_label.tr(),
                       ),
                       validator: (val) {
-                        return !Validators().isValidName(val)
-                            ? LocaleKeys.form_name_error.tr()
+                        return !Validators().isValidLastName(val)
+                            ? LocaleKeys.form_lastname_error.tr()
                             : null;
                       },
-                      onSaved: (value) => _name = value,
+                      onSaved: (value) => _firstname = value,
                     ),
                     const MyVerticalSeparator(),
                     TextFormField(
@@ -208,8 +209,8 @@ class _ChildPageState extends State<ChildPage> {
                             _formKey.currentState!.validate()) {
                           _formKey.currentState!.save();
                           final Child updatedChild = widget.child.copyWith(
-                            name: Name(_name),
-                            surname: Surname(_surname),
+                            firstName: FirstName(_firstname),
+                            lastName: LastName(_lastname),
                             birthday: Birthday.fromValue(dateCtl?.text),
                           );
                           if (updatedChild.id == null) {

@@ -2,6 +2,9 @@ import 'dart:core';
 
 import 'package:familytrusts/src/domain/family/family.dart';
 import 'package:familytrusts/src/domain/user/value_objects.dart';
+import 'package:familytrusts/src/infrastructure/http/families/child_dto.dart';
+import 'package:familytrusts/src/infrastructure/http/families/location_dto.dart';
+import 'package:familytrusts/src/infrastructure/http/families/trust_person_dto.dart';
 import 'package:familytrusts/src/infrastructure/http/join_proposal/member_dto.dart';
 import 'package:json_annotation/json_annotation.dart';
 
@@ -26,7 +29,7 @@ class FamilyDTO {
 
   Family toDomain() {
     return Family(
-      name: Name(name),
+      name: FirstName(name),
       id: familyId,
     );
   }

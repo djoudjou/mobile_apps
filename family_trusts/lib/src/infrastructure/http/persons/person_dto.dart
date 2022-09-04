@@ -3,10 +3,11 @@ import 'dart:core';
 import 'package:familytrusts/src/domain/user/user.dart';
 import 'package:familytrusts/src/domain/user/value_objects.dart';
 import 'package:familytrusts/src/infrastructure/http/families/family_dto.dart';
-import 'package:json_annotation/json_annotation.dart';
+import 'package:freezed_annotation/freezed_annotation.dart';
 
 part 'person_dto.g.dart';
 
+@freezed
 @JsonSerializable()
 class PersonDTO {
   String? personId;
@@ -29,8 +30,8 @@ class PersonDTO {
 
   factory PersonDTO.fromUser(User user) => PersonDTO(
         email: user.email.getOrCrash(),
-        firstName: user.surname.getOrCrash(),
-        lastName: user.name.getOrCrash(),
+        firstName: user.firstName.getOrCrash(),
+        lastName: user.lastName.getOrCrash(),
         personId: user.id,
         photoUrl: user.photoUrl,
       );
@@ -45,8 +46,8 @@ class PersonDTO {
 
     return User(
       email: EmailAddress(email),
-      name: Name(lastName),
-      surname: Surname(firstName),
+      firstName: FirstName(lastName),
+      lastName: LastName(firstName),
       photoUrl: photoUrl,
       id: personId,
       family: familyDTO?.toDomain(),

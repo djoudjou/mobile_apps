@@ -2,7 +2,9 @@ import 'dart:async';
 
 import 'package:bloc/bloc.dart';
 import 'package:bloc_concurrency/bloc_concurrency.dart';
+import 'package:dartz/dartz.dart';
 import 'package:familytrusts/src/application/family/children/bloc.dart';
+import 'package:familytrusts/src/domain/family/children_failure.dart';
 import 'package:familytrusts/src/domain/family/i_family_repository.dart';
 import 'package:familytrusts/src/domain/user/user.dart';
 import 'package:injectable/injectable.dart';
@@ -62,11 +64,17 @@ class ChildrenFormBloc extends Bloc<ChildrenFormEvent, ChildrenFormState> {
     try {
       emit(const ChildrenFormState.deleteChildInProgress());
       final User user = event.user;
-      await _familyRepository.deleteChild(
+      final Either<ChildrenFailure, Unit> result =
+          await _familyRepository.deleteChild(
         familyId: user.family!.id!,
         child: event.child,
       );
-      emit(const ChildrenFormState.deleteChildSuccess());
+      emit(
+        result.fold(
+          (failure) => const ChildrenFormState.deleteChildFailure(),
+          (success) => const ChildrenFormState.deleteChildSuccess(),
+        ),
+      );
     } catch (_) {
       emit(const ChildrenFormState.deleteChildFailure());
     }

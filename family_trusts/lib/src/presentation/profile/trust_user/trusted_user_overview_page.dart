@@ -1,7 +1,6 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:familytrusts/generated/locale_keys.g.dart';
-import 'package:familytrusts/src/application/family/children/bloc.dart';
-import 'package:familytrusts/src/domain/family/child.dart';
+import 'package:familytrusts/src/application/family/trusted/bloc.dart';
 import 'package:familytrusts/src/domain/user/user.dart';
 import 'package:familytrusts/src/helper/constants.dart';
 import 'package:familytrusts/src/helper/snackbar_helper.dart';
@@ -14,12 +13,12 @@ import 'package:familytrusts/src/presentation/profile/widgets/profile_content.da
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-class ProfileChildren extends StatelessWidget {
+class ProfileTrustedUsers extends StatelessWidget {
   final double radius;
   final User connectedUser;
-  static const _key = PageStorageKey<String>('children');
+  static const _key = PageStorageKey<String>('trusted');
 
-  const ProfileChildren({
+  const ProfileTrustedUsers({
     Key? key,
     required this.radius,
     required this.connectedUser,
@@ -27,81 +26,80 @@ class ProfileChildren extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MultiBlocListener(
-      listeners: [
-        BlocListener<ChildrenBloc, ChildrenState>(
-          listener: (context, state) {
-            state.map(
-              childrenLoading: (_) {},
-              childrenLoaded: (_) {},
-              childrenNotLoaded: (_) => showErrorMessage(
-                LocaleKeys.profile_childrenNotLoaded.tr(),
-                context,
-              ),
-            );
-          },
-        ),
-      ],
-      child: BlocBuilder<ChildrenBloc, ChildrenState>(
-        builder: (childrenBlocContext, state) {
+    return Builder(
+      builder: (context) =>
+          BlocConsumer<TrustedUserWatcherBloc, TrustedUserWatcherState>(
+        listener: (context, state) {
+          state.map(
+            trustedUsersLoading: (_) {},
+            trustedUsersLoaded: (_) {},
+            trustedUsersNotLoaded: (_) => showErrorMessage(
+              LocaleKeys.profile_trustedUsersNotLoaded.tr(),
+              context,
+            ),
+          );
+        },
+        builder: (trustedUserWatcherBlocContext, state) {
           return state.maybeMap(
             orElse: () => Column(
               children: <Widget>[
-                MyText(LocaleKeys.profile_tabs_children_loading.tr()),
+                MyText(LocaleKeys.profile_tabs_trusted_loading.tr()),
                 const LoadingContent(),
               ],
             ),
-            childrenNotLoaded: (childrenNotLoaded) => Container(
+            trustedUsersNotLoaded: (trustedUsersNotLoaded) => Container(
               color: Colors.blue,
-              child: MyText(LocaleKeys.profile_tabs_children_error.tr()),
+              child: MyText(LocaleKeys.profile_tabs_trusted_error.tr()),
             ),
-            childrenLoaded: (childrenLoaded) =>
-                childrenLoaded.eitherChildren.fold(
-              (childrenFailure) => const ErrorContent(),
-              (eitherChildren) => eitherChildren.isEmpty
+            trustedUsersLoaded: (trustedUsersLoaded) =>
+                trustedUsersLoaded.eitherTrustedUsers.fold(
+              (userFailure) => const ErrorContent(),
+              (trustedUsers) => trustedUsers.isEmpty
                   ? Align(
                       child: MyText(
-                        LocaleKeys.profile_tabs_children_noChildren.tr(),
+                        LocaleKeys.profile_tabs_trusted_noTrusted.tr(),
                         maxLines: 3,
                       ),
                     )
                   : ListView.separated(
                       key: _key,
                       padding: const EdgeInsets.all(8),
-                      itemCount: eitherChildren.length,
+                      itemCount: trustedUsers.length,
                       separatorBuilder: (BuildContext context, int index) =>
                           const Divider(),
                       itemBuilder: (BuildContext context, int index) {
-                        final Child child = eitherChildren[index];
-
+                        final trustedUser = trustedUsers[index];
                         return Container(
-                          //color: Colors.green,
-                          width: MediaQuery.of(context).size.width,
+                          //color: Colors.red,
+                          //height: 100,
                           child: Row(
                             //mainAxisAlignment: MainAxisAlignment.start,
                             children: <Widget>[
-                              MyAvatar(
-                                imageTag: "TAG_CHILD_${child.id}",
-                                photoUrl: child.photoUrl,
-                                radius: radius / 2,
-                                onTapCallback: () => gotoEditChild(
-                                  currentUser: connectedUser,
-                                  context: context,
-                                  editing: true,
-                                  child: child,
+                              Center(
+                                child: MyAvatar(
+                                  imageTag:
+                                      "TAG_TRUSTED_${trustedUser.id}",
+                                  photoUrl: trustedUser.photoUrl,
+                                  radius: radius / 2,
+                                  onTapCallback: () => gotoEditTrustUserScreen(
+                                    imageTag: "TAG_TRUSTED_${trustedUser.id}",
+                                    trustedUser: trustedUser,
+                                    currentUser: connectedUser,
+                                    context: trustedUserWatcherBlocContext,
+                                  ),
+                                  defaultImage: defaultUserImages,
                                 ),
-                                defaultImage: defaultUserImages,
                               ),
                               const MyHorizontalSeparator(),
                               InkWell(
-                                onTap: () => gotoEditChild(
+                                onTap: () => gotoEditTrustUserScreen(
+                                  imageTag: "TAG_TRUSTED_${trustedUser.id}",
+                                  trustedUser: trustedUser,
                                   currentUser: connectedUser,
-                                  context: context,
-                                  editing: true,
-                                  child: child,
+                                  context: trustedUserWatcherBlocContext,
                                 ),
                                 child: MyText(
-                                  child.displayName,
+                                  trustedUser.displayName,
                                   alignment: TextAlign.start,
                                   maxLines: 3,
                                 ),

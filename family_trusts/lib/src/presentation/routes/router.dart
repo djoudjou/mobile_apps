@@ -8,7 +8,7 @@ import 'package:familytrusts/src/presentation/home/home_page_without_family.dart
 import 'package:familytrusts/src/presentation/profile/locations/location_form/location_page.dart';
 import 'package:familytrusts/src/presentation/profile/locations/location_form/search/search_address_page.dart';
 import 'package:familytrusts/src/presentation/profile/locations/location_form/widgets/select_place_picker.dart';
-import 'package:familytrusts/src/presentation/profile/trusted_users/trusted_user_form/trusted_user_form_page.dart';
+import 'package:familytrusts/src/presentation/profile/trust_user/trust_user_page.dart';
 import 'package:familytrusts/src/presentation/register/register_page.dart';
 import 'package:familytrusts/src/presentation/routes/auth_guard.dart';
 import 'package:familytrusts/src/presentation/search_family/search_family_page.dart';
@@ -36,7 +36,7 @@ import 'package:familytrusts/src/presentation/user/user_page.dart';
     AutoRoute(page: ChildrenLookupPage, guards: [AuthGuard], usesPathAsKey: true),
     AutoRoute(page: HomePage, guards: [AuthGuard], usesPathAsKey: true),
     AutoRoute(page: HomePageWithoutFamily, guards: [AuthGuard], usesPathAsKey: true),
-    AutoRoute(page: TrustedUserFormPage, guards: [AuthGuard], usesPathAsKey: true),
+    AutoRoute(page: TrustUserPage, guards: [AuthGuard], usesPathAsKey: true),
     AutoRoute(page: ChildrenLookupDetailsPage, guards: [AuthGuard], usesPathAsKey: true),
     AutoRoute(path: "*", page: UnknownPage),
     AutoRoute(page: SplashPage, initial: true),

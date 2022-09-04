@@ -11,4 +11,5 @@ abstract class TrustedUserFailure with _$TrustedUserFailure {
 
   const factory TrustedUserFailure.unableToAddTrustedUser() =
       _UnableToAddTrustedUser;
+
 }

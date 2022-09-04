@@ -1,9 +1,11 @@
+import 'package:auto_route/auto_route.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:familytrusts/generated/locale_keys.g.dart';
 import 'package:familytrusts/injection.dart';
-import 'package:familytrusts/src/application/user_form/bloc.dart';
+import 'package:familytrusts/src/application/family/trusted/bloc.dart';
 import 'package:familytrusts/src/domain/family/i_family_repository.dart';
-import 'package:familytrusts/src/domain/user/i_user_repository.dart';
+import 'package:familytrusts/src/domain/family/trusted_user/trusted.dart';
+import 'package:familytrusts/src/domain/family/trusted_user/value_objects.dart';
 import 'package:familytrusts/src/domain/user/user.dart';
 import 'package:familytrusts/src/domain/user/value_objects.dart';
 import 'package:familytrusts/src/helper/alert_helper.dart';
@@ -11,6 +13,7 @@ import 'package:familytrusts/src/helper/analytics_svc.dart';
 import 'package:familytrusts/src/helper/constants.dart';
 import 'package:familytrusts/src/helper/snackbar_helper.dart';
 import 'package:familytrusts/src/helper/validators.dart';
+import 'package:familytrusts/src/presentation/core/loading_content.dart';
 import 'package:familytrusts/src/presentation/core/my_apps_bars.dart';
 import 'package:familytrusts/src/presentation/core/my_button.dart';
 import 'package:familytrusts/src/presentation/core/my_image.dart';
@@ -19,30 +22,29 @@ import 'package:familytrusts/src/presentation/profile/widgets/profile_image.dart
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-class UserPage extends StatefulWidget {
-  final User userToEdit;
+class TrustUserPage extends StatefulWidget {
+  final TrustedUser trustedUserToEdit;
   final User connectedUser;
   final String imageTag;
 
-  const UserPage({
+  const TrustUserPage({
     Key? key,
-    required this.userToEdit,
+    required this.trustedUserToEdit,
     required this.imageTag,
     required this.connectedUser,
   }) : super(key: key);
 
   @override
-  _UserPageState createState() => _UserPageState();
+  _TrustUserPageState createState() => _TrustUserPageState();
 }
 
-class _UserPageState extends State<UserPage> {
+class _TrustUserPageState extends State<TrustUserPage> {
   static final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   String? _lastname;
   String? _firstname;
+  String? _phoneNumber;
   String? _email;
   String? _imagePath;
-
-  //LocationResult _pickedLocation;
 
   @override
   void initState() {
@@ -60,59 +62,81 @@ class _UserPageState extends State<UserPage> {
 
     return Scaffold(
       appBar: MyAppBar(
-        pageTitle: LocaleKeys.user_title.tr(),
+        pageTitle: LocaleKeys.profile_tabs_trusted_tab.tr(),
         context: context,
       ),
-      body: BlocProvider<UserFormBloc>(
-        create: (context) => UserFormBloc(
-          getIt<IUserRepository>(),
+      body: BlocProvider<TrustedUserFormBloc>(
+        create: (context) => TrustedUserFormBloc(
           getIt<IFamilyRepository>(),
           getIt<AnalyticsSvc>(),
         )..add(
-            UserFormEvent.init(
+            TrustedUserFormEvent.init(
               connectedUser: widget.connectedUser,
-              userToEdit: widget.userToEdit,
+              toEdit: widget.trustedUserToEdit,
             ),
           ),
-        child: BlocConsumer<UserFormBloc, UserFormState>(
-          listener: (context, state) {
+        child: BlocConsumer<TrustedUserFormBloc, TrustedUserFormState>(
+          listener: (contextTrustedUserFormBloc, state) {
             switch (state.status) {
-              case UserFormStateEnum.unTrusting:
+              case TrustedUserFormStateEnum.removing:
                 showProgressMessage(
                   LocaleKeys.profile_deleteTrustedUserInProgress.tr(),
-                  context,
+                  contextTrustedUserFormBloc,
                 );
                 break;
-              case UserFormStateEnum.submiting:
+              case TrustedUserFormStateEnum.submiting:
                 showProgressMessage(
-                  LocaleKeys.global_update.tr(),
-                  context,
+                  LocaleKeys.profile_addTrustedUserInProgress.tr(),
+                  contextTrustedUserFormBloc,
                 );
                 break;
               default:
                 break;
             }
 
-            if (state.submitUserFailureOrSuccessOption.isSome()) {
-              state.submitUserFailureOrSuccessOption.toNullable()!.fold(
+            state.submitTrustedUserFailureOrSuccessOption.fold(
+              () => null,
+              (value) => value.fold(
                 (failure) {
                   showErrorMessage(
-                    LocaleKeys.global_unexpected.tr(),
-                    context,
+                    LocaleKeys.profile_addTrustedUserFailure.tr(),
+                    contextTrustedUserFormBloc,
                   );
                 },
                 (success) {
                   showSuccessMessage(
-                    LocaleKeys.global_success.tr(),
+                    LocaleKeys.profile_addTrustedUserSuccess.tr(),
                     context,
+                    onDismissed: () => AutoRouter.of(contextTrustedUserFormBloc)
+                        .pop("Created"),
                   );
                 },
-              );
-            }
+              ),
+            );
+
+            state.removeTrustedUserFailureOrSuccessOption.fold(
+              () => null,
+              (value) => value.fold(
+                (failure) {
+                  showErrorMessage(
+                    LocaleKeys.profile_deleteTrustedUserFailure.tr(),
+                    contextTrustedUserFormBloc,
+                  );
+                },
+                (success) {
+                  showSuccessMessage(
+                    LocaleKeys.profile_deleteTrustedUserSuccess.tr(),
+                    context,
+                    onDismissed: () => AutoRouter.of(contextTrustedUserFormBloc)
+                        .pop("Deleted"),
+                  );
+                },
+              ),
+            );
           },
-          builder: (context, state) {
-            if (state.status == UserFormStateEnum.initializing) {
-              return const CircularProgressIndicator();
+          builder: (contextTrustedUserFormBloc, state) {
+            if (state.status == TrustedUserFormStateEnum.initializing) {
+              return const LoadingContent();
             } else {
               return Padding(
                 padding: const EdgeInsets.all(16.0),
@@ -123,10 +147,10 @@ class _UserPageState extends State<UserPage> {
                       Center(
                         child: ProfileImage(
                           imageTag: widget.imageTag,
-                          editable: state.submitUserEnable!,
+                          editable: true,
                           image: MyImage(
                             imagePath: _imagePath,
-                            photoUrl: widget.userToEdit.photoUrl,
+                            photoUrl: widget.trustedUserToEdit.photoUrl,
                             defaultImage: const Image(image: defaultUserImages),
                           ),
                           radius: 70,
@@ -140,9 +164,9 @@ class _UserPageState extends State<UserPage> {
                       ),
                       const MyVerticalSeparator(),
                       TextFormField(
-                        initialValue: widget.userToEdit.firstName.getOrCrash(),
-                        autofocus: !state.submitUserEnable!,
-                        enabled: state.submitUserEnable,
+                        initialValue:
+                            widget.trustedUserToEdit.firstName.value.fold((l) => "", (r) => r),
+                        enabled: true,
                         style: textTheme.headline5,
                         decoration: InputDecoration(
                           labelText: LocaleKeys.form_firstname_label.tr(),
@@ -156,9 +180,9 @@ class _UserPageState extends State<UserPage> {
                       ),
                       const MyVerticalSeparator(),
                       TextFormField(
-                        initialValue: widget.userToEdit.lastName.getOrCrash(),
-                        autofocus: !state.submitUserEnable!,
-                        enabled: state.submitUserEnable,
+                        initialValue:
+                            widget.trustedUserToEdit.lastName.value.fold((l) => "", (r) => r),
+                        enabled: true,
                         style: textTheme.headline5,
                         decoration: InputDecoration(
                           labelText: LocaleKeys.form_lastname_label.tr(),
@@ -172,9 +196,10 @@ class _UserPageState extends State<UserPage> {
                       ),
                       const MyVerticalSeparator(),
                       TextFormField(
-                        initialValue: widget.userToEdit.email.getOrCrash(),
+                        initialValue:
+                            widget.trustedUserToEdit.email.value.fold((l) => "", (r) => r),
                         //autofocus: !state.submitUserEnable!,
-                        enabled: false,
+                        enabled: true,
                         style: textTheme.headline5,
                         decoration: InputDecoration(
                           labelText: LocaleKeys.form_email_label.tr(),
@@ -187,51 +212,72 @@ class _UserPageState extends State<UserPage> {
                         onSaved: (value) => _email = value,
                       ),
                       const MyVerticalSeparator(),
-                      if (state.submitUserEnable!) ...[
-                        Container(margin: const EdgeInsets.only(top: 25.0)),
-                        MyButton(
-                          message: LocaleKeys.user_update.tr(),
-                          onPressed: () {
-                            if (_formKey.currentState != null &&
-                                _formKey.currentState!.validate()) {
-                              _formKey.currentState!.save();
-                              final User updatedUser =
-                                  widget.userToEdit.copyWith(
-                                firstName: FirstName(_firstname),
-                                lastName: LastName(_lastname),
-                                email: EmailAddress(_email),
-                              );
-                              //widget.onSaveCallback(updatedUser, _imagePath);
-                              context.read<UserFormBloc>().add(
-                                    UserFormEvent.userSubmitted(
-                                      user: updatedUser,
-                                      connectedUser: widget.connectedUser,
-                                      pickedFilePath: _imagePath,
-                                    ),
-                                  );
-                              //Navigator.pop(context);
-                            }
-                          },
+                      TextFormField(
+                        initialValue:
+                            widget.trustedUserToEdit.phoneNumber.value.fold((l) => "", (r) => r),
+                        //autofocus: !state.submitUserEnable!,
+                        enabled: true,
+                        style: textTheme.headline5,
+                        decoration: InputDecoration(
+                          labelText: LocaleKeys.form_phone_label.tr(),
                         ),
-                      ],
+                        validator: (val) {
+                          return !Validators().isValidPhone(val)
+                              ? LocaleKeys.form_phone_error.tr()
+                              : null;
+                        },
+                        onSaved: (value) => _phoneNumber = value,
+                      ),
                       const MyVerticalSeparator(),
-                      if (state.disconnectUserEnable!) ...[
+                      Container(margin: const EdgeInsets.only(top: 25.0)),
+                      MyButton(
+                        message: LocaleKeys.user_update.tr(),
+                        onPressed: () {
+                          if (_formKey.currentState != null &&
+                              _formKey.currentState!.validate()) {
+                            _formKey.currentState!.save();
+                            final TrustedUser updatedTrustUser =
+                                widget.trustedUserToEdit.copyWith(
+                              phoneNumber: PhoneNumber(_phoneNumber),
+                              firstName: FirstName(_firstname),
+                              lastName: LastName(_lastname),
+                              email: EmailAddress(_email),
+                            );
+                            contextTrustedUserFormBloc
+                                .read<TrustedUserFormBloc>()
+                                .add(
+                                  TrustedUserFormEvent.submitted(
+                                    trustedUser: updatedTrustUser,
+                                    connectedUser: widget.connectedUser,
+                                    pickedFilePath: _imagePath,
+                                  ),
+                                );
+                            //Navigator.pop(context);
+                          }
+                        },
+                      ),
+                      const MyVerticalSeparator(),
+                      if (state.deleteEnable) ...[
                         Container(margin: const EdgeInsets.only(top: 25.0)),
                         MyButton(
-                          message: LocaleKeys.user_disconnect.tr(),
+                          message: LocaleKeys.trust_user_disconnect.tr(),
                           backgroundColor: Colors.red,
                           textColor: Colors.white,
                           onPressed: () {
                             AlertHelper().confirm(
                               context,
-                              LocaleKeys.user_disconnect_confirm.tr(
-                                args: [widget.userToEdit.displayName],
+                              LocaleKeys.trust_user_disconnect_confirm.tr(
+                                args: [widget.trustedUserToEdit.displayName],
                               ),
                               onConfirmCallback: () {
-                                context.read<UserFormBloc>().add(
-                                      UserFormEvent.leaveFamily(
-                                        connectedUser: widget.connectedUser,
-                                        family: widget.connectedUser.family!,
+                                contextTrustedUserFormBloc
+                                    .read<TrustedUserFormBloc>()
+                                    .add(
+                                      TrustedUserFormEvent.removeTrustedUser(
+                                        trustedUserId:
+                                            widget.trustedUserToEdit.id!,
+                                        familyId:
+                                            widget.connectedUser.family!.id!,
                                       ),
                                     );
                                 //widget.onDisconnectCallback(widget.user);

@@ -17,9 +17,9 @@ class UserFormEvent with _$UserFormEvent {
     required Family family,
   }) = LeaveFamily;
 
-  const factory UserFormEvent.nameChanged(String name) = NameChanged;
+  const factory UserFormEvent.firstNameChanged(String firstName) = FirstNameChanged;
 
-  const factory UserFormEvent.surnameChanged(String surname) = SurnameChanged;
+  const factory UserFormEvent.lastNameChanged(String lastName) = LastNameChanged;
 
   const factory UserFormEvent.pictureChanged(String pickedFilePath) =
       PictureChanged;

@@ -4,15 +4,10 @@ import 'package:bloc/bloc.dart';
 import 'package:bloc_concurrency/bloc_concurrency.dart';
 import 'package:dartz/dartz.dart';
 import 'package:familytrusts/src/application/family/trusted/bloc.dart';
-import 'package:familytrusts/src/domain/auth/i_auth_facade.dart';
 import 'package:familytrusts/src/domain/family/i_family_repository.dart';
-import 'package:familytrusts/src/domain/family/trusted_user/trusted.dart';
 import 'package:familytrusts/src/domain/family/trusted_user/trusted_failure.dart';
 import 'package:familytrusts/src/domain/family/trusted_user/value_objects.dart';
-import 'package:familytrusts/src/domain/search_user/search_user_failure.dart';
-import 'package:familytrusts/src/domain/user/i_user_repository.dart';
-import 'package:familytrusts/src/domain/user/user.dart';
-import 'package:familytrusts/src/domain/user/user_failure.dart';
+import 'package:familytrusts/src/domain/user/value_objects.dart';
 import 'package:familytrusts/src/helper/analytics_svc.dart';
 import 'package:familytrusts/src/helper/bloc_helper.dart';
 import 'package:injectable/injectable.dart';
@@ -22,135 +17,168 @@ import 'package:quiver/strings.dart' as quiver;
 class TrustedUserFormBloc
     extends Bloc<TrustedUserFormEvent, TrustedUserFormState> {
   final IFamilyRepository _familyRepository;
-  final IAuthFacade _authFacade;
-  final IUserRepository _userRepository;
   final AnalyticsSvc _analyticsSvc;
+  static const Duration duration = Duration(milliseconds: 500);
 
   TrustedUserFormBloc(
     this._familyRepository,
-    this._authFacade,
-    this._userRepository,
     this._analyticsSvc,
   ) : super(TrustedUserFormState.initial()) {
-    on<UserLookupChanged>(
-      _mapUserLookupChangedToState,
-      transformer: debounce(const Duration(milliseconds: 500)),
+    on<Init>(_initialize, transformer: sequential());
+    on<RemoveTrustedUser>(_mapRemoveTrustedUser, transformer: sequential());
+    on<LastNameChanged>(_mapLastNameChanged, transformer: debounce(duration));
+    on<FirstNameChanged>(_mapFirstNameChanged, transformer: debounce(duration));
+    on<PhoneNumberChanged>(
+      _mapPhoneNumberChanged,
+      transformer: debounce(duration),
     );
-    on<AddTrustedUser>(_mapAddTrustedUserToState, transformer: sequential());
+    on<PictureChanged>(_mapPictureChanged, transformer: sequential());
+    on<Submitted>(_performSubmit, transformer: sequential());
   }
 
-  FutureOr<void> _mapUserLookupChangedToState(
-    UserLookupChanged event,
+  FutureOr<void> _mapRemoveTrustedUser(
+    RemoveTrustedUser event,
     Emitter<TrustedUserFormState> emit,
   ) async {
-    try {
-      if (quiver.isNotBlank(event.userLookupText) &&
-          event.userLookupText.isNotEmpty) {
-        emit(
-          state.copyWith(
-            state: TrustedUserFormStateEnum.searching,
-            searchUserFailureOrSuccessOption: none(),
-            addTrustedUserFailureOrSuccessOption: none(),
-          ),
-        );
+    emit(
+      state.copyWith(
+        status: TrustedUserFormStateEnum.removing,
+        submitTrustedUserFailureOrSuccessOption: none(),
+        removeTrustedUserFailureOrSuccessOption: none(),
+      ),
+    );
 
-        final String userId = _authFacade.getSignedInUserId().toNullable()!;
+    final Either<TrustedUserFailure, Unit> result =
+        await _familyRepository.deleteTrustedUser(
+      familyId: event.familyId,
+      trustedUserId: event.trustedUserId,
+    );
 
-        final Either<UserFailure, List<TrustedUser>> userFailureOrTrustedUsers =
-            await _familyRepository
-                .getFutureTrustedUsers(event.currentUser.family!.id!);
-        final List<String> trustedUsersId = userFailureOrTrustedUsers.fold(
-          (l) => [],
-          (r) => r.map((e) => e.user.id!).toList(),
-        );
-
-        final Either<SearchUserFailure, List<User>> result =
-            await _userRepository.searchUsers(
-          event.userLookupText,
-          excludedUsers: [...trustedUsersId, userId],
-        );
-
-        emit(
-          result.fold(
-            (failure) {
-              _analyticsSvc.debug("error during trusted user search $failure");
-              return state.copyWith(
-                state: TrustedUserFormStateEnum.none,
-                searchUserFailureOrSuccessOption:
-                    some(left(const SearchUserFailure.serverError())),
-                addTrustedUserFailureOrSuccessOption: none(),
-              );
-            },
-            (success) {
-              //return TrustedUserFormState.usersLoaded(searchUserFailureOrSuccess: result);
-              return state.copyWith(
-                state: TrustedUserFormStateEnum.none,
-                searchUserFailureOrSuccessOption: some(right(success)),
-                addTrustedUserFailureOrSuccessOption: none(),
-              );
-            },
-          ),
-        );
-      }
-    } catch (_) {
-      emit(
-        state.copyWith(
-          state: TrustedUserFormStateEnum.none,
-          searchUserFailureOrSuccessOption:
-              some(left(const SearchUserFailure.serverError())),
-          addTrustedUserFailureOrSuccessOption: none(),
+    emit(
+      result.fold(
+        (failure) {
+          _analyticsSvc.debug(
+            "unable to remove trust person ${event.trustedUserId} > $failure",
+          );
+          return state.copyWith(
+            status: TrustedUserFormStateEnum.none,
+            submitTrustedUserFailureOrSuccessOption: none(),
+            removeTrustedUserFailureOrSuccessOption: some(left(failure)),
+          );
+        },
+        (r) => state.copyWith(
+          status: TrustedUserFormStateEnum.none,
+          submitTrustedUserFailureOrSuccessOption: none(),
+          removeTrustedUserFailureOrSuccessOption: some(right(unit)),
         ),
-      );
-    }
+      ),
+    );
   }
 
-  FutureOr<void> _mapAddTrustedUserToState(
-    AddTrustedUser event,
+  FutureOr<void> _mapFirstNameChanged(
+    FirstNameChanged event,
+    Emitter<TrustedUserFormState> emit,
+  ) {
+    emit(
+      state.copyWith(
+        firstName: FirstName(event.firstName),
+      ),
+    );
+  }
+
+  FutureOr<void> _mapLastNameChanged(
+    LastNameChanged event,
+    Emitter<TrustedUserFormState> emit,
+  ) {
+    emit(
+      state.copyWith(
+        lastName: LastName(event.lastName),
+      ),
+    );
+  }
+
+  FutureOr<void> _mapPhoneNumberChanged(
+    PhoneNumberChanged event,
+    Emitter<TrustedUserFormState> emit,
+  ) {
+    emit(
+      state.copyWith(
+        phoneNumber: PhoneNumber(event.phoneNumber),
+      ),
+    );
+  }
+
+  FutureOr<void> _mapPictureChanged(
+    PictureChanged event,
+    Emitter<TrustedUserFormState> emit,
+  ) {
+    emit(
+      state.copyWith(
+        imagePath: event.pickedFilePath,
+      ),
+    );
+  }
+
+  FutureOr<void> _initialize(
+    Init e,
     Emitter<TrustedUserFormState> emit,
   ) async {
-    try {
-      //yield const TrustedUserFormState.addTrustedUserInProgress();
+    emit(
+      state.copyWith(
+        status: TrustedUserFormStateEnum.initializing,
+      ),
+    );
+
+    emit(
+      state.copyWith(
+        deleteEnable: e.toEdit.id!=null && quiver.isNotBlank(e.toEdit.id),
+        status: TrustedUserFormStateEnum.none,
+        phoneNumber: e.toEdit.phoneNumber,
+        firstName: e.toEdit.firstName,
+        lastName: e.toEdit.lastName,
+        imagePath: e.toEdit.photoUrl,
+        removeTrustedUserFailureOrSuccessOption: none(),
+        submitTrustedUserFailureOrSuccessOption: none(),
+      ),
+    );
+  }
+
+  FutureOr<void> _performSubmit(
+    Submitted e,
+    Emitter<TrustedUserFormState> emit,
+  ) async {
+    final bool isValid = e.trustedUser.failureOption.isNone();
+
+    if (isValid) {
       emit(
         state.copyWith(
-          state: TrustedUserFormStateEnum.adding,
-          addTrustedUserFailureOrSuccessOption: none(),
-        ),
-      );
-      final User user = event.currentUser;
-      final Either<UserFailure, Unit> result =
-          await _familyRepository.addTrustedUser(
-        familyId: user.family!.id!,
-        trustedUser: TrustedUser(
-          user: event.userToAdd,
-          since: event.time,
+          status: TrustedUserFormStateEnum.submiting,
+          submitTrustedUserFailureOrSuccessOption: none(),
         ),
       );
 
+      // TODO ADJ handle picture
+      final Either<TrustedUserFailure, Unit> updateResult =
+          await _familyRepository.addUpdateTrustedUser(
+        familyId: e.connectedUser.family!.id!,
+        trustedUser: e.trustedUser,
+      );
+
       emit(
-        result.fold(
-          (failure) {
-            _analyticsSvc.debug("error during add trusted user $failure");
+        updateResult.fold(
+          (l) {
+            _analyticsSvc
+                .debug("unable to update trusted user ${e.trustedUser} > $l");
             return state.copyWith(
-              state: TrustedUserFormStateEnum.none,
-              addTrustedUserFailureOrSuccessOption:
+              status: TrustedUserFormStateEnum.none,
+              submitTrustedUserFailureOrSuccessOption:
                   some(left(const TrustedUserFailure.unableToAddTrustedUser())),
             );
           },
-          (success) {
-            return state.copyWith(
-              state: TrustedUserFormStateEnum.none,
-              addTrustedUserFailureOrSuccessOption: some(right(unit)),
-            );
-          },
-        ),
-      );
-    } catch (_) {
-      emit(
-        state.copyWith(
-          state: TrustedUserFormStateEnum.none,
-          searchUserFailureOrSuccessOption: none(),
-          addTrustedUserFailureOrSuccessOption:
-              some(left(const TrustedUserFailure.unableToAddTrustedUser())),
+          (r) => state.copyWith(
+            status: TrustedUserFormStateEnum.none,
+            submitTrustedUserFailureOrSuccessOption: some(right(unit)),
+          ),
         ),
       );
     }

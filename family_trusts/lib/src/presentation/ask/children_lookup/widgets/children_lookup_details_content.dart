@@ -124,7 +124,7 @@ class ChildrenLookupDetailsContent extends StatelessWidget {
                             isFirst: isFirst,
                             isLast: idx == 0,
                             startChild: MyText(
-                              childrenLookupHistory.creationDate,
+                              childrenLookupHistory.creationDate.toPrintableDate,
                             ),
                             endChild: Container(
                               //color: Colors.teal,

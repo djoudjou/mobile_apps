@@ -1,6 +1,7 @@
 import 'dart:core';
 
-import 'package:familytrusts/src/domain/user/user.dart';
+import 'package:familytrusts/src/domain/family/trusted_user/trusted.dart';
+import 'package:familytrusts/src/domain/family/trusted_user/value_objects.dart';
 import 'package:familytrusts/src/domain/user/value_objects.dart';
 import 'package:json_annotation/json_annotation.dart';
 
@@ -29,12 +30,13 @@ class TrustPersonDTO {
 
   Map<String, dynamic> toJson() => _$TrustPersonDTOToJson(this);
 
-  User toDomain() {
-    return User(
-      name: Name(lastName),
-      surname: Surname(firstName),
+  TrustedUser toDomain() {
+    return TrustedUser(
+      id: trustPersonId,
+      firstName: FirstName(firstName),
+      lastName: LastName(lastName),
+      phoneNumber: PhoneNumber(phoneNumber),
       email: EmailAddress(email),
-      photoUrl: photoUrl,
     );
   }
 }

@@ -9,7 +9,7 @@ class Family with _$Family {
   const Family._(); // Added constructor
   const factory Family({
     String? id,
-    required Name name,
+    required FirstName name,
   }) = _Family;
 
   String get displayName => name.getOrCrash();

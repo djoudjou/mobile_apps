@@ -13,7 +13,7 @@ class FamilyFormState with _$FamilyFormState {
     required bool showErrorMessages,
     required FamilyFormStateEnum state,
     required bool isInitializing,
-    required Name name,
+    required FirstName name,
     String? id,
     required Option<Either<FamilyFailure, FamilySuccess>>
         failureOrSuccessOption,
@@ -24,6 +24,6 @@ class FamilyFormState with _$FamilyFormState {
         state: FamilyFormStateEnum.none,
         isInitializing: true,
         failureOrSuccessOption: none(),
-        name: Name(''),
+        name: FirstName(''),
       );
 }

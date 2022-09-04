@@ -51,7 +51,7 @@ class JoinFamilyProposalDTO {
           TimestampVo.fromTimestamp(expirationDate!.millisecondsSinceEpoch),
       lastUpdateDate:
           TimestampVo.fromTimestamp(lastUpdateDate!.millisecondsSinceEpoch),
-      family: Family(name: Name(familyName)),
+      family: Family(name: FirstName(familyName)),
       issuer: issuer!.toDomain(null),
       member: member?.toDomain(null),
       state: JoinProposalStatus.fromValue(status!),

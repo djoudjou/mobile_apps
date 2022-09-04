@@ -148,17 +148,21 @@ class CodegenLoader extends AssetLoader{
       "label": "Mot de passe",
       "error": "Mot de passe invalide"
     },
-    "surname": {
+    "firstname": {
       "label": "Prénom",
       "error": "Prénom invalide"
     },
-    "name": {
+    "lastname": {
       "label": "Nom",
       "error": "Nom invalide"
     },
     "birthday": {
       "label": "Date de naissance",
       "error": "Date de naissance non valide"
+    },
+    "phone": {
+      "label": "Numéro de téléphone (+33)XXXXXXXXX",
+      "error": "Numéro de téléphone au mauvais format"
     }
   },
   "login": {
@@ -247,6 +251,12 @@ class CodegenLoader extends AssetLoader{
     "update": "Mise à jour de la fiche",
     "disconnect": "Mettre fin à la relation",
     "disconnect_confirm": "Vous êtes sur le point de mettre fin à la relation avec {} ?"
+  },
+  "trust_user": {
+    "title": "fiche personne de confiance",
+    "update": "Mise à jour de la fiche",
+    "disconnect": "Supprimer la personne",
+    "disconnect_confirm": "Vous êtes sur le point de retirer {} de vos personnes de confiance ?"
   },
   "notifications": {
     "title": "Fil d'actualité",

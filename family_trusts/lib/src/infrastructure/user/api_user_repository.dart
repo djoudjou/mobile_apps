@@ -17,7 +17,9 @@ import 'package:injectable/injectable.dart';
 class ApiUserRepository with LogMixin implements IUserRepository {
   final ApiService _apiService;
 
-  ApiUserRepository(this._apiService);
+  ApiUserRepository(
+    this._apiService,
+  );
 
   @override
   Future<Either<UserFailure, Unit>> update(
@@ -27,20 +29,8 @@ class ApiUserRepository with LogMixin implements IUserRepository {
     try {
       final PersonDTO person = PersonDTO.fromUser(user);
 
-      /**
-          TODO ADJ gérer les images dans le backend
-          post image > File(pickedFilePath!)
+      //person = await updatePhoto(user, person);
 
-          if (quiver.isNotBlank(pickedFilePath)) {
-          final firebase_storage.Reference ref =
-          _storageReference.userPhotoStorage(userEntity.id!);
-
-          final String downloadUrl =
-          await FirebaseHelper.addImage(File(pickedFilePath!), ref);
-
-          userEntity = userEntity.copyWith(photoUrl: downloadUrl);
-          }
-       */
       await _apiService.getPersonRestClient().update(person.personId!, person);
       return right(unit);
     } catch (e) {
@@ -57,21 +47,8 @@ class ApiUserRepository with LogMixin implements IUserRepository {
     try {
       final PersonDTO person = PersonDTO.fromUser(user);
 
-      /**
-          TODO ADJ gérer les images dans le backend
-          post image > File(pickedFilePath!)
-
-          if (quiver.isNotBlank(pickedFilePath)) {
-          final firebase_storage.Reference ref =
-          _storageReference.userPhotoStorage(userEntity.id!);
-
-          final String downloadUrl =
-          await FirebaseHelper.addImage(File(pickedFilePath!), ref);
-
-          userEntity = userEntity.copyWith(photoUrl: downloadUrl);
-          }
-       */
       await _apiService.getPersonRestClient().createPerson(person);
+
       return right(unit);
     } catch (e) {
       log("error in create method : $e");

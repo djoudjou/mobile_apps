@@ -121,9 +121,9 @@ class RegisterForm extends StatelessWidget with LogMixin {
                       password(state, context),
                     ],
                     const MyVerticalSeparator(),
-                    surname(state, context),
+                    firstName(state, context),
                     const MyVerticalSeparator(),
-                    name(state, context),
+                    lastName(state, context),
                     const MyVerticalSeparator(),
                     MyButton(
                       message: LocaleKeys.register_proceed.tr(),
@@ -192,19 +192,19 @@ class RegisterForm extends StatelessWidget with LogMixin {
     );
   }
 
-  Widget surname(RegisterState state, BuildContext context) {
+  Widget firstName(RegisterState state, BuildContext context) {
     return TextFormField(
       decoration: InputDecoration(
-        labelText: LocaleKeys.form_surname_label.tr(),
+        labelText: LocaleKeys.form_firstname_label.tr(),
       ),
       keyboardType: TextInputType.text,
       autocorrect: false,
       onChanged: (value) => context
           .read<RegisterBloc>()
-          .add(RegisterEvent.registerSurnameChanged(value)),
-      validator: (_) => context.read<RegisterBloc>().state.surname.value.fold(
+          .add(RegisterEvent.registerFirstNameChanged(value)),
+      validator: (_) => context.read<RegisterBloc>().state.firstName.value.fold(
             (f) => f.maybeMap(
-              empty: (_) => LocaleKeys.form_surname_error.tr(),
+              empty: (_) => LocaleKeys.form_firstname_error.tr(),
               orElse: () => null,
             ),
             (_) => null,
@@ -212,19 +212,19 @@ class RegisterForm extends StatelessWidget with LogMixin {
     );
   }
 
-  Widget name(RegisterState state, BuildContext context) {
+  Widget lastName(RegisterState state, BuildContext context) {
     return TextFormField(
       decoration: InputDecoration(
-        labelText: LocaleKeys.form_name_label.tr(),
+        labelText: LocaleKeys.form_lastname_label.tr(),
       ),
       keyboardType: TextInputType.text,
       autocorrect: false,
       onChanged: (value) => context
           .read<RegisterBloc>()
-          .add(RegisterEvent.registerNameChanged(value)),
-      validator: (_) => context.read<RegisterBloc>().state.name.value.fold(
+          .add(RegisterEvent.registerLastNameChanged(value)),
+      validator: (_) => context.read<RegisterBloc>().state.lastName.value.fold(
             (f) => f.maybeMap(
-              empty: (_) => LocaleKeys.form_name_error.tr(),
+              empty: (_) => LocaleKeys.form_lastname_error.tr(),
               orElse: () => null,
             ),
             (_) => null,

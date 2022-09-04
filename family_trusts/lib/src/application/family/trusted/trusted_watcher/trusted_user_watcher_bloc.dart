@@ -6,7 +6,7 @@ import 'package:dartz/dartz.dart';
 import 'package:familytrusts/src/application/family/trusted/bloc.dart';
 import 'package:familytrusts/src/domain/family/i_family_repository.dart';
 import 'package:familytrusts/src/domain/family/trusted_user/trusted.dart';
-import 'package:familytrusts/src/domain/user/user_failure.dart';
+import 'package:familytrusts/src/domain/family/trusted_user/trusted_failure.dart';
 import 'package:injectable/injectable.dart';
 import 'package:quiver/strings.dart' as quiver;
 
@@ -31,8 +31,8 @@ class TrustedUserWatcherBloc
     if (quiver.isNotBlank(event.familyId)) {
       emit(const TrustedUserWatcherState.trustedUsersLoading());
 
-      final Either<UserFailure, List<TrustedUser>> result =
-          await _familyRepository.getFutureTrustedUsers(event.familyId!);
+      final Either<TrustedUserFailure, List<TrustedUser>> result =
+          await _familyRepository.getTrustedUsers(event.familyId!);
 
       emit(
         result.fold(

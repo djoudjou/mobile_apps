@@ -154,10 +154,7 @@ _i1.GetIt $initGetIt(_i1.GetIt get,
   gh.factory<_i48.MessagesBloc>(() => _i48.MessagesBloc(
       get<_i45.IMessagesRepository>(), get<_i16.IErrorService>()));
   gh.factory<_i49.TrustedUserFormBloc>(() => _i49.TrustedUserFormBloc(
-      get<_i20.IFamilyRepository>(),
-      get<_i11.IAuthFacade>(),
-      get<_i24.IUserRepository>(),
-      get<_i38.AnalyticsSvc>()));
+      get<_i20.IFamilyRepository>(), get<_i38.AnalyticsSvc>()));
   return get;
 }
 

@@ -2,6 +2,7 @@ import 'package:familytrusts/src/domain/children_lookup/value_objects.dart';
 import 'package:familytrusts/src/domain/core/value_objects.dart';
 import 'package:familytrusts/src/domain/family/child.dart';
 import 'package:familytrusts/src/domain/family/locations/location.dart';
+import 'package:familytrusts/src/domain/family/trusted_user/trusted.dart';
 import 'package:familytrusts/src/domain/family/value_objects.dart';
 import 'package:familytrusts/src/domain/user/user.dart';
 import 'package:flutter/foundation.dart';
@@ -16,7 +17,7 @@ class ChildrenLookup with _$ChildrenLookup {
   const factory ChildrenLookup({
     String? id,
     User? issuer,
-    User? personInCharge,
+    TrustedUser? personInCharge,
     Child? child,
     Location? location,
     MissionState? state,

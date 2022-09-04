@@ -4,8 +4,8 @@ import 'dart:io';
 import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
 import 'package:path/path.dart' as path;
 
-class FirebaseHelper {
-  static Future<String> addImage(
+mixin FirebaseHelper {
+  Future<String> addImage(
     File file,
     firebase_storage.Reference ref,
   ) async {

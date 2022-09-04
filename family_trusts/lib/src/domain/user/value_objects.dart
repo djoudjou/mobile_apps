@@ -10,7 +10,6 @@ enum UserFormStateEnum {
   unTrusting,
 }
 
-
 class EmailAddress extends ValueObject<String> {
   @override
   final Either<ValueFailure<String>, String> value;
@@ -39,18 +38,32 @@ class Password extends ValueObject<String> {
   const Password._(this.value);
 }
 
-class Surname extends ValueObject<String> {
+class LastName extends ValueObject<String> {
   @override
   final Either<ValueFailure<String>, String> value;
 
-  factory Surname(String? input) {
+  factory LastName(String? input) {
     assert(input != null);
-    return Surname._(
+    return LastName._(
       validateStringNotEmpty(input!),
     );
   }
 
-  const Surname._(this.value);
+  const LastName._(this.value);
+}
+
+class FirstName extends ValueObject<String> {
+  @override
+  final Either<ValueFailure<String>, String> value;
+
+  factory FirstName(String? input) {
+    assert(input != null);
+    return FirstName._(
+      validateStringNotEmpty(input!),
+    );
+  }
+
+  const FirstName._(this.value);
 }
 
 class Name extends ValueObject<String> {

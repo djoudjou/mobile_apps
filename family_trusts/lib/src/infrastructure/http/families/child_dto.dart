@@ -3,7 +3,6 @@ import 'dart:core';
 import 'package:familytrusts/src/domain/family/child.dart';
 import 'package:familytrusts/src/domain/family/value_objects.dart';
 import 'package:familytrusts/src/domain/user/value_objects.dart';
-import 'package:familytrusts/src/infrastructure/http/families/family_dto.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 part 'child_dto.g.dart';
@@ -29,12 +28,12 @@ class ChildDTO {
 
   Map<String, dynamic> toJson() => _$ChildDTOToJson(this);
 
-  Child toDomain(FamilyDTO familyDTO) {
+  Child toDomain() {
     return Child(
-      name: Name(lastName),
-      id: familyDTO.familyId,
+      firstName: FirstName(lastName),
+      id: childId,
       birthday: Birthday.fromValue(birthday),
-      surname: Surname(firstName),
+      lastName: LastName(firstName),
     );
   }
 }

@@ -1,18 +1,21 @@
 import 'dart:core';
 
 import 'package:familytrusts/src/domain/children_lookup/children_lookup_history.dart';
+import 'package:familytrusts/src/domain/core/value_objects.dart';
+import 'package:familytrusts/src/infrastructure/http/custom_datetime_converter.dart';
 import 'package:familytrusts/src/infrastructure/http/families/family_dto.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 part 'child_lookup_event_dto.g.dart';
 
 @JsonSerializable()
+@CustomDateTimeConverter()
 class ChildLookupEventDTO {
-  String? date_text;
+  DateTime? creationDate;
   String? message;
 
   ChildLookupEventDTO({
-    this.date_text,
+    this.creationDate,
     this.message,
   });
 
@@ -22,10 +25,9 @@ class ChildLookupEventDTO {
   Map<String, dynamic> toJson() => _$ChildLookupEventDTOToJson(this);
 
   ChildrenLookupHistory toDomain(FamilyDTO familyDTO) {
-    // TODO ADJ missing id
     return ChildrenLookupHistory(
-      id: "",
-      creationDate: date_text!,
+      creationDate:
+          TimestampVo.fromTimestamp(creationDate!.millisecondsSinceEpoch),
       message: message!,
     );
   }

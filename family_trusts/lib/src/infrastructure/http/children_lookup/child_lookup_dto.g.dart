@@ -23,6 +23,8 @@ ChildLookupDTO _$ChildLookupDTOFromJson(Map<String, dynamic> json) =>
       location: json['location'] == null
           ? null
           : LocationDTO.fromJson(json['location'] as Map<String, dynamic>),
+      creationDate: _$JsonConverterFromJson<String, DateTime>(
+          json['creationDate'], const CustomDateTimeConverter().fromJson),
       expectedDate: _$JsonConverterFromJson<String, DateTime>(
           json['expectedDate'], const CustomDateTimeConverter().fromJson),
       expirationDate: _$JsonConverterFromJson<String, DateTime>(
@@ -42,6 +44,8 @@ Map<String, dynamic> _$ChildLookupDTOToJson(ChildLookupDTO instance) =>
       'familyName': instance.familyName,
       'child': instance.child,
       'location': instance.location,
+      'creationDate': _$JsonConverterToJson<String, DateTime>(
+          instance.creationDate, const CustomDateTimeConverter().toJson),
       'expectedDate': _$JsonConverterToJson<String, DateTime>(
           instance.expectedDate, const CustomDateTimeConverter().toJson),
       'expirationDate': _$JsonConverterToJson<String, DateTime>(

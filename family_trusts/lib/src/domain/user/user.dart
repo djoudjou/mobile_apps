@@ -15,20 +15,20 @@ class User with _$User {
     String? id,
     required EmailAddress email,
     Family? family,
-    required Name name,
-    required Surname surname,
+    required FirstName firstName,
+    required LastName lastName,
     String? photoUrl,
     String? spouse,
   }) = _User;
 
   Option<ValueFailure<dynamic>> get failureOption {
-    return name.failureOrUnit
-        .andThen(surname.failureOrUnit)
+    return lastName.failureOrUnit
+        .andThen(firstName.failureOrUnit)
         .andThen(email.failureOrUnit)
         .fold((f) => some(f), (_) => none());
   }
 
-  String get displayName => "${surname.getOrCrash()} ${name.getOrCrash()}";
+  String get displayName => "${firstName.getOrCrash()} ${lastName.getOrCrash()}";
 
   bool notInFamily() => family?.id == null;
 }

@@ -20,7 +20,7 @@ class SearchLocationBloc
     _googleGeocoding = getIt<GoogleGeocoding>();
 
     on<AddressLookupChanged>(
-      (event, emit) => _mapAddressLookupChanged,
+      _mapAddressLookupChanged,
       transformer: debounce(bounceDuration),
     );
   }

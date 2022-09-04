@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:phone_number/phone_number.dart';
 
 // Env
 const String baseUrlEnvVar = "API_URL";
+
+const RegionInfo regionFR = RegionInfo(name: 'FR', code: 'FR',prefix: 33);
 
 //Images
 
@@ -34,30 +37,6 @@ Widget emptyWidget = Container(height: 0.0);
 
 // Main color
 const primaryColor = Colors.blue;
-
-// firebase const
-const fieldId = "id";
-const fieldName = "name";
-const fieldSurname = "surname";
-const fieldBirthday = "birthday";
-const fieldPhotoUrl = "photoUrl";
-
-const fieldDate = "date";
-const fieldFrom = "from";
-const fieldTo = "to";
-const fieldType = "type";
-const fieldSeen = "seen";
-const fieldSubject = "subject";
-
-const fieldTrusted = "trusted";
-
-const fieldSince = "since";
-const fieldBy = "by";
-
-const fieldEmail = "email";
-const fieldSpouse = "spouse";
-const fieldFamilyId = "familyId";
-const fieldSpouseProposal = "spouseProposal";
 
 const int megabyte = 1024 * 1024;
 

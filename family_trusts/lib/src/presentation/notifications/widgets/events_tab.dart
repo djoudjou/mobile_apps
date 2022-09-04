@@ -135,7 +135,7 @@ class EventsTab extends StatelessWidget with LogMixin {
                                     color: event.seen ? Colors.grey : null,
                                     child: ListTile(
                                       title: MyText(
-                                        event.dateText,
+                                        event.creationDate.toPrintableDate,
                                         alignment: TextAlign.start,
                                       ),
                                       subtitle: MyText(

@@ -33,8 +33,8 @@ class MemberDTO {
 
     return User(
       email: EmailAddress(email),
-      name: Name(lastName),
-      surname: Surname(firstName),
+      firstName: FirstName(lastName),
+      lastName: LastName(firstName),
       photoUrl: photoUrl,
       id: memberId,
       family: familyDTO?.toDomain(),

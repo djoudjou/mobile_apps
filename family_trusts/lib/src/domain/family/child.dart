@@ -10,11 +10,11 @@ class Child with _$Child {
   const Child._(); // Added constructor
   const factory Child({
     String? id,
-    required Name name,
-    required Surname surname,
+    required FirstName firstName,
+    required LastName lastName,
     required Birthday birthday,
     String? photoUrl,
   }) = _Child;
 
-  String get displayName => "${surname.getOrCrash()} ${name.getOrCrash()}";
+  String get displayName => "${firstName.getOrCrash()} ${lastName.getOrCrash()}";
 }

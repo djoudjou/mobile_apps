@@ -1,14 +1,17 @@
 import 'dart:core';
 
+import 'package:familytrusts/src/domain/core/value_objects.dart';
 import 'package:familytrusts/src/domain/notification/event.dart';
+import 'package:familytrusts/src/infrastructure/http/custom_datetime_converter.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 part 'family_event_dto.g.dart';
 
 @JsonSerializable()
+@CustomDateTimeConverter()
 class FamilyEventDTO {
   String id;
-  String date_text;
+  DateTime? creationDate;
   String message;
   String messageKey;
   List<String> args;
@@ -17,7 +20,7 @@ class FamilyEventDTO {
 
   FamilyEventDTO({
     required this.id,
-    required this.date_text,
+    this.creationDate,
     required this.message,
     required this.args,
     required this.memberId,
@@ -32,7 +35,8 @@ class FamilyEventDTO {
 
   Event toDomain() {
     return Event(
-      dateText: date_text,
+      creationDate:
+          TimestampVo.fromTimestamp(creationDate!.millisecondsSinceEpoch),
       id: id,
       message: message,
       seen: read,

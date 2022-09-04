@@ -88,7 +88,7 @@ class MissingFamilyContent extends StatelessWidget with LogMixin {
               AutoRouter.of(context)
                   .push(
                 FamilyPageRoute(
-                  familyToEdit: Family(name: Name('')),
+                  familyToEdit: Family(name: FirstName('')),
                   currentUser: user,
                 ),
               )

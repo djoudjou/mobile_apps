@@ -1,3 +1,4 @@
+import 'package:familytrusts/src/domain/core/value_objects.dart';
 import 'package:flutter/foundation.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 
@@ -8,8 +9,7 @@ class ChildrenLookupHistory with _$ChildrenLookupHistory {
   const ChildrenLookupHistory._(); // Added constructor
 
   const factory ChildrenLookupHistory({
-    required String id,
-    required String creationDate,
+    required TimestampVo creationDate,
     required String message,
   }) = _ChildrenLookupHistory;
 }

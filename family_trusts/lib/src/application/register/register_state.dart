@@ -11,21 +11,21 @@ class RegisterState with _$RegisterState {
   const factory RegisterState({
     required EmailAddress emailAddress,
     required Password password,
-    required Surname surname,
-    required Name name,
+    required LastName lastName,
+    required FirstName firstName,
     required bool showErrorMessages,
     required bool isSubmitting,
     required bool isInitializing,
     required bool isEditEmailPwdEnabled,
     String? imagePath,
     String? photoUrl,
-    required
-        Option<Either<RegisterFailure, String?>> registerFailureOrSuccessOption,
+    required Option<Either<RegisterFailure, String?>>
+        registerFailureOrSuccessOption,
   }) = _RegisterState;
 
   factory RegisterState.initial() => RegisterState(
-        surname: Surname(''),
-        name: Name(''),
+        lastName: LastName(''),
+        firstName: FirstName(''),
         emailAddress: EmailAddress(''),
         password: Password(''),
         photoUrl: '',

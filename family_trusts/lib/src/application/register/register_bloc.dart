@@ -29,9 +29,12 @@ class RegisterBloc extends Bloc<RegisterEvent, RegisterState> with LogMixin {
       _mapRegisterPasswordChanged,
       transformer: sequential(),
     );
-    on<RegisterNameChanged>(_mapRegisterNameChanged, transformer: sequential());
-    on<RegisterSurnameChanged>(
-      _mapRegisterSurnameChanged,
+    on<RegisterLastNameChanged>(
+      _mapRegisterLastNameChanged,
+      transformer: sequential(),
+    );
+    on<RegisterFirstNameChanged>(
+      _mapRegisterFirstNameChanged,
       transformer: sequential(),
     );
     on<RegisterSubmitted>(_mapRegisterSubmitted, transformer: sequential());
@@ -56,7 +59,7 @@ class RegisterBloc extends Bloc<RegisterEvent, RegisterState> with LogMixin {
         state.copyWith(
           registerFailureOrSuccessOption: none(),
           emailAddress: EmailAddress(userInfo.email),
-          name: Name(userInfo.displayName),
+          firstName: FirstName(userInfo.displayName),
           isEditEmailPwdEnabled: false,
           isInitializing: false,
           photoUrl: userInfo.photoUrl,
@@ -97,25 +100,25 @@ class RegisterBloc extends Bloc<RegisterEvent, RegisterState> with LogMixin {
     );
   }
 
-  FutureOr<void> _mapRegisterNameChanged(
-    RegisterNameChanged event,
+  FutureOr<void> _mapRegisterFirstNameChanged(
+    RegisterFirstNameChanged event,
     Emitter<RegisterState> emit,
   ) async {
     emit(
       state.copyWith(
-        name: Name(event.name),
+        firstName: FirstName(event.firstName),
         registerFailureOrSuccessOption: none(),
       ),
     );
   }
 
-  FutureOr<void> _mapRegisterSurnameChanged(
-    RegisterSurnameChanged event,
+  FutureOr<void> _mapRegisterLastNameChanged(
+    RegisterLastNameChanged event,
     Emitter<RegisterState> emit,
   ) async {
     emit(
       state.copyWith(
-        surname: Surname(event.surname),
+        lastName: LastName(event.lastName),
         registerFailureOrSuccessOption: none(),
       ),
     );
@@ -147,14 +150,14 @@ class RegisterBloc extends Bloc<RegisterEvent, RegisterState> with LogMixin {
           registerFailureOrSuccess.toOption().toNullable()!,
         );
 
-        if(registerFailureOrSuccess.isLeft()) {
+        if (registerFailureOrSuccess.isLeft()) {
           // delete current user if issue on doCreateUserInBackend
-          await _authFacade.getSignedInUser().fold(() => null, (user) => user.delete());
+          await _authFacade
+              .getSignedInUser()
+              .fold(() => null, (user) => user.delete());
         }
       }
       log("_performRegister result $registerFailureOrSuccess");
-
-
 
       emit(
         state.copyWith(
@@ -198,8 +201,8 @@ class RegisterBloc extends Bloc<RegisterEvent, RegisterState> with LogMixin {
     final backend_user.User user = backend_user.User(
       id: userId,
       email: state.emailAddress,
-      name: state.name,
-      surname: state.surname,
+      firstName: state.firstName,
+      lastName: state.lastName,
       photoUrl: state.photoUrl,
     );
 
