@@ -39,13 +39,7 @@ class HomePage extends MyBasePage {
         BlocProvider(
           create: (context) =>
               NotificationsUnseenBloc(getIt<IFamilyEventRepository>())
-                ..add(SimpleLoaderEvent.startLoading(connectedUserId)),
-        ),
-        BlocProvider(
-          create: (context) => MessagesBloc(
-            getIt<IMessagesRepository>(),
-            getIt<IErrorService>(),
-          )..add(const MessagesEvent.init()),
+                ..add(SimpleLoaderEvent.startLoading(userId: connectedUserId)),
         ),
         BlocProvider(
           create: (context) =>
@@ -188,7 +182,7 @@ class HomePage extends MyBasePage {
     BlocProvider.of<NotificationsUnseenBloc>(
       context,
     ).add(
-      SimpleLoaderEvent.startLoading(connectedUserId),
+      SimpleLoaderEvent.startLoading(userId: connectedUserId),
     );
 
     BlocProvider.of<MessagesBloc>(

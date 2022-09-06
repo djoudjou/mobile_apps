@@ -40,10 +40,11 @@ class RendezVous extends ValueObject<DateTime> {
 /// Waiting <-> Taken -> Ended
 
 enum MissionStateEnum {
-  waiting,
-  accepted,
-  ended,
-  canceled,
+  WAITING_RESPONSE,
+  REJECTED,
+  ACCEPTED,
+  PICKEDUP,
+  CANCELED,
 }
 
 class MissionState extends ValueObject<MissionStateEnum> {
@@ -52,22 +53,6 @@ class MissionState extends ValueObject<MissionStateEnum> {
 
   factory MissionState(MissionStateEnum input) {
     return MissionState._(right(input));
-  }
-
-  factory MissionState.waiting() {
-    return MissionState(MissionStateEnum.waiting);
-  }
-
-  factory MissionState.accepted() {
-    return MissionState(MissionStateEnum.accepted);
-  }
-
-  factory MissionState.ended() {
-    return MissionState(MissionStateEnum.ended);
-  }
-
-  factory MissionState.canceled() {
-    return MissionState(MissionStateEnum.canceled);
   }
 
   factory MissionState.fromValue(String text) {
@@ -81,60 +66,6 @@ class MissionState extends ValueObject<MissionStateEnum> {
   }
 
   const MissionState._(this.value);
-
-  String get toText => EnumToString.convertToString(getOrCrash());
-}
-
-enum MissionEventTypeEnum {
-  created,
-  accepted,
-  declined,
-  ended,
-  canceled,
-}
-
-class MissionEventType extends ValueObject<MissionEventTypeEnum> {
-  @override
-  final Either<ValueFailure<MissionEventTypeEnum>, MissionEventTypeEnum> value;
-
-  factory MissionEventType(MissionEventTypeEnum input) {
-    //assert(input != null);
-    return MissionEventType._(right(input));
-  }
-
-  factory MissionEventType.created() {
-    return MissionEventType(MissionEventTypeEnum.created);
-  }
-
-  factory MissionEventType.accepted() {
-    return MissionEventType(MissionEventTypeEnum.accepted);
-  }
-
-  factory MissionEventType.declined() {
-    return MissionEventType(MissionEventTypeEnum.declined);
-  }
-
-  factory MissionEventType.ended() {
-    return MissionEventType(MissionEventTypeEnum.ended);
-  }
-
-  factory MissionEventType.canceled() {
-    return MissionEventType(MissionEventTypeEnum.canceled);
-  }
-
-  factory MissionEventType.fromValue(String text) {
-    //assert(text != null);
-    final MissionEventTypeEnum? val =
-        EnumToString.fromString(MissionEventTypeEnum.values, text);
-
-    return (val == null)
-        ? MissionEventType._(
-            left(ValueFailure.invalidEnumValue(failedValue: text)),
-          )
-        : MissionEventType._(right(val));
-  }
-
-  const MissionEventType._(this.value);
 
   String get toText => EnumToString.convertToString(getOrCrash());
 }

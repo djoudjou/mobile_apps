@@ -57,7 +57,8 @@ abstract class  LocaleKeys {
   static const ask_childlookup_MissionState_accepted = 'ask.childlookup.MissionState.accepted';
   static const ask_childlookup_MissionState_canceled = 'ask.childlookup.MissionState.canceled';
   static const ask_childlookup_MissionState_waiting = 'ask.childlookup.MissionState.waiting';
-  static const ask_childlookup_MissionState_ended = 'ask.childlookup.MissionState.ended';
+  static const ask_childlookup_MissionState_pickedup = 'ask.childlookup.MissionState.pickedup';
+  static const ask_childlookup_MissionState_rejected = 'ask.childlookup.MissionState.rejected';
   static const ask_childlookup_MissionState = 'ask.childlookup.MissionState';
   static const ask_childlookup_stepper_child_selection = 'ask.childlookup.stepper.child_selection';
   static const ask_childlookup_stepper_place_selection = 'ask.childlookup.stepper.place_selection';

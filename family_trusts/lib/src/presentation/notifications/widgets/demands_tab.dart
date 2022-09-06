@@ -75,12 +75,21 @@ class DemandsTab extends StatelessWidget {
                           childrenLookups[index];
                       return InkWell(
                         onTap: () {
-                          context.pushRoute(
+                          AutoRouter.of(context)
+                              .push(
                             ChildrenLookupDetailsPageRoute(
                               connectedUser: connectedUser,
                               childrenLookup: childrenLookup,
                             ),
-                          );
+                          )
+                              .then((value) {
+                            if (value != null) {
+                              context.read<DemandsBloc>().add(
+                                    DemandsEvent.loadDemands(
+                                        connectedUser.family!.id),
+                                  );
+                            }
+                          });
                         },
                         child: ChildrenLookupWidget(
                           cardWidth: MediaQuery.of(context).size.width * .7,

@@ -159,7 +159,7 @@ class _ChildPageState extends State<ChildPage> {
                             ? LocaleKeys.form_firstname_error.tr()
                             : null;
                       },
-                      onSaved: (value) => _lastname = value,
+                      onSaved: (value) => _firstname = value,
                     ),
                     const MyVerticalSeparator(),
                     TextFormField(
@@ -174,7 +174,7 @@ class _ChildPageState extends State<ChildPage> {
                             ? LocaleKeys.form_lastname_error.tr()
                             : null;
                       },
-                      onSaved: (value) => _firstname = value,
+                      onSaved: (value) => _lastname = value,
                     ),
                     const MyVerticalSeparator(),
                     TextFormField(

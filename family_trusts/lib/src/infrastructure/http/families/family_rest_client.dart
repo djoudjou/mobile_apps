@@ -28,6 +28,9 @@ abstract class FamilyRestClient {
   @POST("/families")
   Future<FamilyDTO> createFamily(@Body() CreateFamilyDTO createFamilyDTO);
 
+  @GET("/families/{familyId}")
+  Future<FamilyDTO> findFamilyByIdQuery(@Path("familyId") String familyId);
+
   @DELETE("/families/{familyId}/members/{memberId}")
   Future<FamilyDTO> removeMember(
     @Path("familyId") String familyId,

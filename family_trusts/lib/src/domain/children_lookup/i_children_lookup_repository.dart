@@ -22,19 +22,22 @@ abstract class IChildrenLookupRepository {
 
   Future<Either<ChildrenLookupFailure, List<ChildrenLookupHistory>>>
       getChildrenLookupHistories({
+    required String familyId,
     required String childrenLookupId,
   });
 
   Future<Either<ChildrenLookupFailure, ChildrenLookupDetails>> findChildrenLookupDetailsById({
+    required String familyId,
     required String childrenLookupId,
   });
 
   Future<Either<ChildrenLookupFailure, Unit>> createChildrenLookup({
     required ChildrenLookup childrenLookup,
+    required String familyId,
   });
 
   Future<Either<PlanningFailure, Planning>> getPlanning({
-    required String userId,
+    required String familyId,
   });
 
   Future<Either<ChildrenLookupFailure,Unit>> cancel({

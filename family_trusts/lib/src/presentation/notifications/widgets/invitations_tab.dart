@@ -82,7 +82,7 @@ class InvitationsTab extends StatelessWidget {
 
             },
             joinProposalsLoadFailure: (joinProposalsLoadFailure) {
-              showProgressMessage(
+              showErrorMessage(
                 LocaleKeys.join_proposal_loadingFailed.tr(),
                 contextFamilyJoinProposalBloc,
                 onDismissed: () => refresh(contextFamilyJoinProposalBloc),
@@ -119,91 +119,6 @@ class InvitationsTab extends StatelessWidget {
                     asIssuer: false,
                     joinProposal: joinProposal,
                   );
-/*
-                  Card(
-                    elevation: 10.0,
-                    color: Colors.white,
-                    child: Container(
-                      width: MediaQuery.of(context).size.width,
-                      height: 200,
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children: <Widget>[
-                          Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Container(
-                              width: double.infinity,
-                              height: 30,
-                              //color: Colors.red,
-                              child: MyText(
-                                invitation.date.toPrintableDate,
-                                alignment: TextAlign.start,
-                              ),
-                            ),
-                          ),
-                          Expanded(
-                            child: MyText(
-                              formatMessage(invitation),
-                              maxLines: 5,
-                              style: FontStyle.italic,
-                              //alignment: TextAlign.center,
-                            ),
-                          ),
-                          Expanded(
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                              children: <Widget>[
-                                ElevatedButton(
-                                  onPressed: () async {
-                                    await AlertHelper().confirm(
-                                      context,
-                                      LocaleKeys.invitations_confirm.tr(),
-                                      onConfirmCallback: () {
-                                        context.read<SetupFamilyBloc>().add(
-                                              SetupFamilyEvent
-                                                  .acceptInvitationTriggered(
-                                                invitation: invitation,
-                                              ),
-                                            );
-                                      },
-                                    );
-                                  },
-                                  child: MyText(
-                                    LocaleKeys.invitations_accept.tr(),
-                                    color: Colors.white,
-                                  ),
-                                ),
-                                ElevatedButton(
-                                  onPressed: () async {
-                                    await AlertHelper().confirm(
-                                      context,
-                                      LocaleKeys.invitations_confirm.tr(),
-                                      onConfirmCallback: () {
-                                        BlocProvider.of<SetupFamilyBloc>(
-                                          context,
-                                        ).add(
-                                          SetupFamilyEvent
-                                              .declineInvitationTriggered(
-                                            invitation: invitation,
-                                          ),
-                                        );
-                                      },
-                                    );
-                                  },
-                                  child: MyText(
-                                    LocaleKeys.invitations_decline.tr(),
-                                    color: Colors.white,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          )
-                        ],
-                      ),
-                    ),
-                  );
-
- */
                 },
                 separatorBuilder: (BuildContext context, int index) =>
                     const Divider(),

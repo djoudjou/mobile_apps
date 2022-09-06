@@ -71,19 +71,19 @@ class _ChildrenLookupRestClient implements ChildrenLookupRestClient {
   }
 
   @override
-  Future<FamilyDTO> create(createChildLookupDTO) async {
+  Future<ChildLookupDTO> create(createChildLookupDTO) async {
     const _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};
     final _data = <String, dynamic>{};
     _data.addAll(createChildLookupDTO.toJson());
     final _result = await _dio.fetch<Map<String, dynamic>>(
-        _setStreamType<FamilyDTO>(
+        _setStreamType<ChildLookupDTO>(
             Options(method: 'POST', headers: _headers, extra: _extra)
                 .compose(_dio.options, '/childrenlookup',
                     queryParameters: queryParameters, data: _data)
                 .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
-    final value = FamilyDTO.fromJson(_result.data!);
+    final value = ChildLookupDTO.fromJson(_result.data!);
     return value;
   }
 
@@ -101,6 +101,23 @@ class _ChildrenLookupRestClient implements ChildrenLookupRestClient {
                     queryParameters: queryParameters, data: _data)
                 .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
     final value = FamilyDTO.fromJson(_result.data!);
+    return value;
+  }
+
+  @override
+  Future<PlanningDTO> getPlanningByFamilyId(familyId) async {
+    const _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _headers = <String, dynamic>{};
+    final _data = <String, dynamic>{};
+    final _result = await _dio.fetch<Map<String, dynamic>>(
+        _setStreamType<PlanningDTO>(
+            Options(method: 'GET', headers: _headers, extra: _extra)
+                .compose(
+                    _dio.options, '/childrenlookup/family/${familyId}/planning',
+                    queryParameters: queryParameters, data: _data)
+                .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
+    final value = PlanningDTO.fromJson(_result.data!);
     return value;
   }
 

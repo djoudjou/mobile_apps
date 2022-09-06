@@ -1,6 +1,7 @@
 import 'dart:core';
 
 import 'package:familytrusts/src/domain/family/child.dart';
+import 'package:intl/intl.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 part 'update_child_dto.g.dart';
@@ -25,10 +26,11 @@ class UpdateChildDTO {
   Map<String, dynamic> toJson() => _$UpdateChildDTOToJson(this);
 
   factory UpdateChildDTO.fromChild(Child child) {
+
     return UpdateChildDTO(
       firstName: child.firstName.getOrCrash(),
       lastName: child.lastName.getOrCrash(),
-      birthday: child.birthday.toText,
+      birthday:  DateFormat("yyyy-MM-dd").format(child.birthday.getOrCrash().toLocal()),
       photoUrl: child.photoUrl,
     );
   }

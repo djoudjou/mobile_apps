@@ -26,6 +26,7 @@ class ChildLookupDetailsDTO {
   String? familyName;
   ChildDTO? child;
   LocationDTO? location;
+  DateTime? creationDate;
   DateTime? expectedDate;
   DateTime? expirationDate;
   List<TrustPersonDTO>? trustedPersons;
@@ -40,6 +41,7 @@ class ChildLookupDetailsDTO {
     this.familyName,
     this.child,
     this.location,
+    this.creationDate,
     this.expectedDate,
     this.expirationDate,
     this.trustedPersons,
@@ -69,8 +71,7 @@ class ChildLookupDetailsDTO {
         child: child?.toDomain(),
         location: location?.toDomain(),
         state: MissionState.fromValue(status!),
-        //creationDate: TimestampVo.fromTimestamp(lastUpdateDate!.millisecondsSinceEpoch),
-        creationDate: TimestampVo.now(),
+        creationDate: TimestampVo.fromTimestamp(creationDate!.millisecondsSinceEpoch),
         noteBody: NoteBody(""),
         rendezVous: RendezVous.fromDate(expectedDate!),
       ),

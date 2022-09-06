@@ -122,8 +122,8 @@ _i1.GetIt $initGetIt(_i1.GetIt get,
       _i30.NotificationsEventsUpdateBloc(get<_i18.IFamilyEventRepository>()));
   gh.factory<_i31.NotificationsUnseenBloc>(
       () => _i31.NotificationsUnseenBloc(get<_i18.IFamilyEventRepository>()));
-  gh.factory<_i32.PlanningBloc>(
-      () => _i32.PlanningBloc(get<_i13.IChildrenLookupRepository>()));
+  gh.factory<_i32.PlanningBloc>(() => _i32.PlanningBloc(
+      get<_i13.IChildrenLookupRepository>(), get<_i24.IUserRepository>()));
   gh.factory<_i33.ProfileTabBloc>(() => _i33.ProfileTabBloc());
   gh.lazySingleton<_i34.Reference>(
       () => firebaseInjectableModule.storageReference);

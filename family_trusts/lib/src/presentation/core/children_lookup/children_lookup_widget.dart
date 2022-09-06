@@ -146,21 +146,26 @@ class ChildrenLookupWidget extends StatelessWidget {
       String message;
 
       switch (childrenLookup.state!.getOrCrash()) {
-        case MissionStateEnum.accepted:
+        case MissionStateEnum.ACCEPTED:
           message = LocaleKeys.ask_childlookup_MissionState_accepted.tr();
           badgeColor = Theme.of(context).accentColor;
           break;
-        case MissionStateEnum.canceled:
+        case MissionStateEnum.CANCELED:
           badgeColor = Theme.of(context).primaryColorLight;
           message = LocaleKeys.ask_childlookup_MissionState_canceled.tr();
           break;
-        case MissionStateEnum.waiting:
+        case MissionStateEnum.WAITING_RESPONSE:
           message = LocaleKeys.ask_childlookup_MissionState_waiting.tr();
           badgeColor = Theme.of(context).primaryColor;
           break;
-        case MissionStateEnum.ended:
+        case MissionStateEnum.PICKEDUP:
           badgeColor = Theme.of(context).primaryColorLight;
-          message = LocaleKeys.ask_childlookup_MissionState_ended.tr();
+          message = LocaleKeys.ask_childlookup_MissionState_pickedup.tr();
+          break;
+
+        case MissionStateEnum.REJECTED:
+          badgeColor = Theme.of(context).accentColor;
+          message = LocaleKeys.ask_childlookup_MissionState_rejected.tr();
           break;
       }
 
@@ -288,6 +293,12 @@ class ChildrenLookupWidget extends StatelessWidget {
                     onTapCallback: () {},
                     defaultImage: defaultUserImages,
                   ),
+                  MyText(
+                    childrenLookup.personInCharge!.displayName,
+                    style: FontStyle.italic,
+                    fontWeight: FontWeight.bold,
+                  ),
+                  const MyVerticalSeparator(),
                 ]
               ],
             ),

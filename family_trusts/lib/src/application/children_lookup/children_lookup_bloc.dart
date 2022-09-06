@@ -155,12 +155,12 @@ class ChildrenLookupBloc
       creationDate: TimestampVo.now(),
       issuer: event.connectedUser,
       location: state.locationsStep.selectedLocation,
-      state: MissionState.waiting(),
     );
 
     final Either<ChildrenLookupFailure, Unit> resultCreate =
         await _childrenLookupRepository.createChildrenLookup(
       childrenLookup: childrenLookup,
+      familyId: event.connectedUser.family!.id!,
     );
 
     emit(

@@ -5,7 +5,7 @@ class Validators {
     r'^[a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$',
   );
   static final RegExp _phoneRegExp = RegExp(
-    r"""^\s*[1-9](?:[\s.-]*\d{2}){4}$""",
+    r'^(?:(?:\+|00)33|0)\s*[1-9](?:[\s.-]*\d{2}){4}$',
   );
 
   //static final RegExp _passwordRegExp = RegExp(r'^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$');

@@ -69,6 +69,22 @@ class _FamilyRestClient implements FamilyRestClient {
   }
 
   @override
+  Future<FamilyDTO> findFamilyByIdQuery(familyId) async {
+    const _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _headers = <String, dynamic>{};
+    final _data = <String, dynamic>{};
+    final _result = await _dio.fetch<Map<String, dynamic>>(
+        _setStreamType<FamilyDTO>(
+            Options(method: 'GET', headers: _headers, extra: _extra)
+                .compose(_dio.options, '/families/${familyId}',
+                    queryParameters: queryParameters, data: _data)
+                .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
+    final value = FamilyDTO.fromJson(_result.data!);
+    return value;
+  }
+
+  @override
   Future<FamilyDTO> removeMember(familyId, memberId) async {
     const _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};

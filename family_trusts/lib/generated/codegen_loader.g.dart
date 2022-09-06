@@ -85,7 +85,8 @@ class CodegenLoader extends AssetLoader{
         "accepted": "Prise en charge",
         "canceled": "Annulée",
         "waiting": "En attente",
-        "ended": "Terminée"
+        "pickedup": "Récupéré",
+        "rejected": "expirée"
       },
       "stepper": {
         "child_selection": "Sélection de l'enfant",
@@ -161,7 +162,7 @@ class CodegenLoader extends AssetLoader{
       "error": "Date de naissance non valide"
     },
     "phone": {
-      "label": "Numéro de téléphone (+33)XXXXXXXXX",
+      "label": "Numéro de téléphone +33XXXXXXXXX",
       "error": "Numéro de téléphone au mauvais format"
     }
   },

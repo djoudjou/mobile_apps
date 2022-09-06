@@ -32,7 +32,7 @@ Either<ValueFailure<String>, String> validateSingleLine(String input) {
 
 Either<ValueFailure<String>, String> validatePhoneNumber(String input) {
   const emailRegex =
-  r"""^\s*[1-9](?:[\s.-]*\d{2}){4}$""";
+  r"""^(?:(?:\+|00)33|0)\s*[1-9](?:[\s.-]*\d{2}){4}$""";
   if (RegExp(emailRegex).hasMatch(input)) {
     return right(input);
   } else {

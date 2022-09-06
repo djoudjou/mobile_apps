@@ -34,6 +34,7 @@ class ChildrenLookupDetailsBloc
     emit(
       state.copyWith(
         isInitializing: true,
+        failureOrSuccessCancelOption: none(),
       ),
     );
 
@@ -41,6 +42,7 @@ class ChildrenLookupDetailsBloc
         resultChildrenLookupDetails =
         await _childrenLookupRepository.findChildrenLookupDetailsById(
       childrenLookupId: event.childrenLookup.id!,
+      familyId: event.connectedUser.family!.id!,
     );
 
     emit(
@@ -48,13 +50,13 @@ class ChildrenLookupDetailsBloc
         (failure) => state.copyWith(
           showErrorMessages: true,
           isInitializing: false,
-          failureOrSuccessOption: some(left(failure)),
         ),
         (childrenLookupDetails) => state.copyWith(
+          showErrorMessages: true,
+          isInitializing: false,
           optionChildrenLookupDetails: some(childrenLookupDetails),
           isIssuer: event.connectedUser.id ==
               childrenLookupDetails.childrenLookup.issuer?.id,
-          failureOrSuccessOption: none(),
         ),
       ),
     );
@@ -67,7 +69,7 @@ class ChildrenLookupDetailsBloc
     emit(
       state.copyWith(
         isSubmitting: true,
-        failureOrSuccessOption: none(),
+        failureOrSuccessCancelOption: none(),
       ),
     );
 
@@ -82,11 +84,11 @@ class ChildrenLookupDetailsBloc
         (failure) => state.copyWith(
           showErrorMessages: true,
           isInitializing: false,
-          failureOrSuccessOption: some(left(failure)),
+          failureOrSuccessCancelOption: some(left(failure)),
         ),
         (success) => state.copyWith(
           isSubmitting: false,
-          failureOrSuccessOption: some(right(unit)),
+          failureOrSuccessCancelOption: some(right(unit)),
         ),
       ),
     );

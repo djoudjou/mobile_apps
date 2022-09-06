@@ -7,8 +7,9 @@ const staticFr = "fr";
 
 String getPrintableDateFromTimestamp(int timestamp) {
   intl_local_date_data.initializeDateFormatting();
-  final DateTime now = DateTime.now();
-  final DateTime datePost = DateTime.fromMillisecondsSinceEpoch(timestamp);
+  final DateTime now = DateTime.now().toLocal();
+  final DateTime datePost =
+      DateTime.fromMillisecondsSinceEpoch(timestamp).toLocal();
 
   DateFormat format;
 
@@ -36,11 +37,11 @@ String getPrintableDate(String timestamp) {
 String birthdayConverterToString(DateTime date) {
   intl_local_date_data.initializeDateFormatting();
   final DateFormat format = DateFormat.yMd(staticFr);
-  return format.format(date);
+  return format.format(date.toLocal());
 }
 
 Option<DateTime> birthdayConverterToDate(String? date) {
-  return parseDate(date);
+  return parseBirthDate(date);
 }
 
 String rendezVousConverterToString(DateTime date) {
@@ -48,14 +49,14 @@ String rendezVousConverterToString(DateTime date) {
   final DateFormat formatDate = DateFormat.yMMMd(staticFr);
   final DateFormat formatHour = DateFormat.Hms(staticFr);
 
-  return "le ${formatDate.format(date)} à ${formatHour.format(date)}";
+  return "le ${formatDate.format(date.toLocal())} à ${formatHour.format(date.toLocal())}";
 }
 
 String rendezVousConverterToHourString(DateTime date) {
   intl_local_date_data.initializeDateFormatting();
   final DateFormat formatHour = DateFormat.Hm(staticFr);
 
-  return formatHour.format(date);
+  return formatHour.format(date.toLocal());
 }
 
 String getDateToString(DateTime date) {
@@ -98,9 +99,29 @@ Option<DateTime> parseDate(String? date) {
   }
 }
 
+Option<DateTime> parseBirthDate(String? date) {
+  intl_local_date_data.initializeDateFormatting();
+  if (date != null) {
+    DateFormat format;
+    if (date.contains("/")) {
+      format = DateFormat("dd/MM/yyyy");
+    } else {
+      format = DateFormat("yyyy-MM-dd");
+    }
+
+    try {
+      final DateTime result = format.parse(date);
+      return some(result);
+    } catch (exception) {
+      return none();
+    }
+  }
+  return none();
+}
+
 String parseRdvDateTimeFromDateTime(DateTime date) {
   intl_local_date_data.initializeDateFormatting();
   final DateFormat format = DateFormat("yyyy-MM-dd HH:mm");
 
-  return format.format(date);
+  return format.format(date.toLocal());
 }

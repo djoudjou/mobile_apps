@@ -46,12 +46,18 @@ class ChildrenFormBloc extends Bloc<ChildrenFormEvent, ChildrenFormState> {
     try {
       emit(const ChildrenFormState.updateChildInProgress());
       final User user = event.user;
-      await _familyRepository.addUpdateChild(
+      final Either<ChildrenFailure, Unit> result =
+          await _familyRepository.addUpdateChild(
         familyId: user.family!.id!,
         child: event.child,
         pickedFilePath: event.pickedFilePath,
       );
-      emit(const ChildrenFormState.updateChildSuccess());
+      emit(
+        result.fold(
+          (l) => const ChildrenFormState.updateChildFailure(),
+          (r) => const ChildrenFormState.updateChildSuccess(),
+        ),
+      );
     } catch (_) {
       emit(const ChildrenFormState.updateChildFailure());
     }

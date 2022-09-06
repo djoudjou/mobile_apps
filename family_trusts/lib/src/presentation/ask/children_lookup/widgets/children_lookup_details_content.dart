@@ -1,3 +1,4 @@
+import 'package:auto_route/auto_route.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:familytrusts/generated/locale_keys.g.dart';
 import 'package:familytrusts/src/application/children_lookup/details/bloc.dart';
@@ -28,14 +29,18 @@ class ChildrenLookupDetailsContent extends StatelessWidget {
           showProgressMessage(LocaleKeys.global_update.tr(), bc);
         }
 
-        state.failureOrSuccessOption.fold(
+        state.failureOrSuccessCancelOption.fold(
           () {},
           (either) => either.fold(
             (failure) {
               showErrorMessage(LocaleKeys.global_serverError.tr(), bc);
             },
             (_) {
-              showSuccessMessage(LocaleKeys.global_success.tr(), bc);
+              showSuccessMessage(
+                LocaleKeys.global_success.tr(),
+                bc,
+                onDismissed: () => AutoRouter.of(context).pop("Canceled"),
+              );
             },
           ),
         );
@@ -124,7 +129,8 @@ class ChildrenLookupDetailsContent extends StatelessWidget {
                             isFirst: isFirst,
                             isLast: idx == 0,
                             startChild: MyText(
-                              childrenLookupHistory.creationDate.toPrintableDate,
+                              childrenLookupHistory
+                                  .creationDate.toPrintableDate,
                             ),
                             endChild: Container(
                               //color: Colors.teal,

@@ -13,7 +13,8 @@ class ChildrenLookupDetailsState with _$ChildrenLookupDetailsState {
     required bool isInitializing,
     required bool isIssuer,
     required Option<ChildrenLookupDetails> optionChildrenLookupDetails,
-    required Option<Either<ChildrenLookupFailure, Unit>> failureOrSuccessOption,
+    required Option<Either<ChildrenLookupFailure, Unit>>
+        failureOrSuccessCancelOption,
   }) = _ChildrenLookupDetailsState;
 
   factory ChildrenLookupDetailsState.initial() => ChildrenLookupDetailsState(
@@ -22,6 +23,6 @@ class ChildrenLookupDetailsState with _$ChildrenLookupDetailsState {
         isSubmitting: false,
         isIssuer: false,
         optionChildrenLookupDetails: none(),
-        failureOrSuccessOption: none(),
+        failureOrSuccessCancelOption: none(),
       );
 }

@@ -2,6 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:familytrusts/src/infrastructure/http/children_lookup/child_lookup_details_dto.dart';
 import 'package:familytrusts/src/infrastructure/http/children_lookup/child_lookup_dto.dart';
 import 'package:familytrusts/src/infrastructure/http/children_lookup/create_child_lookup_dto.dart';
+import 'package:familytrusts/src/infrastructure/http/children_lookup/planning_dto.dart';
 import 'package:familytrusts/src/infrastructure/http/families/family_dto.dart';
 import 'package:retrofit/retrofit.dart';
 
@@ -27,11 +28,14 @@ abstract class ChildrenLookupRestClient {
   );
 
   @POST("/childrenlookup")
-  Future<FamilyDTO> create(@Body() CreateChildLookupDTO createChildLookupDTO);
+  Future<ChildLookupDTO> create(@Body() CreateChildLookupDTO createChildLookupDTO);
 
   @PUT("/childrenlookup/{childLookupId}/cancel/{issuerId}")
   Future<FamilyDTO> cancel(
     @Path("childLookupId") String childLookupId,
     @Path("issuerId") String issuerId,
   );
+
+  @GET("/childrenlookup/family/{familyId}/planning")
+  Future<PlanningDTO> getPlanningByFamilyId(@Path("familyId") String familyId);
 }

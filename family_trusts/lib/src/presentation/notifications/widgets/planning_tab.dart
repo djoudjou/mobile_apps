@@ -7,6 +7,7 @@ import 'package:familytrusts/src/domain/children_lookup/i_children_lookup_reposi
 import 'package:familytrusts/src/domain/planning/planning.dart';
 import 'package:familytrusts/src/domain/planning/planning_entry.dart';
 import 'package:familytrusts/src/domain/planning/planning_failure.dart';
+import 'package:familytrusts/src/domain/user/i_user_repository.dart';
 import 'package:familytrusts/src/domain/user/user.dart';
 import 'package:familytrusts/src/helper/constants.dart';
 import 'package:familytrusts/src/helper/date_helper.dart';
@@ -29,8 +30,9 @@ class PlanningTab extends StatelessWidget with LogMixin {
   @override
   Widget build(BuildContext context) {
     return BlocProvider<PlanningBloc>(
-      create: (context) => PlanningBloc(getIt<IChildrenLookupRepository>())
-        ..add(SimpleLoaderEvent.startLoading(connectedUser.id)),
+      create: (context) => PlanningBloc(
+          getIt<IChildrenLookupRepository>(), getIt<IUserRepository>())
+        ..add(SimpleLoaderEvent.startLoading(userId: connectedUser.id)),
       child: BlocConsumer<PlanningBloc, SimpleLoaderState>(
         listener: (context, state) {},
         builder: (context, state) {
@@ -80,13 +82,13 @@ class PlanningTab extends StatelessWidget with LogMixin {
               Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  MyVerticalSeparator(),
+                  const MyVerticalSeparator(),
                   Container(
                     alignment: Alignment.center,
                     //color: Colors.blueAccent,
                     child: MyText(getDateToString(entry.day)),
                   ),
-                  MyVerticalSeparator(),
+                  const MyVerticalSeparator(),
                   //MyText(entry.childrenLookups.length.toString()),
                   Column(
                     children: entry.childrenLookups.map((e) {

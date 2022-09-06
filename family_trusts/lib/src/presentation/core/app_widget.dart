@@ -134,6 +134,7 @@ class AppWidget extends StatelessWidget with LogMixin {
           create: (context) => UserBloc(
             getIt<IAuthFacade>(),
             getIt<IUserRepository>(),
+            getIt<IMessagesRepository>(),
           ),
         ),
       ],

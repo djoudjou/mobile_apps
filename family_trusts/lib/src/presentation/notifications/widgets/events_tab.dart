@@ -32,7 +32,7 @@ class EventsTab extends StatelessWidget with LogMixin {
       context,
     ).add(
       SimpleLoaderEvent.startLoading(
-        connectedUser.id,
+        userId: connectedUser.id,
       ),
     );
   }
@@ -45,7 +45,7 @@ class EventsTab extends StatelessWidget with LogMixin {
       child: BlocProvider<NotificationsEventsBloc>(
         create: (context) =>
             NotificationsEventsBloc(getIt<IFamilyEventRepository>())
-              ..add(SimpleLoaderEvent.startLoading(connectedUser.id)),
+              ..add(SimpleLoaderEvent.startLoading(userId: connectedUser.id)),
         child: BlocListener<NotificationsEventsUpdateBloc,
             NotificationsEventsUpdateState>(
           listener: (contextNotificationsEventsUpdateBloc, state) {

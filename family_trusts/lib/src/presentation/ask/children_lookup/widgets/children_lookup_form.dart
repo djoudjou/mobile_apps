@@ -385,7 +385,6 @@ class _ChildrenLookupFormState extends State<ChildrenLookupForm> with LogMixin {
             location: state.locationsStep.selectedLocation,
             rendezVous: state.rendezVousStep.rendezVous,
             noteBody: state.notesStep.noteBody,
-            state: MissionState.waiting(),
             creationDate: TimestampVo.now(),
           ),
         ),

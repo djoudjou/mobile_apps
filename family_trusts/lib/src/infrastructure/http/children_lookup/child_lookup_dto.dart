@@ -51,7 +51,7 @@ class ChildLookupDTO {
   Map<String, dynamic> toJson() => _$ChildLookupDTOToJson(this);
 
   ChildrenLookup toDomain(FamilyDTO familyDTO) {
-    // TODO ADJ missing Note & CreationDate on backend
+    // TODO ADJ missing Note on backend
     return ChildrenLookup(
       id: childLookupId,
       issuer: issuer?.toDomain(familyDTO),

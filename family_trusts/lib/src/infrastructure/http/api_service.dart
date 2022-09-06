@@ -3,6 +3,7 @@ import 'package:dio/dio.dart';
 import 'package:familytrusts/src/domain/auth/i_auth_facade.dart';
 import 'package:familytrusts/src/helper/constants.dart';
 import 'package:familytrusts/src/infrastructure/http/append_token_interceptor.dart';
+import 'package:familytrusts/src/infrastructure/http/children_lookup/children_lookup_rest_client.dart';
 import 'package:familytrusts/src/infrastructure/http/families/family_rest_client.dart';
 import 'package:familytrusts/src/infrastructure/http/family_event/family_event_rest_client.dart';
 import 'package:familytrusts/src/infrastructure/http/join_proposal/join_proposal_rest_client.dart';
@@ -18,8 +19,8 @@ class ApiService {
   static Future<ApiService> init(IAuthFacade authFacade) async {
     await dotenv.load(
       mergeWith: {
-        'API_URL': 'http://192.168.50.204:9004',
-        //'API_URL' : 'https://familytrusts-staging.herokuapp.com',
+        //'API_URL': 'http://192.168.50.204:9004',
+        'API_URL': 'https://familytrusts-staging.herokuapp.com',
       },
     );
     final baseUrl = dotenv.env[baseUrlEnvVar];
@@ -39,7 +40,12 @@ class ApiService {
 
   FamilyRestClient getFamilyRestClient() => FamilyRestClient(_dio);
 
-  JoinProposalRestClient getJoinProposalRestClient() => JoinProposalRestClient(_dio);
+  JoinProposalRestClient getJoinProposalRestClient() =>
+      JoinProposalRestClient(_dio);
 
-  FamilyEventRestClient getFamilyEventRestClient() => FamilyEventRestClient(_dio);
+  FamilyEventRestClient getFamilyEventRestClient() =>
+      FamilyEventRestClient(_dio);
+
+  ChildrenLookupRestClient getChildrenLookupRestClient() =>
+      ChildrenLookupRestClient(_dio);
 }

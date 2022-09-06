@@ -29,7 +29,7 @@ class Birthday extends ValueObject<DateTime> {
 
   const Birthday._(this.value);
 
-  String get toText => birthdayConverterToString(getOrCrash());
+  String get toText => value.fold((l) => "error", (r) => birthdayConverterToString(r));
 }
 
 class GpsPosition extends ValueObject<LatLng> {

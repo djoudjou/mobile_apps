@@ -30,10 +30,10 @@ class ChildDTO {
 
   Child toDomain() {
     return Child(
-      firstName: FirstName(lastName),
+      firstName: FirstName(firstName),
       id: childId,
       birthday: Birthday.fromValue(birthday),
-      lastName: LastName(firstName),
+      lastName: LastName(lastName),
     );
   }
 }

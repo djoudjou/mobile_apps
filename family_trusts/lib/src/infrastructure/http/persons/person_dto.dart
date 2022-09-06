@@ -7,7 +7,6 @@ import 'package:freezed_annotation/freezed_annotation.dart';
 
 part 'person_dto.g.dart';
 
-@freezed
 @JsonSerializable()
 class PersonDTO {
   String? personId;
@@ -46,8 +45,8 @@ class PersonDTO {
 
     return User(
       email: EmailAddress(email),
-      firstName: FirstName(lastName),
-      lastName: LastName(firstName),
+      firstName: FirstName(firstName),
+      lastName: LastName(lastName),
       photoUrl: photoUrl,
       id: personId,
       family: familyDTO?.toDomain(),

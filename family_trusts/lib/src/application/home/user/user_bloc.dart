@@ -4,6 +4,8 @@ import 'package:bloc/bloc.dart';
 import 'package:dartz/dartz.dart';
 import 'package:familytrusts/src/application/home/user/bloc.dart';
 import 'package:familytrusts/src/domain/auth/i_auth_facade.dart';
+import 'package:familytrusts/src/domain/messages/i_messages_repository.dart';
+import 'package:familytrusts/src/domain/messages/messages_failure.dart';
 import 'package:familytrusts/src/domain/user/i_user_repository.dart';
 import 'package:familytrusts/src/domain/user/user.dart';
 import 'package:familytrusts/src/domain/user/user_failure.dart';
@@ -12,10 +14,12 @@ import 'package:quiver/strings.dart' as quiver;
 class UserBloc extends Bloc<UserEvent, UserState> {
   final IAuthFacade _authFacade;
   final IUserRepository _userRepository;
+  final IMessagesRepository _messagesRepository;
 
   UserBloc(
     this._authFacade,
     this._userRepository,
+    this._messagesRepository,
   ) : super(const UserState.userInitial()) {
     on<Init>(_onInit);
     on<UserStarted>(
@@ -41,6 +45,10 @@ class UserBloc extends Bloc<UserEvent, UserState> {
 
     final Either<UserFailure, User> result =
         await _userRepository.getUser(event.userId);
+
+    if (result.isRight()) {
+      final Either<MessagesFailure, String> resultSaveToken = await _messagesRepository.saveToken(event.userId);
+    }
 
     add(UserEvent.userReceived(result));
   }
