@@ -24,44 +24,40 @@ class AskPageTab extends StatelessWidget {
         pageTitle: LocaleKeys.ask_title.tr(),
         context: context,
       ),
-      body: Container(
-        child: GridView.count(
-          crossAxisCount: 2,
-          children: <Widget>[
-            InkWell(
-              onTap: () => gotoChildrenLookup(
-                context,
-              ),
-              child: Container(
-                //color: Colors.green,
-                child: Card(
-                  margin: const EdgeInsets.all(10),
-                  //color: Colors.red,
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      MyAvatar(
-                        defaultImage: childrenLookupImages,
-                        onTapCallback: () => gotoChildrenLookup(
-                          context,
-                        ),
-                        radius: 70,
-                        imageTag: "CHILDREN_LOOKUP",
-                      ),
-                      SizedBox(
-                        width: 100,
-                        child: MyText(
-                          LocaleKeys.ask_childlookup_title.tr(),
-                          fontSize: 13,
-                          maxLines: 3,
-                        ),
-                      ),
-                    ],
+      body: FractionallySizedBox(
+        alignment: Alignment.topCenter,
+        widthFactor: 0.5,
+        heightFactor: 0.5,
+        //color: Colors.red,
+        child: InkWell(
+          onTap: () => gotoChildrenLookup(
+            context,
+          ),
+          child: Card(
+            margin: const EdgeInsets.all(10),
+            //color: Colors.red,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                MyAvatar(
+                  defaultImage: childrenLookupImages,
+                  onTapCallback: () => gotoChildrenLookup(
+                    context,
+                  ),
+                  radius: 70,
+                  imageTag: "CHILDREN_LOOKUP",
+                ),
+                SizedBox(
+                  width: 100,
+                  child: MyText(
+                    LocaleKeys.ask_childlookup_title.tr(),
+                    fontSize: 13,
+                    maxLines: 3,
                   ),
                 ),
-              ),
+              ],
             ),
-          ],
+          ),
         ),
       ),
     );

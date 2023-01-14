@@ -145,12 +145,12 @@ class SignInForm extends StatelessWidget with LogMixin {
                         SizedBox(
                           width: MediaQuery.of(context).size.width,
                           //color: Colors.blue,
-                          child: Row(
+                          child: Column(
                             mainAxisAlignment: MainAxisAlignment.spaceAround,
                             children: const [
                               GoogleLoginButton(),
                               //const MyHorizontalSeparator(),
-                              FacebookLoginButton(),
+                              //FacebookLoginButton(),
                             ],
                           ),
                         ),

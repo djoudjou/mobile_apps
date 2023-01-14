@@ -19,6 +19,7 @@ abstract class BaseRestClient with LogMixin  {
   }
 
   Future<String> authHeader() async {
-    return "Bearer ${getToken()}";
+    var token = await getToken();
+    return "Bearer $token";
   }
 }

@@ -12,15 +12,16 @@ class JoinProposalRestClientHttp extends BaseRestClient {
   Future<Either<HttpFailure, Option<JoinFamilyProposalDTO>>>
       findPendingByPersonId(String personId) async {
     try {
+      var token = await authHeader();
       var response = await http.get(
           Uri.parse("$baseUrl/proposals/person/$personId/pending"),
           headers: {
-            'Authorization': await authHeader(),
+            'Authorization': token,
           });
 
-      final responseJson = jsonDecode(response.body);
-
       if (response.statusCode == 200) {
+        final responseJson = jsonDecode(response.body);
+
         final JoinFamilyProposalDTO joinFamilyProposal =
             JoinFamilyProposalDTO.fromJson(
                 responseJson as Map<String, dynamic>);
@@ -31,7 +32,7 @@ class JoinProposalRestClientHttp extends BaseRestClient {
       } else if (response.statusCode == 401 && response.statusCode == 403) {
         return left(const HttpFailure.insufficientPermission());
       } else {
-        log("Error response $responseJson");
+        log("Error response $token ${response.statusCode} > ${response.body}");
         return left(const HttpFailure.technicalError());
       }
     } catch (e) {
@@ -43,15 +44,17 @@ class JoinProposalRestClientHttp extends BaseRestClient {
   Future<Either<HttpFailure, List<JoinFamilyProposalDTO>>>
       findArchivedByPersonId(String personId) async {
     try {
+      var token = await authHeader();
+
       var response = await http.get(
           Uri.parse("$baseUrl/proposals/person/$personId/archived"),
           headers: {
-            'Authorization': await authHeader(),
+            'Authorization': token,
           });
 
-      final responseJson = jsonDecode(response.body);
-
       if (response.statusCode == 200) {
+        final responseJson = jsonDecode(response.body);
+
         final List<JoinFamilyProposalDTO> joinFamilyProposals =
             (responseJson as List<dynamic>)
                 .map((dynamic elt) =>
@@ -62,7 +65,7 @@ class JoinProposalRestClientHttp extends BaseRestClient {
       } else if (response.statusCode == 401 && response.statusCode == 403) {
         return left(const HttpFailure.insufficientPermission());
       } else {
-        log("Error response $responseJson");
+        log("Error response ${response.body}");
         return left(const HttpFailure.technicalError());
       }
     } catch (e) {
