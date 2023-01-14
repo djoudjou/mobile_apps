@@ -1,0 +1,70 @@
+Features de la version :
+ * evol : maj des dépendances
+ * evol : migration bouton -> elevator (correction de la couleur du bouton supprimé)
+ * fix bug sur la gestion des onglets de l'écran profil
+ * fix bug d'ajout de personnes de confiances
+ * fix bug sur écran des lieux
+ * evol : Ecran personnes de confiances > ne remonte que les gens qui ne sont pas déjà personnes de confiances
+ * evol : Gestion de l'écran utilisateur via un bloc
+    * règles de gestion
+      * affichage du boutton update si user = connected user id
+      * affichage du boutton "casser le lien" si user != connected user id et user = conjoint
+      * affichage du boutton "retirer en tant que personne de confiance" si personne de confiance et non conjoint
+ * refacto écran notification (1 bloc par onglet)
+ * bug pour ajout d'enfant
+ * fix login issue
+ * fix "création demande" ko (regression due to package update)
+ * nouvelle écran "tableau de bord" pour voir à un seul endroit l'ensemble des demandes sur les enfants de la famille
+    * v1 / juste affichage
+
+todo :
+ * Ajouter interraction dans l'écran "tableau de bord"
+ * externaliser la gestions des notifs dans google fonction (exemple lors de la C/U/D d'un lieu, enfant, personne de confiance
+ * debug des notifications
+
+
+#Avant
+Features de la version :
+ * Gestion des notifications dans la barre de menu
+ * Choix d'un logo
+ * SSO avec Facebook
+Features des versions précédentes :
+ * refactoring de l'écran profile
+ * refactoring de l'écran d'acceuil
+ * ajout d'un menu burger
+ * UC missions :
+   * première implémentation, on peut maintenant lancer le workflow de création d'une mission
+   par contre elle n'est pas encore sauvergardé et pas de notification
+ * Ecran profile
+    * Ajout des onglets
+    * Modification de la fonction de rechercher pour trouver via mot clés
+ * On peut maintenant saisir une liste de lieux favoris (domicile, école etc...)
+ * Corrections de bugs
+ * Publication dans Firebase App Distribution
+ * Gestion des themes
+ * UC missions :
+    * Workflow de gestion des demandes de récupération d'enfant
+ * correction de bugs
+ * limitation des notifications aux 14 derniers jours
+ * UC missions :
+    * finalisation du workflow sur la demande de récupération d'enfant
+
+TODO :
+ - Soucis sur le SSO, une fois l'application fermée, on perd la session
+# - Le cadrage des photos
+# - Proposer la gallery par défaut pour les photos
+ - Attention à ne pas pouvoir modifier l'email une fois saisie
+ - permettre de ne plus recevoir les notifications de certaines personnes
+ - Si une personne n'est pas trouvée dans l'application, permettre l'envoi d'un email pour s'inscrire
+    Voir template d'email avec lien dans le store
+ - Gérer la localisation des personnes dans la fiche personne
+ - Lors de la recherche, si pas trouvé envoie d'un email/sms pour s'inscrire sur l'application (tricher avec la beta fermé)
+    Bascule vers les contacts avec la possibilité d'envoie d'invitation en masse
+ - UC missions :
+    - Une mission n'est visible que si dans la même région que la personne
+    - Gérer les notifications comme sur whatsapp (pastille sur l'icone de l'apps + notification téléphone)
+ - Publication de l'appication dans le store Android > "en mode fermé"
+ - Compatibilité IOS
+
+ - Recherche d'adresse, limiter à la france
+ - Ecran mission récupéré enfant
