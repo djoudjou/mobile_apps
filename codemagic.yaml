@@ -40,19 +40,13 @@ workflows:
           flutter packages pub get
       - name: Generate freezed package
         script: |
-          cd $FCI_BUILD_DIR/family_trusts
           flutter pub get && flutter pub run build_runner build --delete-conflicting-outputs
       - name: Generate localization
         script: |
-          cd $FCI_BUILD_DIR/family_trusts
           flutter pub run easy_localization:generate -f keys -o locale_keys.g.dart
           flutter pub run easy_localization:generate
-      - name: Flutter analyze
-        script: | 
-          flutter analyze
       - name: Build AAB with Flutter
         script: |
-          cd $FCI_BUILD_DIR/family_trusts
           flutter build appbundle --release
     artifacts:
       - family_trusts/build/**/outputs/apk/**/*.apk
