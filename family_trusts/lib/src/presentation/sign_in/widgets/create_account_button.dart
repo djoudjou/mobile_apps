@@ -7,6 +7,8 @@ import 'package:familytrusts/src/presentation/routes/router.gr.dart';
 import 'package:flutter/material.dart';
 
 class CreateAccountButton extends StatelessWidget {
+  const CreateAccountButton({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Row(
@@ -16,7 +18,11 @@ class CreateAccountButton extends StatelessWidget {
         TextButton(
           style: flatButtonStyle,
           onPressed: () {
-            AutoRouter.of(context).replace(const RegisterPageRoute());
+            AutoRouter.of(context).replace(
+              RegisterPageRoute(
+                key: const ValueKey("RegisterPage"),
+              ),
+            );
           },
           child: MyText(
             LocaleKeys.login_register.tr(),

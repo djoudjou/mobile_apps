@@ -18,8 +18,7 @@ class InvitationsTab extends StatelessWidget {
   final User connectedUser;
   static const _key = PageStorageKey<String>('invitations');
 
-  const InvitationsTab({Key? key, required this.connectedUser})
-      : super(key: key);
+  const InvitationsTab({super.key, required this.connectedUser});
 
   @override
   Widget build(BuildContext context) {
@@ -94,7 +93,7 @@ class InvitationsTab extends StatelessWidget {
           if (state is FamilyJoinProposalsLoaded) {
             if (!state.hasPendingProposals) {
               return Center(
-                child: Container(
+                child: SizedBox(
                   width: MediaQuery.of(context).size.width,
                   child: MyText(
                     LocaleKeys.invitations_empty.tr(),

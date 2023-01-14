@@ -18,7 +18,7 @@ class DemandsTab extends StatelessWidget {
   final User connectedUser;
   static const _key = PageStorageKey<String>('childrenLookup');
 
-  const DemandsTab({Key? key, required this.connectedUser}) : super(key: key);
+  const DemandsTab({super.key, required this.connectedUser});
 
   @override
   Widget build(BuildContext context) {
@@ -57,7 +57,7 @@ class DemandsTab extends StatelessWidget {
                     .inProgressChildrenLookups;
                 if (childrenLookups.isEmpty) {
                   return Center(
-                    child: Container(
+                    child: SizedBox(
                       width: MediaQuery.of(context).size.width,
                       child: MyText(
                         LocaleKeys.notifications_tabs_demands_empty.tr(),
@@ -78,6 +78,7 @@ class DemandsTab extends StatelessWidget {
                           AutoRouter.of(context)
                               .push(
                             ChildrenLookupDetailsPageRoute(
+                              key: const ValueKey("ChildrenLookupDetailsPage"),
                               connectedUser: connectedUser,
                               childrenLookup: childrenLookup,
                             ),
@@ -86,7 +87,8 @@ class DemandsTab extends StatelessWidget {
                             if (value != null) {
                               context.read<DemandsBloc>().add(
                                     DemandsEvent.loadDemands(
-                                        connectedUser.family!.id),
+                                      connectedUser.family!.id,
+                                    ),
                                   );
                             }
                           });

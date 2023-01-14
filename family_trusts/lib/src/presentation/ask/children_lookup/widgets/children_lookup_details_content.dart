@@ -18,8 +18,7 @@ import 'package:timeline_tile/timeline_tile.dart';
 class ChildrenLookupDetailsContent extends StatelessWidget {
   final User connectedUser;
 
-  const ChildrenLookupDetailsContent({Key? key, required this.connectedUser})
-      : super(key: key);
+  const ChildrenLookupDetailsContent({super.key, required this.connectedUser});
 
   @override
   Widget build(BuildContext context) {
@@ -141,7 +140,7 @@ class ChildrenLookupDetailsContent extends StatelessWidget {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
-                                  Container(
+                                  SizedBox(
                                     //color: Colors.red,
                                     width:
                                         MediaQuery.of(context).size.width * .5,

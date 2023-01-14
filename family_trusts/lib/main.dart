@@ -8,6 +8,7 @@ import 'package:familytrusts/src/domain/auth/i_auth_facade.dart';
 import 'package:familytrusts/src/domain/error/i_error_service.dart';
 import 'package:familytrusts/src/infrastructure/core/api_keys.dart';
 import 'package:familytrusts/src/infrastructure/http/api_service.dart';
+import 'package:familytrusts/src/infrastructure/http/api_service_http.dart';
 import 'package:familytrusts/src/presentation/core/app_widget.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/foundation.dart';
@@ -26,6 +27,7 @@ Future<void> main() async {
   configureInjection(Environment.prod);
 
   getIt.registerSingleton(await ApiService.init(getIt<IAuthFacade>()));
+  getIt.registerSingleton(await ApiServiceHttp.init(getIt<IAuthFacade>()));
 
   getIt.allReady();
 
@@ -41,21 +43,20 @@ Future<void> main() async {
           options.dsn = ApiKeys.sentryKey;
         },
       );
-      BlocOverrides.runZoned(
-        () => runApp(
-          EasyLocalization(
-            supportedLocales: const [
-              Locale('en', 'US'),
-              Locale('fr', 'FR'),
-            ],
-            path: 'resources/langs',
-            fallbackLocale: const Locale('en', 'US'),
-            startLocale: const Locale('fr', 'FR'),
-            assetLoader: const CodegenLoader(),
-            child: AppWidget(),
-          ),
+
+      Bloc.observer = SimpleBlocDelegate();
+      runApp(
+        EasyLocalization(
+          supportedLocales: const [
+            Locale('en', 'US'),
+            Locale('fr', 'FR'),
+          ],
+          path: 'resources/langs',
+          fallbackLocale: const Locale('en', 'US'),
+          startLocale: const Locale('fr', 'FR'),
+          assetLoader: const CodegenLoader(),
+          child: AppWidget(),
         ),
-        blocObserver: SimpleBlocDelegate(),
       );
     },
     (error, stackTrace) async {

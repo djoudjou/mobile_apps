@@ -27,5 +27,5 @@ abstract class IAuthFacade {
 
   Future<Option<MyUserInfo>> getSignedUserInfo();
 
-  Future<String> getToken();
+  Future<Either<AuthFailure,String>> getToken();
 }

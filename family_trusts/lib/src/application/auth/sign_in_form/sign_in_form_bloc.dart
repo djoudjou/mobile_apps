@@ -123,10 +123,38 @@ class SignInFormBloc extends Bloc<SignInFormEvent, SignInFormState> {
     SignInWithEmailAndPasswordPressed event,
     Emitter<SignInFormState> emit,
   ) async {
-    await _performActionOnAuthFacadeWithEmailAndPassword(
-      _authFacade.signInWithEmailAndPassword,
-      emit,
-    );
+
+    Either<AuthFailure, String>? failureOrSuccess;
+
+    final bool isEmailValid = state.emailAddress.isValid();
+    final bool isPasswordValid = state.password.isValid();
+
+    if (isEmailValid && isPasswordValid) {
+      emit(
+        state.copyWith(
+          isSubmitting: true,
+          authFailureOrSuccessOption: none(),
+        ),
+      );
+
+      failureOrSuccess = await _authFacade.signInWithEmailAndPassword(
+        emailAddress: state.emailAddress,
+        password: state.password,
+      );
+
+      await failureOrSuccess.fold(
+            (failure) => null,
+            (userId) => _analyticsSvc.loginWithLoginPwd(userId),
+      );
+
+      emit(
+        state.copyWith(
+          isSubmitting: false,
+          showErrorMessages: true,
+          authFailureOrSuccessOption: optionOf(failureOrSuccess),
+        ),
+      );
+    }
   }
 
   FutureOr<void> _onSignInWithGooglePressed(

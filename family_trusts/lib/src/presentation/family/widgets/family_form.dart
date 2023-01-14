@@ -20,12 +20,12 @@ class FamilyForm extends StatefulWidget {
   final User currentUser;
 
   const FamilyForm({
-    Key? key,
+    super.key,
     required this.currentUser,
-  }) : super(key: key);
+  });
 
   @override
-  _FamilyFormState createState() => _FamilyFormState();
+  State<FamilyForm> createState() => _FamilyFormState();
 }
 
 class _FamilyFormState extends State<FamilyForm> with LogMixin {

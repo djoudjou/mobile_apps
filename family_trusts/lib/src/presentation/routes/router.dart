@@ -21,7 +21,6 @@ import 'package:familytrusts/src/presentation/user/user_page.dart';
 //part 'router.gr.dart';
 
 @MaterialAutoRouter(
-
   routes: <AutoRoute>[
     AutoRoute(page: SignInPage, usesPathAsKey: true),
     AutoRoute(page: RegisterPage, usesPathAsKey: true),

@@ -6,6 +6,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class GoogleLoginButton extends StatelessWidget {
+  const GoogleLoginButton({super.key});
+
   @override
   Widget build(BuildContext context) {
     return GoogleAuthButton(
@@ -19,7 +21,7 @@ class GoogleLoginButton extends StatelessWidget {
             .read<SignInFormBloc>()
             .add(const SignInFormEvent.signInWithGooglePressed());
       },
-      darkMode: true, // default: false
+      themeMode: ThemeMode.dark,
     );
   }
 }

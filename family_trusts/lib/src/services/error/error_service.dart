@@ -54,14 +54,6 @@ class SentryErrorService with IErrorService, LogMixin {
   }) async {
     log('Caught error: $error\n$stackTrace');
 
-    if (_isInDebugMode) {
-      log(message ?? "Unexpected error", stackTrace: stackTrace);
-      log('In dev mode. Not sending report to Sentry.io.');
-      return;
-    }
-
-    log('Reporting to Sentry.io...');
-
     final PackageInfo info = await PackageInfo.fromPlatform();
 
     final Map<String, dynamic> extra = <String, dynamic>{};
@@ -135,6 +127,16 @@ class SentryErrorService with IErrorService, LogMixin {
       level: SentryLevel.fatal,
     );
 
+    if (_isInDebugMode) {
+      log(message ?? "Unexpected error", stackTrace: stackTrace);
+      log('In dev mode. Not sending report to Sentry.io.');
+      log("Sentry Event > $event");
+      log("Sentry tags > $tags");
+      log("Sentry extra > $extra");
+      return;
+    }
+
+    log('Reporting to Sentry.io...');
     try {
       await Sentry.captureEvent(event, stackTrace: stackTrace);
       /*

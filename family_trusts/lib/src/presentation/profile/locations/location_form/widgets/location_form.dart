@@ -24,12 +24,12 @@ class LocationForm extends StatefulWidget {
   final User currentUser;
 
   const LocationForm({
-    Key? key,
+    super.key,
     required this.currentUser,
-  }) : super(key: key);
+  });
 
   @override
-  _LocationFormState createState() => _LocationFormState();
+  State<LocationForm> createState() => _LocationFormState();
 }
 
 class _LocationFormState extends State<LocationForm> with LogMixin {
@@ -148,6 +148,7 @@ class _LocationFormState extends State<LocationForm> with LogMixin {
 
                         context.pushRoute(
                           SearchAddressPageRoute(
+                            key: const ValueKey("SearchAddressPage"),
                             onSelectAddressCallback: (complexAddress) {
                               _addressController.text = complexAddress.address!;
                               context.read<LocationFormBloc>().add(
@@ -297,7 +298,7 @@ class _LocationFormState extends State<LocationForm> with LogMixin {
   }
 
   Widget buildMap(LocationFormState state, BuildContext context) {
-    return Container(
+    return SizedBox(
       width: MediaQuery.of(context).size.width,
       height: 200,
       child: Card(

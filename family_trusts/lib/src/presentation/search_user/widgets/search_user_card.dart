@@ -8,7 +8,7 @@ import 'package:flutter/material.dart';
 class SearchUserCard extends StatelessWidget {
   final User user;
 
-  const SearchUserCard({Key? key, required this.user}) : super(key: key);
+  const SearchUserCard({super.key, required this.user});
 
   @override
   Widget build(BuildContext context) {

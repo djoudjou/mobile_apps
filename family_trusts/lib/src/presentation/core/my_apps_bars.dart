@@ -11,18 +11,17 @@ class MyAppBar extends AppBar {
   final BuildContext context;
   final bool displayLogout;
 
-  MyAppBar({
+  MyAppBar({super.key,
     this.displayLogout = true,
     required this.context,
     required this.pageTitle,
-    PreferredSizeWidget? bottom,
+    super.bottom,
   }) : super(
           title: MyText(
             pageTitle,
             color: Colors.white,
             fontSize: 20,
           ),
-          bottom: bottom,
           actions: <Widget>[
             if (displayLogout) ...[
               IconButton(
@@ -47,14 +46,13 @@ class MyAppBar extends AppBar {
 
 class MySilverAppBar extends SliverAppBar {
   MySilverAppBar({
-    Key? key,
+    super.key,
     required String pageTitle,
     AssetImage? image,
     double height = 150.0,
-    required PreferredSizeWidget bottom,
+    required PreferredSizeWidget super.bottom,
     required BuildContext context,
   }) : super(
-          key: key,
           pinned: true,
           flexibleSpace: FlexibleSpaceBar(
             title: MyText(pageTitle, color: Colors.white),
@@ -66,7 +64,6 @@ class MySilverAppBar extends SliverAppBar {
                 : null,
           ),
           expandedHeight: height,
-          bottom: bottom,
           actions: <Widget>[
             IconButton(
               //color: Colors.black54,

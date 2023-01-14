@@ -5,13 +5,14 @@ import 'package:dartz/dartz.dart';
 import 'package:familytrusts/src/application/home/user/bloc.dart';
 import 'package:familytrusts/src/domain/auth/i_auth_facade.dart';
 import 'package:familytrusts/src/domain/messages/i_messages_repository.dart';
-import 'package:familytrusts/src/domain/messages/messages_failure.dart';
 import 'package:familytrusts/src/domain/user/i_user_repository.dart';
 import 'package:familytrusts/src/domain/user/user.dart';
 import 'package:familytrusts/src/domain/user/user_failure.dart';
+import 'package:familytrusts/src/helper/log_mixin.dart';
+import 'package:firebase_auth/firebase_auth.dart' as fire;
 import 'package:quiver/strings.dart' as quiver;
 
-class UserBloc extends Bloc<UserEvent, UserState> {
+class UserBloc extends Bloc<UserEvent, UserState> with LogMixin {
   final IAuthFacade _authFacade;
   final IUserRepository _userRepository;
   final IMessagesRepository _messagesRepository;
@@ -41,16 +42,29 @@ class UserBloc extends Bloc<UserEvent, UserState> {
     UserStarted event,
     Emitter<UserState> emit,
   ) async {
-    emit(UserState.userLoadInProgress(event.userId));
+    try {
+      final Option<fire.User> user = _authFacade.getSignedInUser();
 
-    final Either<UserFailure, User> result =
-        await _userRepository.getUser(event.userId);
+      if (user.isNone()) {
+        emit(const UserState.userLoadFailure("Not connected"));
+      } else {
+        emit(UserState.userLoadInProgress(event.userId));
 
-    if (result.isRight()) {
-      final Either<MessagesFailure, String> resultSaveToken = await _messagesRepository.saveToken(event.userId);
+        final Either<UserFailure, User> result =
+            await _userRepository.getUser(event.userId);
+
+        if (result.isRight()) {
+          await _messagesRepository.saveToken(
+            event.userId,
+          );
+        }
+
+        add(UserEvent.userReceived(result));
+      }
+    } catch (error) {
+      log("_onUserStarted error", error: error);
+      emit(const UserState.userLoadFailure("_onUserStarted error"));
     }
-
-    add(UserEvent.userReceived(result));
   }
 
   Future<FutureOr<void>> _onUserReceived(

@@ -24,8 +24,7 @@ class SelectAddressParams {
 class SearchAddressPage extends StatelessWidget {
   final OnSelectAddressCallback onSelectAddressCallback;
 
-  const SearchAddressPage({Key? key, required this.onSelectAddressCallback})
-      : super(key: key);
+  const SearchAddressPage({super.key, required this.onSelectAddressCallback});
 
   @override
   Widget build(BuildContext context) {

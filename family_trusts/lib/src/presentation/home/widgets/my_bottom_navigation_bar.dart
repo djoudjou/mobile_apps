@@ -8,11 +8,11 @@ class MyBottomNavigationBar extends StatelessWidget {
   final int nbNotificationsUnseen;
 
   const MyBottomNavigationBar({
-    Key? key,
+    super.key,
     required this.activeTab,
     required this.onTabSelected,
     required this.nbNotificationsUnseen,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

@@ -17,9 +17,9 @@ class HomePageWithoutFamily extends MyBasePage {
   final _scaffoldKey = GlobalKey<ScaffoldState>();
 
   HomePageWithoutFamily({
-    Key? key,
+    super.key,
     required this.connectedUser,
-  }) : super(key: key);
+  });
 
   @override
   Widget myBuild(BuildContext context) {

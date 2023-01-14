@@ -7,9 +7,7 @@ import 'package:familytrusts/src/application/home/tab/bloc.dart';
 import 'package:familytrusts/src/application/home/user/bloc.dart';
 import 'package:familytrusts/src/application/messages/bloc.dart';
 import 'package:familytrusts/src/application/notifications/unseen/notifications_unseen_bloc.dart';
-import 'package:familytrusts/src/domain/error/i_error_service.dart';
 import 'package:familytrusts/src/domain/home/app_tab.dart';
-import 'package:familytrusts/src/domain/messages/i_messages_repository.dart';
 import 'package:familytrusts/src/domain/notification/i_familyevent_repository.dart';
 import 'package:familytrusts/src/domain/notification/notifications_failure.dart';
 import 'package:familytrusts/src/presentation/ask/ask_page_tab.dart';
@@ -29,8 +27,7 @@ class HomePage extends MyBasePage {
 
   final _scaffoldKey = GlobalKey<ScaffoldState>();
 
-  HomePage({Key? key, required this.currentTab, required this.connectedUserId})
-      : super(key: key);
+  HomePage({super.key, required this.currentTab, required this.connectedUserId});
 
   @override
   Widget myBuild(BuildContext context) {
@@ -81,11 +78,11 @@ class HomePage extends MyBasePage {
         child: BlocBuilder<UserBloc, UserState>(
           builder: (contextUserBloc, state) {
             return state.map(
-              userInitial: (UserInitial value) => LoadingScaffold(),
-              userNotFound: (UserNotFound value) => ErrorScaffold(),
-              userLoadFailure: (UserLoadFailure value) => ErrorScaffold(),
+              userInitial: (UserInitial value) => const LoadingScaffold(),
+              userNotFound: (UserNotFound value) => const ErrorScaffold(),
+              userLoadFailure: (UserLoadFailure value) => const ErrorScaffold(),
               userLoadInProgress: (UserLoadInProgress value) =>
-                  LoadingScaffold(),
+                  const LoadingScaffold(),
               userLoadSuccess: (UserLoadSuccess value) {
                 final user = value.user;
                 final spouse = value.spouse;

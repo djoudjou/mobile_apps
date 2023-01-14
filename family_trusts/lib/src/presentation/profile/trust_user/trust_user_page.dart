@@ -28,14 +28,14 @@ class TrustUserPage extends StatefulWidget {
   final String imageTag;
 
   const TrustUserPage({
-    Key? key,
+    super.key,
     required this.trustedUserToEdit,
     required this.imageTag,
     required this.connectedUser,
-  }) : super(key: key);
+  });
 
   @override
-  _TrustUserPageState createState() => _TrustUserPageState();
+  State<TrustUserPage> createState() => _TrustUserPageState();
 }
 
 class _TrustUserPageState extends State<TrustUserPage> {

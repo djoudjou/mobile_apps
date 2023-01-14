@@ -23,9 +23,9 @@ class EventsTab extends StatelessWidget with LogMixin {
   final _key = const PageStorageKey<String>('events');
 
   EventsTab({
-    Key? key,
+    super.key,
     required this.connectedUser,
-  }) : super(key: key);
+  });
 
   void refresh(BuildContext context) {
     BlocProvider.of<NotificationsEventsBloc>(
@@ -85,7 +85,7 @@ class EventsTab extends StatelessWidget with LogMixin {
 
                   return eventsResult.fold(
                     (failure) => Center(
-                      child: Container(
+                      child: SizedBox(
                         width: MediaQuery.of(contextNotificationsEventsBloc)
                             .size
                             .width,
@@ -188,12 +188,12 @@ class EventsTab extends StatelessWidget with LogMixin {
 
 class EventDeleteWidget extends StatelessWidget {
   const EventDeleteWidget({
-    Key? key,
-  }) : super(key: key);
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return ColoredBox(
       color: Colors.red,
       child: Padding(
         padding: const EdgeInsets.all(15),

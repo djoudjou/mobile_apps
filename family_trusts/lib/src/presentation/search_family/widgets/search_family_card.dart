@@ -10,7 +10,7 @@ import 'package:flutter/material.dart';
 class SearchFamilyCard extends StatelessWidget {
   final Family family;
 
-  const SearchFamilyCard({Key? key, required this.family}) : super(key: key);
+  const SearchFamilyCard({super.key, required this.family});
 
   @override
   Widget build(BuildContext context) {

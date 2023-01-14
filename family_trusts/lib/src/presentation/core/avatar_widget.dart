@@ -13,17 +13,17 @@ class MyAvatar extends StatelessWidget {
   final OnTapCallback onTapCallback;
 
   const MyAvatar({
-    Key? key,
+    super.key,
     this.photoUrl,
     required this.onTapCallback,
     required this.imageTag,
     required this.radius,
     required this.defaultImage,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return SizedBox(
       height: radius * 2,
       child: Column(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,

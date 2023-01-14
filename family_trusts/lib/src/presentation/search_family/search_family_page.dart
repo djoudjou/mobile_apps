@@ -11,8 +11,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 class SearchFamilyPage extends MyBasePage {
   SearchFamilyPage({
-    Key? key,
-  }) : super(key: key);
+    super.key,
+  });
 
   @override
   Widget myBuild(BuildContext context) {

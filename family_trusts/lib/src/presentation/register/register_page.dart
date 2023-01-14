@@ -11,6 +11,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class RegisterPage extends MyBasePage {
+  RegisterPage({super.key});
+
   @override
   Widget myBuild(BuildContext context) {
     return Scaffold(
@@ -24,7 +26,7 @@ class RegisterPage extends MyBasePage {
             getIt<IUserRepository>(),
             getIt<IAuthFacade>(),
           )..add(const RegisterEvent.init()),
-          child: RegisterForm(),
+          child: const RegisterForm(),
         ),
       ),
     );

@@ -15,10 +15,10 @@ class ChildrenLookupPage extends StatelessWidget {
   final String? currentFamilyId;
 
   const ChildrenLookupPage({
-    Key? key,
+    super.key,
     required this.connectedUser,
     this.currentFamilyId,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

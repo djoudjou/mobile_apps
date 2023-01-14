@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 
 class MyVerticalSeparator extends StatelessWidget {
   const MyVerticalSeparator({
-    Key? key,
-  }) : super(key: key);
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -13,8 +13,8 @@ class MyVerticalSeparator extends StatelessWidget {
 
 class MyHorizontalSeparator extends StatelessWidget {
   const MyHorizontalSeparator({
-    Key? key,
-  }) : super(key: key);
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {

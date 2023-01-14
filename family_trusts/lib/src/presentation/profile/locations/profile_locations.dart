@@ -19,10 +19,10 @@ class ProfileLocations extends StatelessWidget {
   static const _key = PageStorageKey<String>('locations');
 
   const ProfileLocations({
-    Key? key,
+    super.key,
     required this.radius,
     required this.connectedUser,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -51,7 +51,7 @@ class ProfileLocations extends StatelessWidget {
                   const LoadingContent(),
                 ],
               ),
-              locationsNotLoaded: (locationsNotLoaded) => Container(
+              locationsNotLoaded: (locationsNotLoaded) => ColoredBox(
                 color: Colors.blue,
                 child: MyText(LocaleKeys.profile_tabs_locations_error.tr()),
               ),

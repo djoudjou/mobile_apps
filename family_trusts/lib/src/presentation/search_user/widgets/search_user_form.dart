@@ -16,10 +16,10 @@ class SearchUserForm extends StatelessWidget {
   final bool lookingForNewTrustUser;
 
   const SearchUserForm({
-    Key? key,
+    super.key,
     required this.connectedUser,
     required this.lookingForNewTrustUser,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

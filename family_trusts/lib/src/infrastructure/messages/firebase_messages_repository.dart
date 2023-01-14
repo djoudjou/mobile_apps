@@ -52,7 +52,8 @@ class FirebaseMessagesRepository with LogMixin implements IMessagesRepository {
       if (settings.authorizationStatus == AuthorizationStatus.authorized) {
         FirebaseMessaging.onMessage.listen((RemoteMessage message) {
           log("onMessage: $message");
-          addMessage("onMessage", message.data);
+          final RemoteNotification? notification = message.notification;
+          addMessage("onMessage", notification);
         }
 
             // FirebaseMessaging.onMessageOpenedApp.listen((event) {
@@ -60,7 +61,7 @@ class FirebaseMessagesRepository with LogMixin implements IMessagesRepository {
             //   addMessage("onMessage", event.data);
             // })
 
-            /*
+            /*M05034
           _firebaseMessaging.configure(
           onMessage: (Map<String, dynamic> message) async {
             log("onMessage: $message");
@@ -89,8 +90,8 @@ class FirebaseMessagesRepository with LogMixin implements IMessagesRepository {
     }
   }
 
-  void addMessage(String from, Map<String, dynamic> message) {
-    final MessageEntity me = MessageEntity.fromData(message);
+  void addMessage(String from, RemoteNotification? notification) {
+    final MessageEntity me = MessageEntity.fromData(notification);
     controller.add(
       right(
         Message(

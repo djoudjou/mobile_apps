@@ -18,10 +18,10 @@ class ProfilePageTab extends StatelessWidget {
   final User? spouse;
 
   const ProfilePageTab({
-    Key? key,
+    super.key,
     required this.connectedUser,
     this.spouse,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

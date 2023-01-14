@@ -14,5 +14,4 @@ abstract class AuthFailure with _$AuthFailure {
 
   const factory AuthFailure.invalidEmailAndPasswordCombination() =
       InvalidEmailAndPasswordCombination;
-
 }

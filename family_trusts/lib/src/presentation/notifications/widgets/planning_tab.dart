@@ -25,14 +25,15 @@ class PlanningTab extends StatelessWidget with LogMixin {
   final _key = const PageStorageKey<String>('planning');
   final radius = 70;
 
-  PlanningTab({Key? key, required this.connectedUser}) : super(key: key);
+  PlanningTab({super.key, required this.connectedUser});
 
   @override
   Widget build(BuildContext context) {
     return BlocProvider<PlanningBloc>(
       create: (context) => PlanningBloc(
-          getIt<IChildrenLookupRepository>(), getIt<IUserRepository>())
-        ..add(SimpleLoaderEvent.startLoading(userId: connectedUser.id)),
+        getIt<IChildrenLookupRepository>(),
+        getIt<IUserRepository>(),
+      )..add(SimpleLoaderEvent.startLoading(userId: connectedUser.id)),
       child: BlocConsumer<PlanningBloc, SimpleLoaderState>(
         listener: (context, state) {},
         builder: (context, state) {
@@ -72,7 +73,7 @@ class PlanningTab extends StatelessWidget with LogMixin {
       itemBuilder: (BuildContext context, int index) {
         final PlanningEntry entry = planning.entries[index];
 
-        return Container(
+        return SizedBox(
           width: MediaQuery.of(context).size.width,
           //height: MediaQuery.of(context).size.height,
           //color: Colors.red,
@@ -92,7 +93,7 @@ class PlanningTab extends StatelessWidget with LogMixin {
                   //MyText(entry.childrenLookups.length.toString()),
                   Column(
                     children: entry.childrenLookups.map((e) {
-                      return Container(
+                      return SizedBox(
                         width: MediaQuery.of(context).size.width * (3 / 4),
                         //color: Colors.brown,
                         child: Row(

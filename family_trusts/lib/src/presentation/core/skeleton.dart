@@ -4,11 +4,10 @@ class Skeleton extends StatefulWidget {
   final double height;
   final double width;
 
-  const Skeleton({Key? key, this.height = 20, this.width = 200})
-      : super(key: key);
+  const Skeleton({super.key, this.height = 20, this.width = 200});
 
   @override
-  _SkeletonState createState() => _SkeletonState();
+  State<Skeleton> createState() => _SkeletonState();
 }
 
 class _SkeletonState extends State<Skeleton>
@@ -51,7 +50,7 @@ class _SkeletonState extends State<Skeleton>
           decoration: BoxDecoration(
             gradient: LinearGradient(
               begin: Alignment(gradientPosition!.value, 0),
-              end: const Alignment(-1, 0),
+              end: Alignment.centerLeft,
               colors: const [
                 Colors.black12,
                 Colors.black26,

@@ -17,10 +17,10 @@ class NotificationsPageTab extends StatelessWidget {
   final User? spouse;
 
   const NotificationsPageTab({
-    Key? key,
+    super.key,
     required this.user,
     this.spouse,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -43,13 +43,13 @@ class NotificationsPageTabStateFull extends StatefulWidget {
   final User? spouse;
 
   const NotificationsPageTabStateFull({
-    Key? key,
+    super.key,
     required this.user,
     this.spouse,
-  }) : super(key: key);
+  });
 
   @override
-  _NotificationsPageTabState createState() => _NotificationsPageTabState();
+  State<NotificationsPageTabStateFull> createState() => _NotificationsPageTabState();
 }
 
 class _NotificationsPageTabState extends State<NotificationsPageTabStateFull>

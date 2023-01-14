@@ -15,10 +15,10 @@ class SearchUserPage extends StatelessWidget {
   final bool lookingForNewTrustUser;
 
   const SearchUserPage({
-    Key? key,
+    super.key,
     required this.connectedUser,
     required this.lookingForNewTrustUser,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

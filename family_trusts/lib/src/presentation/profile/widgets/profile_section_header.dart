@@ -2,7 +2,7 @@ import 'package:familytrusts/src/presentation/core/my_text.dart';
 import 'package:flutter/material.dart';
 
 class ProfileSectionHeader extends SliverToBoxAdapter {
-  ProfileSectionHeader(String text)
+  ProfileSectionHeader(String text, {super.key})
       : super(
           child: Container(
             width: double.infinity,

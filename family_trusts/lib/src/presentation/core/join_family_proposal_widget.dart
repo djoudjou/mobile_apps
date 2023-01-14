@@ -18,13 +18,13 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 class JoinFamilyProposalWidget extends StatelessWidget {
   const JoinFamilyProposalWidget({
-    Key? key,
+    super.key,
     required this.cardWidth,
     required this.joinProposal,
     required this.asIssuer,
     required this.asFamily,
     required this.connectedUser,
-  }) : super(key: key);
+  });
 
   final double cardWidth;
   final JoinProposal joinProposal;
@@ -40,7 +40,7 @@ class JoinFamilyProposalWidget extends StatelessWidget {
     switch (joinProposal.state!.getOrCrash()) {
       case JoinProposalStateEnum.accepted:
         message = LocaleKeys.join_proposal_details_accepted_text.tr();
-        badgeColor = Theme.of(context).accentColor;
+        badgeColor = Theme.of(context).colorScheme.secondary;
         break;
       case JoinProposalStateEnum.canceled:
         badgeColor = Theme.of(context).primaryColorLight;
@@ -60,7 +60,7 @@ class JoinFamilyProposalWidget extends StatelessWidget {
         break;
     }
 
-    return Container(
+    return SizedBox(
       width: double.infinity,
       child: Card(
         margin: const EdgeInsets.all(10),

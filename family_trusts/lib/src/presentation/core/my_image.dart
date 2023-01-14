@@ -10,11 +10,11 @@ class MyImage extends StatelessWidget {
   final Image defaultImage;
 
   const MyImage({
-    Key? key,
+    super.key,
     this.imagePath = '',
     this.photoUrl,
     required this.defaultImage,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

@@ -17,11 +17,11 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 class MyDrawer extends StatelessWidget {
   const MyDrawer({
-    Key? key,
+    super.key,
     required this.user,
     this.radius = 60.0,
     this.spouse,
-  }) : super(key: key);
+  });
 
   final User user;
   final double radius;

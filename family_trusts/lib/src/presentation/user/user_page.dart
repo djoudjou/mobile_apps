@@ -25,14 +25,14 @@ class UserPage extends StatefulWidget {
   final String imageTag;
 
   const UserPage({
-    Key? key,
+    super.key,
     required this.userToEdit,
     required this.imageTag,
     required this.connectedUser,
-  }) : super(key: key);
+  });
 
   @override
-  _UserPageState createState() => _UserPageState();
+  State<UserPage> createState() => _UserPageState();
 }
 
 class _UserPageState extends State<UserPage> {

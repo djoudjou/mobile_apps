@@ -4,7 +4,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
 import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
-import 'package:geoflutterfire/geoflutterfire.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:injectable/injectable.dart';
 
@@ -28,9 +27,6 @@ abstract class FirebaseInjectableModule {
 
   @lazySingleton
   FirebaseAnalytics get firebaseAnalytics => FirebaseAnalytics.instance;
-
-  @lazySingleton
-  Geoflutterfire get geoflutterfire => Geoflutterfire();
 
   @lazySingleton
   FirebaseMessaging get fire => FirebaseMessaging.instance;

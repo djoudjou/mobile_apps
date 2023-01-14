@@ -8,6 +8,7 @@ import 'package:familytrusts/src/helper/analytics_svc.dart';
 import 'package:familytrusts/src/helper/constants.dart';
 import 'package:familytrusts/src/helper/log_mixin.dart';
 import 'package:familytrusts/src/helper/snackbar_helper.dart';
+import 'package:familytrusts/src/presentation/core/loading_scaffold.dart';
 import 'package:familytrusts/src/presentation/core/my_button.dart';
 import 'package:familytrusts/src/presentation/core/my_text.dart';
 import 'package:familytrusts/src/presentation/core/separator.dart';
@@ -16,6 +17,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class SignInForm extends StatelessWidget with LogMixin {
+  const SignInForm({super.key});
+
   @override
   Widget build(BuildContext context) {
     return MultiBlocProvider(
@@ -58,6 +61,10 @@ class SignInForm extends StatelessWidget with LogMixin {
           );
         },
         builder: (context, state) {
+          if(state.isSubmitting) {
+            return const LoadingScaffold();
+          }
+
           return Padding(
             padding: const EdgeInsets.all(10.0),
             child: Form(
@@ -135,12 +142,12 @@ class SignInForm extends StatelessWidget with LogMixin {
                         ),
                         const MyVerticalSeparator(),
                         MyText(LocaleKeys.login_or.tr()),
-                        Container(
+                        SizedBox(
                           width: MediaQuery.of(context).size.width,
                           //color: Colors.blue,
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceAround,
-                            children: [
+                            children: const [
                               GoogleLoginButton(),
                               //const MyHorizontalSeparator(),
                               FacebookLoginButton(),
@@ -148,7 +155,7 @@ class SignInForm extends StatelessWidget with LogMixin {
                           ),
                         ),
                         const MyVerticalSeparator(),
-                        CreateAccountButton(),
+                        const CreateAccountButton(),
                       ],
                     ),
                   ),

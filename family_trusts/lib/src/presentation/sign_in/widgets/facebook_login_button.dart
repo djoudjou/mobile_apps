@@ -6,6 +6,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class FacebookLoginButton extends StatelessWidget {
+  const FacebookLoginButton({super.key});
+
   @override
   Widget build(BuildContext context) {
     return FacebookAuthButton(

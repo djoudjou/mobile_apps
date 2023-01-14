@@ -13,9 +13,9 @@ class SearchAddressForm extends StatelessWidget {
   final OnSelectAddressCallback onSelectAddressCallback;
 
   const SearchAddressForm({
-    Key? key,
+    super.key,
     required this.onSelectAddressCallback,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

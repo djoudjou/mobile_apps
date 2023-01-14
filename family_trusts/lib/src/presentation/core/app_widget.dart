@@ -2,6 +2,8 @@ import 'package:auto_route/auto_route.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:familytrusts/injection.dart';
 import 'package:familytrusts/src/application/auth/bloc.dart';
+import 'package:familytrusts/src/application/connection/connection_bloc.dart';
+import 'package:familytrusts/src/application/connection/connection_event.dart';
 import 'package:familytrusts/src/application/core/simple_navigator_observer.dart';
 import 'package:familytrusts/src/application/home/user/user_bloc.dart';
 import 'package:familytrusts/src/application/messages/bloc.dart';
@@ -24,6 +26,8 @@ class AppWidget extends StatelessWidget with LogMixin {
 
   final appRouter = router_gr.MyAppRouter(authGuard: AuthGuard());
 
+  AppWidget({super.key});
+
   @override
   Widget build(BuildContext context) {
     log(context.locale.toString());
@@ -36,7 +40,11 @@ class AppWidget extends StatelessWidget with LogMixin {
       locale: context.locale,
       key: _scaffoldKey,
       routerDelegate: appRouter.delegate(
-        initialRoutes: [const router_gr.SplashPageRoute()],
+        initialRoutes: [
+          router_gr.SplashPageRoute(
+            key: const ValueKey("SplashPage"),
+          )
+        ],
         navigatorObservers: () => [
           AutoRouteObserver(),
           FirebaseAnalyticsObserver(analytics: getIt<FirebaseAnalytics>()),
@@ -119,6 +127,10 @@ class AppWidget extends StatelessWidget with LogMixin {
 
     return MultiBlocProvider(
       providers: [
+        BlocProvider(
+          create: (context) => ConnectBloc(getIt<IErrorService>())
+            ..add(const ConnectEvent.init()),
+        ),
         BlocProvider(
           create: (context) => MessagesBloc(
             getIt<IMessagesRepository>(),

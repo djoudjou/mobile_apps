@@ -11,6 +11,7 @@ class MyText extends StatelessWidget {
 
   const MyText(
     this.data, {
+    super.key,
     this.alignment = TextAlign.center,
     this.fontSize,
     this.style,
@@ -33,7 +34,8 @@ class MyText extends StatelessWidget {
     if (fontSize != null) {
       themeData = themeData.copyWith(
         textTheme: themeData.textTheme.copyWith(
-          bodyText1: themeData.textTheme.bodyText1!.copyWith(fontSize: fontSize),
+          bodyText1:
+              themeData.textTheme.bodyText1!.copyWith(fontSize: fontSize),
         ),
       );
     }
@@ -49,7 +51,8 @@ class MyText extends StatelessWidget {
     if (fontWeight != null) {
       themeData = themeData.copyWith(
         textTheme: themeData.textTheme.copyWith(
-          bodyText1: themeData.textTheme.bodyText1!.copyWith(fontWeight: fontWeight),
+          bodyText1:
+              themeData.textTheme.bodyText1!.copyWith(fontWeight: fontWeight),
         ),
       );
     }

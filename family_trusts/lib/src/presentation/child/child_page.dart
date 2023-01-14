@@ -30,15 +30,15 @@ class ChildPage extends StatefulWidget {
   final User connectedUser;
 
   const ChildPage({
-    Key? key,
+    super.key,
     required this.isEditing,
     required this.child,
     required this.imageTag,
     required this.connectedUser,
-  }) : super(key: key);
+  });
 
   @override
-  _ChildPageState createState() => _ChildPageState();
+  State<ChildPage> createState() => _ChildPageState();
 }
 
 class _ChildPageState extends State<ChildPage> {

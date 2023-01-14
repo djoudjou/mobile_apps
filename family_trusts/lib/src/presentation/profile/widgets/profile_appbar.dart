@@ -13,7 +13,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 class ProfileAppBar extends SliverAppBar {
   ProfileAppBar(
-    TabBar? _tabBar, {
+    TabBar? tabBar, {super.key,
     required BuildContext context,
     required User currentUser,
     User? spouse,
@@ -24,7 +24,7 @@ class ProfileAppBar extends SliverAppBar {
           expandedHeight: 300,
           floating: true,
           forceElevated: innerBoxIsScrolled,
-          bottom: _tabBar,
+          bottom: tabBar,
           actions: <Widget>[
             IconButton(
               color: Colors.black,
@@ -43,7 +43,7 @@ class ProfileAppBar extends SliverAppBar {
             )
           ],
           flexibleSpace: FlexibleSpaceBar(
-            titlePadding: _tabBar != null
+            titlePadding: tabBar != null
                 ? const EdgeInsets.only(bottom: 75)
                 : const EdgeInsets.only(bottom: 20),
             title: MyText(currentUser.displayName),

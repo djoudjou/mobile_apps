@@ -1,7 +1,6 @@
 import 'dart:async';
 
 import 'package:dartz/dartz.dart';
-import 'package:dio/dio.dart';
 import 'package:familytrusts/src/domain/family/family.dart';
 import 'package:familytrusts/src/domain/join_proposal/i_join_proposal_repository.dart';
 import 'package:familytrusts/src/domain/join_proposal/join_proposal.dart';
@@ -9,6 +8,8 @@ import 'package:familytrusts/src/domain/join_proposal/join_proposal_failure.dart
 import 'package:familytrusts/src/domain/user/user.dart';
 import 'package:familytrusts/src/helper/log_mixin.dart';
 import 'package:familytrusts/src/infrastructure/http/api_service.dart';
+import 'package:familytrusts/src/infrastructure/http/api_service_http.dart';
+import 'package:familytrusts/src/infrastructure/http/http_failure.dart';
 import 'package:familytrusts/src/infrastructure/http/join_proposal/create_join_family_dto.dart';
 import 'package:familytrusts/src/infrastructure/http/join_proposal/join_proposal_dto.dart';
 import 'package:injectable/injectable.dart';
@@ -18,9 +19,10 @@ import 'package:injectable/injectable.dart';
 class ApiJoinProposalRepository
     with LogMixin
     implements IJoinProposalRepository {
+  final ApiServiceHttp _apiServiceHttp;
   final ApiService _apiService;
 
-  ApiJoinProposalRepository(this._apiService);
+  ApiJoinProposalRepository(this._apiService, this._apiServiceHttp);
 
   @override
   Future<Either<JoinProposalFailure, Unit>> cancelProposal(
@@ -45,11 +47,20 @@ class ApiJoinProposalRepository
     User connectedUser,
   ) async {
     try {
-      final List<JoinFamilyProposalDTO> joinFamilyProposals = await _apiService
-          .getJoinProposalRestClient()
-          .findArchivedByPersonId(connectedUser.id!);
+      final Either<HttpFailure, List<JoinFamilyProposalDTO>>
+          eitherJoinFamilyProposals = await _apiServiceHttp
+              .getJoinProposalRestClient()
+              .findArchivedByPersonId(connectedUser.id!);
 
-      return right(joinFamilyProposals.map((f) => f.toDomain()).toList());
+      return eitherJoinFamilyProposals.fold(
+          (httpFailure) => left(
+                httpFailure.maybeMap(
+                  insufficientPermission: (_) =>
+                      const JoinProposalFailure.insufficientPermission(),
+                  orElse: () => const JoinProposalFailure.serverError(),
+                ),
+              ),
+          (result) => right(result.map((f) => f.toDomain()).toList()));
     } catch (e) {
       log("error in findArchivedByUser method : $e");
       return left(const JoinProposalFailure.serverError());
@@ -57,20 +68,27 @@ class ApiJoinProposalRepository
   }
 
   @override
-  Future<Either<JoinProposalFailure, Option<JoinProposal>>> findPendingByUser(User connectedUser) async {
+  Future<Either<JoinProposalFailure, Option<JoinProposal>>> findPendingByUser(
+      User connectedUser) async {
     try {
-      final JoinFamilyProposalDTO joinFamilyProposal = await _apiService
-          .getJoinProposalRestClient()
-          .findPendingByPersonId(connectedUser.id!);
+      final Either<HttpFailure, Option<JoinFamilyProposalDTO>> result =
+          await _apiServiceHttp
+              .getJoinProposalRestClient()
+              .findPendingByPersonId(connectedUser.id!);
 
-      return right(some(joinFamilyProposal.toDomain()));
-    } catch (e) {
-      if(e is DioError && e.response?.statusCode == 404) {
-        return right(none());
-      } else {
-        log("error in findPendingByUser method : $e");
-        return left(const JoinProposalFailure.serverError());
-      }
+      return result.fold(
+          (httpFailure) => left(
+                httpFailure.maybeMap(
+                  insufficientPermission: (_) =>
+                      const JoinProposalFailure.insufficientPermission(),
+                  orElse: () => const JoinProposalFailure.serverError(),
+                ),
+              ),
+          (success) => success.fold(
+              () => right(none()), (a) => right(some(a.toDomain()))));
+    } on Exception catch (e) {
+      log("catchError in findPendingByUser method : $e");
+      return left(const JoinProposalFailure.serverError());
     }
   }
 
@@ -98,7 +116,8 @@ class ApiJoinProposalRepository
   }
 
   @override
-  Future<Either<JoinProposalFailure, Unit>> acceptProposal(User connectedUser, String joinProposalId) async {
+  Future<Either<JoinProposalFailure, Unit>> acceptProposal(
+      User connectedUser, String joinProposalId) async {
     try {
       await _apiService
           .getJoinProposalRestClient()
@@ -111,7 +130,8 @@ class ApiJoinProposalRepository
   }
 
   @override
-  Future<Either<JoinProposalFailure, Unit>> declineProposal(User connectedUser, String joinProposalId) async {
+  Future<Either<JoinProposalFailure, Unit>> declineProposal(
+      User connectedUser, String joinProposalId) async {
     try {
       await _apiService
           .getJoinProposalRestClient()
@@ -124,7 +144,8 @@ class ApiJoinProposalRepository
   }
 
   @override
-  Future<Either<JoinProposalFailure, List<JoinProposal>>> findPendingProposalsByFamily(Family family) async {
+  Future<Either<JoinProposalFailure, List<JoinProposal>>>
+      findPendingProposalsByFamily(Family family) async {
     try {
       final List<JoinFamilyProposalDTO> joinFamilyProposals = await _apiService
           .getJoinProposalRestClient()
@@ -136,6 +157,4 @@ class ApiJoinProposalRepository
       return left(const JoinProposalFailure.serverError());
     }
   }
-
-
 }

@@ -6,7 +6,7 @@ part 'children_lookup_failure.freezed.dart';
 @freezed
 class ChildrenLookupFailure with _$ChildrenLookupFailure {
   const factory ChildrenLookupFailure.insufficientPermission() = InsufficientPermission;
-  const factory ChildrenLookupFailure.serverError() = ServerError;
+  const factory ChildrenLookupFailure.serverError({required String message}) = ServerError;
   const factory ChildrenLookupFailure.noFamily() = NoFamily;
   const factory ChildrenLookupFailure.userNotConnected() = UserNotConnected;
   const factory ChildrenLookupFailure.unableToUpdate() = UnableToUpdate;

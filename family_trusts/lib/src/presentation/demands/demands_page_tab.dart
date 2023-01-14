@@ -19,8 +19,7 @@ class DemandsPageTab extends StatelessWidget {
   final User user;
   final User? spouse;
 
-  const DemandsPageTab({Key? key, required this.user, this.spouse})
-      : super(key: key);
+  const DemandsPageTab({super.key, required this.user, this.spouse});
 
   @override
   Widget build(BuildContext context) {
@@ -72,7 +71,7 @@ class DemandsPageTab extends StatelessWidget {
                       ),
                       Tab(
                         text: LocaleKeys.demands_tabs_passed_tab.tr(),
-                        icon: const Icon(FontAwesomeIcons.archive),
+                        icon: const Icon(FontAwesomeIcons.boxArchive),
                       )
                     ],
                   ),

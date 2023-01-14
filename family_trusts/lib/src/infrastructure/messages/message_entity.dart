@@ -1,3 +1,4 @@
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 
 part 'message_entity.freezed.dart';
@@ -10,10 +11,10 @@ abstract class MessageEntity implements _$MessageEntity {
     required String body,
   }) = _MessageEntity;
 
-  factory MessageEntity.fromData(Map<String, dynamic> data) {
+  factory MessageEntity.fromData(RemoteNotification? notification) {
     return MessageEntity(
-      title:data['notification']['title'] as String,
-      body:data['notification']['body'] as String,
+      title: notification!.title!,
+      body: notification.body!,
     );
   }
 }

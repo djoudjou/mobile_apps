@@ -18,7 +18,6 @@ class FirebasePictureRepository with FirebaseHelper {
     this._storageReference,
   );
 
-  @override
   Future<Either<PictureFailure, Option<String>>> saveChildPhoto({
     required String childId,
     String? pickedFilePath,
@@ -28,7 +27,6 @@ class FirebasePictureRepository with FirebaseHelper {
     return tryUpload(pickedFilePath, ref);
   }
 
-  @override
   Future<Either<PictureFailure, Option<String>>> saveLocationPhoto({
     required String familyId,
     required String locationId,
@@ -39,7 +37,6 @@ class FirebasePictureRepository with FirebaseHelper {
     return tryUpload(pickedFilePath, ref);
   }
 
-  @override
   Future<Either<PictureFailure, Option<String>>> saveUserPhoto({
     required String userId,
     String? pickedFilePath,

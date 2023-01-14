@@ -16,11 +16,11 @@ import 'package:quiver/strings.dart' as quiver;
 
 class ChildrenLookupWidget extends StatelessWidget {
   const ChildrenLookupWidget({
-    Key? key,
+    super.key,
     required this.cardWidth,
     required this.childrenLookup,
     required this.connectedUser,
-  }) : super(key: key);
+  });
 
   final double cardWidth;
   final ChildrenLookup childrenLookup;
@@ -42,7 +42,7 @@ class ChildrenLookupWidget extends StatelessWidget {
             ),
             const MyVerticalSeparator(),
             const MyVerticalSeparator(),
-            Container(
+            SizedBox(
               width: cardWidth,
               child: Column(
                 children: [
@@ -100,7 +100,7 @@ class ChildrenLookupWidget extends StatelessWidget {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Container(
+                      SizedBox(
                         width: cardWidth,
                         child: MyText(
                           childrenLookup.noteBody.getOrCrash(),
@@ -148,7 +148,7 @@ class ChildrenLookupWidget extends StatelessWidget {
       switch (childrenLookup.state!.getOrCrash()) {
         case MissionStateEnum.ACCEPTED:
           message = LocaleKeys.ask_childlookup_MissionState_accepted.tr();
-          badgeColor = Theme.of(context).accentColor;
+          badgeColor = Theme.of(context).colorScheme.secondary;
           break;
         case MissionStateEnum.CANCELED:
           badgeColor = Theme.of(context).primaryColorLight;
@@ -164,12 +164,12 @@ class ChildrenLookupWidget extends StatelessWidget {
           break;
 
         case MissionStateEnum.REJECTED:
-          badgeColor = Theme.of(context).accentColor;
+          badgeColor = Theme.of(context).colorScheme.secondary;
           message = LocaleKeys.ask_childlookup_MissionState_rejected.tr();
           break;
       }
 
-      return Container(
+      return SizedBox(
         width: double.infinity,
         child: Badge(
           shape: BadgeShape.square,
@@ -268,7 +268,7 @@ class ChildrenLookupWidget extends StatelessWidget {
                           Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              Container(
+                              SizedBox(
                                 width: cardWidth * .8,
                                 child: MyText(
                                   childrenLookup.noteBody.getOrCrash(),

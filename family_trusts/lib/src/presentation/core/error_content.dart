@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 class ErrorContent extends StatelessWidget {
   final double size;
 
-  const ErrorContent({Key? key, this.size = 40.0}) : super(key: key);
+  const ErrorContent({super.key, this.size = 40.0});
 
   @override
   Widget build(BuildContext context) {

@@ -15,8 +15,11 @@ class AppendTokenInterceptor extends Interceptor with LogMixin {
     RequestInterceptorHandler handler,
   ) async {
     if (!_exceptions.any(options.path.startsWith)) {
-      final token = await _authFacade.getToken();
-      options.headers['Authorization'] = "Bearer $token";
+      final result = await _authFacade.getToken();
+      result.fold(
+        (failure) => null,
+        (token) => options.headers['Authorization'] = "Bearer $token",
+      );
     }
 
     return super.onRequest(options, handler);
@@ -28,6 +31,7 @@ class AppendTokenInterceptor extends Interceptor with LogMixin {
     log("DATA: ${err.response?.data}");
     log("HEADERS: ${err.response?.headers}");
     log("STATUS: ${err.response?.statusCode}");
+
     return handler.next(err); // <--- THE TIP IS HERE
   }
 }

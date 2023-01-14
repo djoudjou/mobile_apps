@@ -19,10 +19,10 @@ class ProfileTrustedUsers extends StatelessWidget {
   static const _key = PageStorageKey<String>('trusted');
 
   const ProfileTrustedUsers({
-    Key? key,
+    super.key,
     required this.radius,
     required this.connectedUser,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -47,7 +47,7 @@ class ProfileTrustedUsers extends StatelessWidget {
                 const LoadingContent(),
               ],
             ),
-            trustedUsersNotLoaded: (trustedUsersNotLoaded) => Container(
+            trustedUsersNotLoaded: (trustedUsersNotLoaded) => ColoredBox(
               color: Colors.blue,
               child: MyText(LocaleKeys.profile_tabs_trusted_error.tr()),
             ),

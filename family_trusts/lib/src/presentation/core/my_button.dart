@@ -8,14 +8,13 @@ class MyButton extends StatelessWidget {
   final Color? textColor;
 
   const MyButton({
-    Key? key,
+    super.key,
     required String message,
     required VoidCallback onPressed,
     this.backgroundColor,
     this.textColor,
   })  : _onPressed = onPressed,
-        _message = message,
-        super(key: key);
+        _message = message;
 
   @override
   Widget build(BuildContext context) {
@@ -37,7 +36,8 @@ class MyButton extends StatelessWidget {
         onPressed: _onPressed,
         child: MyText(
           _message,
-          color: textColor ?? themeData.accentTextTheme.bodyText1!.color,
+          color: textColor ?? themeData.colorScheme.secondary,
+          //color: textColor ?? themeData.accentTextTheme.bodyText1!.color,
         ),
       ),
     );

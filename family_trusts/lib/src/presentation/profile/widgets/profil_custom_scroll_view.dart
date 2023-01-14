@@ -12,13 +12,13 @@ class ProfileCustomScrollView extends StatelessWidget {
 
   const ProfileCustomScrollView(
     this._scrollViewController, {
-    Key? key,
+    super.key,
     required this.user,
     required this.spouse,
     required this.body,
     required this.tabBar,
     required this.radius,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

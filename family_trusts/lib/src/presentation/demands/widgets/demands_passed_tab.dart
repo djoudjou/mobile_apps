@@ -10,14 +10,13 @@ class DemandsPassedTab extends StatelessWidget {
   final List<ChildrenLookup> childrenLookups;
   final User connectedUser;
 
-  const DemandsPassedTab({Key? key, required this.childrenLookups, required this.connectedUser})
-      : super(key: key);
+  const DemandsPassedTab({super.key, required this.childrenLookups, required this.connectedUser});
 
   @override
   Widget build(BuildContext context) {
     if (childrenLookups.isEmpty) {
       return Center(
-        child: Container(
+        child: SizedBox(
           width: MediaQuery.of(context).size.width,
           child: MyText(
             LocaleKeys.demands_tabs_empty.tr(),
@@ -55,12 +54,12 @@ class DemandsPassedTab extends StatelessWidget {
 
 class DemandDeleteBackground extends StatelessWidget {
   const DemandDeleteBackground({
-    Key? key,
-  }) : super(key: key);
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return ColoredBox(
       color: Colors.red,
       child: Padding(
         padding: const EdgeInsets.all(15),

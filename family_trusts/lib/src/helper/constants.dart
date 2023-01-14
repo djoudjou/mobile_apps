@@ -44,7 +44,7 @@ const int megabyte = 1024 * 1024;
 const defaultLocation = "";
 
 final ButtonStyle flatButtonStyle = TextButton.styleFrom(
-  primary: Colors.black87,
+  foregroundColor: Colors.black87,
   minimumSize: const Size(88, 36),
   padding: const EdgeInsets.symmetric(horizontal: 16.0),
   shape: const RoundedRectangleBorder(

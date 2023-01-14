@@ -15,8 +15,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 class SearchFamilyForm extends StatelessWidget {
   const SearchFamilyForm({
-    Key? key,
-  }) : super(key: key);
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {

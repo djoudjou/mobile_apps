@@ -4,7 +4,9 @@ import 'package:dartz/dartz.dart';
 import 'package:familytrusts/src/domain/auth/auth_failure.dart';
 import 'package:familytrusts/src/domain/auth/i_auth_facade.dart';
 import 'package:familytrusts/src/domain/auth/user_info.dart';
+import 'package:familytrusts/src/domain/error/i_error_service.dart';
 import 'package:familytrusts/src/domain/user/value_objects.dart';
+import 'package:familytrusts/src/helper/log_mixin.dart';
 import 'package:firebase_auth/firebase_auth.dart' as fire;
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/services.dart';
@@ -13,10 +15,12 @@ import 'package:google_sign_in/google_sign_in.dart';
 import 'package:injectable/injectable.dart';
 
 @LazySingleton(as: IAuthFacade)
-class FirebaseAuthFacade implements IAuthFacade {
+class FirebaseAuthFacade with LogMixin implements IAuthFacade {
   final fire.FirebaseAuth _firebaseAuth;
+  final IErrorService errorService;
   final GoogleSignIn _googleSignIn;
   final FacebookAuth _facebookAuth;
+
   //final _onConnectionStream = StreamController<Either<AuthFailure, String>>.broadcast();
 
   bool _loggedWithGoogle = false;
@@ -26,6 +30,7 @@ class FirebaseAuthFacade implements IAuthFacade {
     this._firebaseAuth,
     this._googleSignIn,
     this._facebookAuth,
+    this.errorService,
   );
 
   @override
@@ -34,7 +39,6 @@ class FirebaseAuthFacade implements IAuthFacade {
 
   @override
   Option<fire.User> getSignedInUser() => optionOf(_firebaseAuth.currentUser);
-
 
   @override
   Future<Either<AuthFailure, String>> registerWithEmailAndPassword({
@@ -56,13 +60,13 @@ class FirebaseAuthFacade implements IAuthFacade {
       } else {
         return left(const AuthFailure.serverError());
       }
-    } on fire.FirebaseAuthException catch(e) {
+    } on fire.FirebaseAuthException catch (e) {
       if (e.code == 'email-already-in-use') {
         return left(const AuthFailure.emailAlreadyInUse());
       } else {
         return left(const AuthFailure.serverError());
       }
-    } catch(e) {
+    } catch (e) {
       return left(const AuthFailure.serverError());
     }
   }
@@ -85,6 +89,10 @@ class FirebaseAuthFacade implements IAuthFacade {
 
       return right(userCredential.user!.uid);
     } on FirebaseException catch (e) {
+      errorService.logException(
+        "signInWithEmailAndPassword error ${e.message}",
+        message: e.message,
+      );
       if (e.code == 'wrong-password' || e.code == 'user-not-found') {
         return left(const AuthFailure.invalidEmailAndPasswordCombination());
       } else {
@@ -169,14 +177,13 @@ class FirebaseAuthFacade implements IAuthFacade {
 
   @override
   Future<void> signOut() async {
-
     await _firebaseAuth.signOut();
 
-    if(_loggedWithGoogle) {
+    if (_loggedWithGoogle) {
       await _googleSignIn.signOut();
     }
 
-    if(_loggedWithFacebook) {
+    if (_loggedWithFacebook) {
       await _facebookAuth.logOut();
     }
   }
@@ -230,13 +237,20 @@ class FirebaseAuthFacade implements IAuthFacade {
   }
 
   @override
-  Future<String> getToken() async {
-    final fire.User? user = _firebaseAuth.currentUser;
-    if (user != null) {
-      return user.getIdToken();
-    } else {
-      return "";
+  Future<Either<AuthFailure, String>> getToken() async {
+    try {
+      final fire.User? user = _firebaseAuth.currentUser;
+
+      if (user != null) {
+        final String token = await user.getIdToken();
+        return right(token);
+      } else {
+        log("error on getToken no user connected");
+        return left(const AuthFailure.serverError());
+      }
+    } catch (error) {
+      log("error on getToken", error: error);
+      return left(const AuthFailure.serverError());
     }
   }
-
 }

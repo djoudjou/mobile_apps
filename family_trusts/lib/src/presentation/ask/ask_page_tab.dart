@@ -14,8 +14,7 @@ class AskPageTab extends StatelessWidget {
   final User user;
   final User? spouse;
 
-  const AskPageTab({Key? key, required this.user, this.spouse})
-      : super(key: key);
+  const AskPageTab({super.key, required this.user, this.spouse});
 
   @override
   Widget build(BuildContext context) {
@@ -49,7 +48,7 @@ class AskPageTab extends StatelessWidget {
                         radius: 70,
                         imageTag: "CHILDREN_LOOKUP",
                       ),
-                      Container(
+                      SizedBox(
                         width: 100,
                         child: MyText(
                           LocaleKeys.ask_childlookup_title.tr(),
@@ -71,6 +70,7 @@ class AskPageTab extends StatelessWidget {
   void gotoChildrenLookup(BuildContext context) {
     AutoRouter.of(context).push(
       ChildrenLookupPageRoute(
+        key: const ValueKey("ChildrenLookupPage"),
         connectedUser: user,
         currentFamilyId: user.family?.id,
       ),

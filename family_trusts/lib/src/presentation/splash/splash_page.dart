@@ -6,6 +6,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 class SplashPage extends MyBasePage {
   final _scaffoldKey = GlobalKey<ScaffoldState>();
 
+  SplashPage({super.key});
+
   @override
   Widget myBuild(BuildContext context) {
     return BlocBuilder<UserBloc, UserState>(

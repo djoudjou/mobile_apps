@@ -16,16 +16,16 @@ class DemandsInProgressTab extends StatelessWidget {
   final User connectedUser;
 
   const DemandsInProgressTab({
-    Key? key,
+    super.key,
     required this.childrenLookups,
     required this.connectedUser,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
     if (childrenLookups.isEmpty) {
       return Center(
-        child: Container(
+        child: SizedBox(
           width: MediaQuery.of(context).size.width,
           child: MyText(
             LocaleKeys.demands_tabs_empty.tr(),
@@ -45,6 +45,7 @@ class DemandsInProgressTab extends StatelessWidget {
               AutoRouter.of(context)
                   .push(
                 ChildrenLookupDetailsPageRoute(
+                  key: const ValueKey("ChildrenLookupDetailsPage"),
                   connectedUser: connectedUser,
                   childrenLookup: childrenLookup,
                 ),
@@ -81,13 +82,13 @@ class DemandDeleteBackground extends StatelessWidget {
   final Direction direction;
 
   const DemandDeleteBackground({
-    Key? key,
+    super.key,
     required this.direction,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return ColoredBox(
       color: Colors.red,
       child: Padding(
         padding: const EdgeInsets.all(15),

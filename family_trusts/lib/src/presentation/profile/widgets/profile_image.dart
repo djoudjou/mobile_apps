@@ -18,7 +18,7 @@ class ProfileImage extends StatelessWidget {
   final bool editable;
   final _picker = ImagePicker();
 
-  ProfileImage({
+  ProfileImage({super.key,
     required this.imageTag,
     this.radius = 20.0,
     required this.image,
@@ -56,7 +56,7 @@ class ProfileImage extends StatelessWidget {
     showModalBottomSheet(
       context: context,
       builder: (BuildContext ctx) {
-        return Container(
+        return ColoredBox(
           color: Colors.transparent,
           child: Card(
             elevation: 5.0,
@@ -99,14 +99,14 @@ class ProfileImage extends StatelessWidget {
     );
   }
 
-  Future<void> takePicture(BuildContext context, ImageSource source) async {
+  Future<void> takePicture(BuildContext bc, ImageSource source) async {
     final XFile? image = await _picker.pickImage(
       source: source,
       maxHeight: 500.0,
       maxWidth: 500.0,
     );
     if (image != null && onUpdatePictureFilePathCallback != null) {
-      onUpdatePictureFilePathCallback!(context, image.path);
+      onUpdatePictureFilePathCallback!(bc, image.path);
     }
   }
 }

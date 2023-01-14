@@ -42,7 +42,7 @@ class ApiChildrenLookupRepository
       return right(unit);
     } catch (e) {
       log("error in cancel method : $e");
-      return left(const ChildrenLookupFailure.serverError());
+      return left(ChildrenLookupFailure.serverError(message: e.toString()));
     }
   }
 
@@ -59,7 +59,7 @@ class ApiChildrenLookupRepository
       return right(unit);
     } catch (e) {
       log("error in createChildrenLookup method : $e");
-      return left(const ChildrenLookupFailure.serverError());
+      return left(ChildrenLookupFailure.serverError(message: e.toString()));
     }
   }
 
@@ -79,7 +79,7 @@ class ApiChildrenLookupRepository
       return right(childLookupDetailsDTO.toDomain(familyDTO));
     } catch (e) {
       log("error in findChildrenLookupDetailsById method : $e");
-      return left(const ChildrenLookupFailure.serverError());
+      return left(ChildrenLookupFailure.serverError(message: e.toString()));
     }
   }
 
@@ -99,7 +99,7 @@ class ApiChildrenLookupRepository
       return right(childLookupDetailsDTO.toDomain(familyDTO).histories);
     } catch (e) {
       log("error in getChildrenLookupHistories method : $e");
-      return left(const ChildrenLookupFailure.serverError());
+      return left(ChildrenLookupFailure.serverError(message: e.toString()));
     }
   }
 
@@ -115,7 +115,7 @@ class ApiChildrenLookupRepository
       return right(childLookupDTOs.map((f) => f.toDomain(familyDTO)).toList());
     } catch (e) {
       log("error in getInProgressChildrenLookupsByFamilyId method : $e");
-      return left(const ChildrenLookupFailure.serverError());
+      return left(ChildrenLookupFailure.serverError(message: e.toString()));
     }
   }
 
@@ -131,7 +131,7 @@ class ApiChildrenLookupRepository
       return right(childLookupDTOs.map((f) => f.toDomain(familyDTO)).toList());
     } catch (e) {
       log("error in getPassedChildrenLookupsByFamilyId method : $e");
-      return left(const ChildrenLookupFailure.serverError());
+      return left(ChildrenLookupFailure.serverError(message: e.toString()));
     }
   }
 

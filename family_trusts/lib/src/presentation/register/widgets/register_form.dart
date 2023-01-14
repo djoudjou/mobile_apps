@@ -19,6 +19,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class RegisterForm extends StatelessWidget with LogMixin {
+  const RegisterForm({super.key});
+
   @override
   Widget build(BuildContext context) {
     return MultiBlocListener(
@@ -27,7 +29,9 @@ class RegisterForm extends StatelessWidget with LogMixin {
           listener: (userBlocContext, state) {
             if (state is UserLoadFailure) {
               //showErrorMessage(LocaleKeys.global_serverError.tr(),context,);
-              AutoRouter.of(userBlocContext).replace(const SignInPageRoute());
+              AutoRouter.of(userBlocContext).replace(SignInPageRoute(
+                key: const ValueKey("SignInPage"),
+              ));
             } else if (state is UserLoadSuccess) {
               final User user = state.user;
 
@@ -35,12 +39,14 @@ class RegisterForm extends StatelessWidget with LogMixin {
                 // navigation ver
                 AutoRouter.of(userBlocContext).replace(
                   HomePageWithoutFamilyRoute(
+                    key: const ValueKey("HomePageWithoutFamily"),
                     connectedUser: user,
                   ),
                 );
               } else {
                 AutoRouter.of(userBlocContext).replace(
                   HomePageRoute(
+                    key: const ValueKey("HomePage"),
                     currentTab: AppTab.ask,
                     connectedUserId: user.id!,
                   ),

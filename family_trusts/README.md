@@ -63,3 +63,7 @@ a.djoutsop@gmail.com:Support2424
 
 flutter build appbundle --no-shrink
 Java -jar bundletool-all-1.2.0.jar build-apks --bundle=outputs/bundle/release/app-release.aab --output=app.apks --ks=../../familytrusts.jks --ks-key-alias=familytrusts_key --ks-pass=pass:Support2424 --mode=universal
+
+clear pg connexion
+heroku login
+heroku pg:killall

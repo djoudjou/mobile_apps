@@ -21,9 +21,9 @@ class MissingFamilyContent extends StatelessWidget with LogMixin {
   final User user;
 
   const MissingFamilyContent({
-    Key? key,
+    super.key,
     required this.user,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -68,12 +68,12 @@ class MissingFamilyContent extends StatelessWidget with LogMixin {
   }
 
   Widget buildCreateFamily(BuildContext context) {
-    return Container(
+    return SizedBox(
       width: double.infinity,
       child: ElevatedButton(
         style: ElevatedButton.styleFrom(
-          onPrimary: Colors.blueAccent,
-          primary: Colors.blueAccent,
+          foregroundColor: Colors.blueAccent,
+          backgroundColor: Colors.blueAccent,
           minimumSize: const Size(88, 36),
           padding: const EdgeInsets.symmetric(horizontal: 16),
           shape: const RoundedRectangleBorder(
@@ -88,6 +88,7 @@ class MissingFamilyContent extends StatelessWidget with LogMixin {
               AutoRouter.of(context)
                   .push(
                 FamilyPageRoute(
+                  key: const ValueKey("FamilyPage"),
                   familyToEdit: Family(name: FirstName('')),
                   currentUser: user,
                 ),
@@ -112,12 +113,12 @@ class MissingFamilyContent extends StatelessWidget with LogMixin {
   }
 
   Widget buidConnectToFamily(BuildContext context) {
-    return Container(
+    return SizedBox(
       width: double.infinity,
       child: ElevatedButton(
         style: ElevatedButton.styleFrom(
-          onPrimary: Colors.blueAccent,
-          primary: Colors.blueAccent,
+          foregroundColor: Colors.blueAccent,
+          backgroundColor: Colors.blueAccent,
           minimumSize: const Size(88, 36),
           padding: const EdgeInsets.symmetric(horizontal: 16),
           shape: const RoundedRectangleBorder(
@@ -126,7 +127,11 @@ class MissingFamilyContent extends StatelessWidget with LogMixin {
         ),
         onPressed: () async {
           AutoRouter.of(context)
-              .push(SearchFamilyPageRoute())
+              .push(
+            SearchFamilyPageRoute(
+              key: const ValueKey("SearchFamilyPage"),
+            ),
+          )
               .then((selected) async {
             if (selected != null) {
               final Family selectedFamily = selected as Family;

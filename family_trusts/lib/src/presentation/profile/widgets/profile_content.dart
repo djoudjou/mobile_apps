@@ -32,13 +32,13 @@ class ProfileContent extends StatefulWidget with LogMixin {
   final User? spouse;
 
   ProfileContent({
-    Key? key,
+    super.key,
     required this.user,
     this.spouse,
-  }) : super(key: key);
+  });
 
   @override
-  _ProfileContentState createState() => _ProfileContentState();
+  State<ProfileContent> createState() => _ProfileContentState();
 }
 
 class _ProfileContentState extends State<ProfileContent>
@@ -214,6 +214,7 @@ void gotoEditUserScreen({
 }) {
   AutoRouter.of(context).push(
     UserPageRoute(
+      key: const ValueKey("UserPage"),
       imageTag: "TAG_USER_${user.id}",
       connectedUser: currentUser,
       userToEdit: user,
@@ -230,6 +231,7 @@ void gotoEditChild({
   AutoRouter.of(context)
       .push(
     ChildPageRoute(
+      key: const ValueKey("ChildPage"),
       child: child,
       imageTag: "TAG_CHILD_${child.id}",
       isEditing: editing,
@@ -252,15 +254,20 @@ void gotoEditLocation(
 ) {
   AutoRouter.of(context)
       .push(
-    LocationPageRoute(locationToEdit: location, currentUser: currentUser),
+    LocationPageRoute(
+        key: const ValueKey("LocationPage"),
+        locationToEdit: location,
+        currentUser: currentUser),
   )
-      .then((value) {
-    if (value != null) {
-      context
-          .read<LocationsBloc>()
-          .add(LocationsEvent.loadLocations(currentUser.family!.id));
-    }
-  });
+      .then(
+    (value) {
+      if (value != null) {
+        context
+            .read<LocationsBloc>()
+            .add(LocationsEvent.loadLocations(currentUser.family!.id));
+      }
+    },
+  );
 }
 
 void gotoEditTrustUserScreen({
@@ -270,18 +277,23 @@ void gotoEditTrustUserScreen({
   required String imageTag,
 }) {
   AutoRouter.of(context)
-      .push(TrustUserPageRoute(
-    trustedUserToEdit: trustedUser,
-    connectedUser: currentUser,
-    imageTag: imageTag,
-  ))
-      .then((value) {
-    if (value != null) {
-      context.read<TrustedUserWatcherBloc>().add(
-            TrustedUserWatcherEvent.loadTrustedUsers(
-              currentUser.family!.id,
-            ),
-          );
-    }
-  });
+      .push(
+    TrustUserPageRoute(
+      key: const ValueKey("TrustUserPage"),
+      trustedUserToEdit: trustedUser,
+      connectedUser: currentUser,
+      imageTag: imageTag,
+    ),
+  )
+      .then(
+    (value) {
+      if (value != null) {
+        context.read<TrustedUserWatcherBloc>().add(
+              TrustedUserWatcherEvent.loadTrustedUsers(
+                currentUser.family!.id,
+              ),
+            );
+      }
+    },
+  );
 }

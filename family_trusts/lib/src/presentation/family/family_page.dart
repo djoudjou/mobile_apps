@@ -23,10 +23,10 @@ class FamilyPage extends MyBasePage {
   final Family familyToEdit;
 
   FamilyPage({
-    Key? key,
+    super.key,
     required this.familyToEdit,
     required this.currentUser,
-  }) : super(key: key);
+  });
 
   @override
   Widget myBuild(BuildContext context) {

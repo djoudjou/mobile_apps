@@ -20,10 +20,10 @@ class ProfileChildren extends StatelessWidget {
   static const _key = PageStorageKey<String>('children');
 
   const ProfileChildren({
-    Key? key,
+    super.key,
     required this.radius,
     required this.connectedUser,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -51,7 +51,7 @@ class ProfileChildren extends StatelessWidget {
                 const LoadingContent(),
               ],
             ),
-            childrenNotLoaded: (childrenNotLoaded) => Container(
+            childrenNotLoaded: (childrenNotLoaded) => ColoredBox(
               color: Colors.blue,
               child: MyText(LocaleKeys.profile_tabs_children_error.tr()),
             ),
@@ -74,7 +74,7 @@ class ProfileChildren extends StatelessWidget {
                       itemBuilder: (BuildContext context, int index) {
                         final Child child = eitherChildren[index];
 
-                        return Container(
+                        return SizedBox(
                           //color: Colors.green,
                           width: MediaQuery.of(context).size.width,
                           child: Row(

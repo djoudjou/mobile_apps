@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:dartz/dartz.dart';
+import 'package:dio/dio.dart';
 import 'package:familytrusts/src/domain/search_user/search_user_failure.dart';
 import 'package:familytrusts/src/domain/user/i_user_repository.dart';
 import 'package:familytrusts/src/domain/user/user.dart';
@@ -59,19 +60,48 @@ class ApiUserRepository with LogMixin implements IUserRepository {
   @override
   Future<Either<UserFailure, User>> getUser(String id) async {
     try {
-      final PersonDTO result =
-          await _apiService.getPersonRestClient().findPersonById(id);
+      final PersonDTO result = await _apiService
+          .getPersonRestClient()
+          .findPersonById(id)
+          .catchError((Object obj) {
+        log("$obj");
+        // non-200 error goes here.
+        switch (obj.runtimeType) {
+          case DioError:
+            // Here's the sample to get the failed response error code and message
+            final res = (obj as DioError).response;
+            log("Got error : ${res?.statusCode} -> ${res?.statusMessage}");
+            break;
+          default:
+            break;
+        }
+      });
 
       final List<FamilyDTO> families = await _apiService
           .getFamilyRestClient()
-          .findMatchingFamiliesByMemberIdQuery(id);
+          .findMatchingFamiliesByMemberIdQuery(id)
+          .catchError((Object obj) {
+        log("$obj"); // non-200 error goes here.
+        switch (obj.runtimeType) {
+          case DioError:
+            // Here's the sample to get the failed response error code and message
+            final res = (obj as DioError).response;
+            log("Got error : ${res?.statusCode} -> ${res?.statusMessage}");
+            break;
+          default:
+            break;
+        }
+      });
 
       final User user =
           result.toDomain(families.isNotEmpty ? families.first : null);
 
       return right(user);
-    } catch (e) {
+    } on DioError catch (e) {
       log("error in getUser method : $e");
+      return left(const UserFailure.unexpected());
+    } catch (e2) {
+      log("error in getUser method : $e2");
       return left(const UserFailure.unexpected());
     }
   }

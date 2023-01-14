@@ -4,7 +4,6 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:familytrusts/generated/locale_keys.g.dart';
 import 'package:familytrusts/src/application/children_lookup/bloc.dart';
 import 'package:familytrusts/src/domain/children_lookup/children_lookup.dart';
-import 'package:familytrusts/src/domain/children_lookup/value_objects.dart';
 import 'package:familytrusts/src/domain/core/value_objects.dart';
 import 'package:familytrusts/src/domain/home/app_tab.dart';
 import 'package:familytrusts/src/domain/user/user.dart';
@@ -26,11 +25,10 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 class ChildrenLookupForm extends StatefulWidget {
   final User connectedUser;
 
-  const ChildrenLookupForm({Key? key, required this.connectedUser})
-      : super(key: key);
+  const ChildrenLookupForm({super.key, required this.connectedUser});
 
   @override
-  _ChildrenLookupFormState createState() => _ChildrenLookupFormState();
+  State<ChildrenLookupForm> createState() => _ChildrenLookupFormState();
 }
 
 class _ChildrenLookupFormState extends State<ChildrenLookupForm> with LogMixin {
@@ -85,6 +83,7 @@ class _ChildrenLookupFormState extends State<ChildrenLookupForm> with LogMixin {
                   AutoRouter.of(context).popUntilRoot();
                   AutoRouter.of(context).replace(
                     HomePageRoute(
+                      key: const ValueKey("HomePage"),
                       currentTab: AppTab.myDemands,
                       connectedUserId: widget.connectedUser.id!,
                     ),
@@ -374,7 +373,7 @@ class _ChildrenLookupFormState extends State<ChildrenLookupForm> with LogMixin {
   Center buildResume(BuildContext context, ChildrenLookupState state) {
     final cardWidth = MediaQuery.of(context).size.width * .7;
     return Center(
-      child: Container(
+      child: SizedBox(
         width: MediaQuery.of(context).size.width * .9,
         child: ChildrenLookupWidget(
           connectedUser: widget.connectedUser,

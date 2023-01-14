@@ -26,10 +26,10 @@ class LocationPage extends StatelessWidget with LogMixin {
   final Location locationToEdit;
 
   const LocationPage({
-    Key? key,
+    super.key,
     required this.locationToEdit,
     required this.currentUser,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -40,7 +40,8 @@ class LocationPage extends StatelessWidget with LogMixin {
             getIt<IFamilyRepository>(),
             getIt<AnalyticsSvc>(),
           )..add(
-              LocationFormEvent.init(currentUser.family!.id, locationToEdit)),
+              LocationFormEvent.init(currentUser.family!.id, locationToEdit),
+            ),
         ),
       ],
       child: BlocConsumer<LocationFormBloc, LocationFormState>(

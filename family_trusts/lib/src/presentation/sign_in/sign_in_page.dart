@@ -6,6 +6,8 @@ import 'package:familytrusts/src/presentation/sign_in/widgets/sign_in.dart';
 import 'package:flutter/material.dart';
 
 class SignInPage extends MyBasePage {
+  SignInPage({super.key});
+
   @override
   Widget myBuild(BuildContext context) {
     return Scaffold(
@@ -15,7 +17,7 @@ class SignInPage extends MyBasePage {
         pageTitle: LocaleKeys.login_title.tr(),
         context: context,
       ),
-      body: SignInForm(),
+      body: const SignInForm(),
     );
   }
 

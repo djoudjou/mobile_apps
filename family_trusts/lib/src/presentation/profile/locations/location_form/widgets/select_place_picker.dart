@@ -31,13 +31,13 @@ class SelectPlacePickerInput extends StatefulWidget {
   final OnSelectPlaceCallback onSelectPlaceCallback;
 
   const SelectPlacePickerInput({
-    Key? key,
+    super.key,
     required this.currentPosition,
     required this.onSelectPlaceCallback,
-  }) : super(key: key);
+  });
 
   @override
-  _SelectPlacePickerInputState createState() => _SelectPlacePickerInputState();
+  State<SelectPlacePickerInput> createState() => _SelectPlacePickerInputState();
 }
 
 class _SelectPlacePickerInputState extends State<SelectPlacePickerInput>
@@ -53,6 +53,7 @@ class _SelectPlacePickerInputState extends State<SelectPlacePickerInput>
       onPressed: () {
         context.pushRoute(
           SelectPlacePickerPageRoute(
+            key: const ValueKey("SelectPlacePickerPage"),
             currentPosition: widget.currentPosition,
             onSelectPlaceCallback: widget.onSelectPlaceCallback,
           ),
@@ -67,10 +68,10 @@ class SelectPlacePickerPage extends StatelessWidget with LogMixin {
   final OnSelectPlaceCallback? onSelectPlaceCallback;
 
   const SelectPlacePickerPage({
-    Key? key,
+    super.key,
     required this.currentPosition,
     this.onSelectPlaceCallback,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -115,9 +116,9 @@ class SelectPlacePickerPage extends StatelessWidget with LogMixin {
   }
 
   Widget _buildLoadingIndicator() {
-    return Container(
+    return const SizedBox(
       height: 48,
-      child: const Center(
+      child: Center(
         child: SizedBox(
           width: 24,
           height: 24,
@@ -141,14 +142,14 @@ class SelectPlacePickerPage extends StatelessWidget with LogMixin {
           ),
           const SizedBox(height: 10),
           if (result.photos != null && result.photos!.isNotEmpty) ...[
-            Container(
+            SizedBox(
               width: MediaQuery.of(context).size.width * 0.8,
               height: 150,
               //color: Colors.red,
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Container(
+                  SizedBox(
                     width: 40,
                     //color: Colors.blue,
                     child: IconButton(
@@ -156,7 +157,7 @@ class SelectPlacePickerPage extends StatelessWidget with LogMixin {
                       icon: const Icon(Icons.skip_previous),
                     ),
                   ),
-                  Container(
+                  SizedBox(
                     //color: Colors.grey,
                     width: MediaQuery.of(context).size.width * 0.8 - 80,
                     child: CarouselSlider.builder(
@@ -191,7 +192,7 @@ class SelectPlacePickerPage extends StatelessWidget with LogMixin {
                       ),
                     ),
                   ),
-                  Container(
+                  SizedBox(
                     //color: Colors.green,
                     width: 40,
                     child: IconButton(
@@ -205,7 +206,7 @@ class SelectPlacePickerPage extends StatelessWidget with LogMixin {
           ],
           ElevatedButton(
             style: TextButton.styleFrom(
-              primary: Colors.black87,
+              foregroundColor: Colors.black87,
               minimumSize: const Size(88, 36),
               padding:
                   const EdgeInsets.symmetric(horizontal: 15.0, vertical: 10),
