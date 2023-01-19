@@ -50,7 +50,7 @@ workflows:
       - name: Build AAB with Flutter
         script: |
           cd $FCI_BUILD_DIR/family_trusts
-          flutter build apk --split-per-abi
+          flutter build apk
     artifacts:
       - family_trusts/build/**/outputs/apk/**/*.apk
       - family_trusts/build/**/outputs/bundle/**/*.aab
@@ -73,7 +73,7 @@ workflows:
           # Add one or more groups that you wish to distribute your Android application to.
           # You can create groups in the Firebase console
           groups:
-            - android-testers
+            - solo
           artifact_type: 'apk'
       email:
         recipients:
