@@ -50,7 +50,7 @@ workflows:
       - name: Build AAB with Flutter
         script: |
           cd $FCI_BUILD_DIR/family_trusts
-          flutter build apk –split-per-abi
+          flutter build apk --split-per-abi
     artifacts:
       - family_trusts/build/**/outputs/apk/**/*.apk
       - family_trusts/build/**/outputs/bundle/**/*.aab
