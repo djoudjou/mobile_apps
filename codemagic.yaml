@@ -32,7 +32,7 @@ workflows:
           echo "flutter.sdk=$HOME/programs/flutter" > "$CM_BUILD_DIR/family_trusts/android/local.properties"
           echo "flutter.versionName=1.0.0" >> "$CM_BUILD_DIR/family_trusts/android/local.properties"
           echo "flutter.buildMode=release" >> "$CM_BUILD_DIR/family_trusts/android/local.properties"
-          echo "flutter.versionCode=1" >> "$CM_BUILD_DIR/family_trusts/android/local.properties"
+          echo "flutter.versionCode=2" >> "$CM_BUILD_DIR/family_trusts/android/local.properties"
           echo "flutter.minSdkVersion=33" >> "$CM_BUILD_DIR/family_trusts/android/local.properties"
       - name: Get Flutter packages
         script: |
