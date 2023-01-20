@@ -7,9 +7,9 @@ workflows:
     max_build_duration: 60
     environment:
       android_signing:
-        - keystore_reference
+        - familytrusts
       groups:
-        - google_play # <-- (Includes GCLOUD_SERVICE_ACCOUNT_CREDENTIALS)
+        - perso
       vars:
         PACKAGE_NAME: "fr.djoutsop.familytrusts"
         GOOGLE_PLAY_TRACK: "alpha"
@@ -29,23 +29,28 @@ workflows:
     scripts:
       - name: Set up local.properties
         script: |
-          echo "flutter.sdk=$HOME/programs/flutter" > "$CM_BUILD_DIR/android/local.properties"
+          echo "flutter.sdk=$HOME/programs/flutter" > "$CM_BUILD_DIR/family_trusts/android/local.properties"
+          echo "flutter.versionName=1.0.0" >> "$CM_BUILD_DIR/family_trusts/android/local.properties"
+          echo "flutter.buildMode=release" >> "$CM_BUILD_DIR/family_trusts/android/local.properties"
+          echo "flutter.versionCode=1" >> "$CM_BUILD_DIR/family_trusts/android/local.properties"
+          echo "flutter.minSdkVersion=33" >> "$CM_BUILD_DIR/family_trusts/android/local.properties"
       - name: Get Flutter packages
         script: |
+          cd $FCI_BUILD_DIR/family_trusts
           flutter packages pub get
-      - name: Flutter analyze
+      - name: Generate freezed package
         script: |
-          flutter analyze
-      - name: Flutter unit tests
+          cd $FCI_BUILD_DIR/family_trusts
+          flutter pub get && flutter pub run build_runner build --delete-conflicting-outputs
+      - name: Generate localization
         script: |
-          flutter test
-        ignore_failure: true
+          cd $FCI_BUILD_DIR/family_trusts
+          flutter pub run easy_localization:generate -f keys -o locale_keys.g.dart
+          flutter pub run easy_localization:generate
       - name: Build AAB with Flutter
         script: |
-          BUILD_NUMBER=$(($(google-play get-latest-build-number --package-name "$PACKAGE_NAME" --tracks="$GOOGLE_PLAY_TRACK") + 1))      
-          flutter build appbundle --release \
-            --build-name=1.0.$BUILD_NUMBER \
-            --build-number=$BUILD_NUMBER
+          cd $FCI_BUILD_DIR/family_trusts
+          flutter build apk
     artifacts:
       - family_trusts/build/**/outputs/apk/**/*.apk
       - family_trusts/build/**/outputs/bundle/**/*.aab
@@ -68,8 +73,8 @@ workflows:
           # Add one or more groups that you wish to distribute your Android application to.
           # You can create groups in the Firebase console
           groups:
-            - android-testers
-          artifact_type: 'aab'
+            - solo
+          artifact_type: 'apk'
       email:
         recipients:
           - a.djoutsop@gmail.com
