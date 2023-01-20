@@ -1,5 +1,12 @@
 Features de la version :
  * fix login issue
+todo :
+ * Ajouter interraction dans l'écran "tableau de bord"
+ * externaliser la gestions des notifs dans google fonction (exemple lors de la C/U/D d'un lieu, enfant, personne de confiance
+ * debug des notifications
+
+
+#Avant
  * evol : maj des dépendances
  * evol : migration bouton -> elevator (correction de la couleur du bouton supprimé)
  * fix bug sur la gestion des onglets de l'écran profil
@@ -16,14 +23,6 @@ Features de la version :
  * fix "création demande" ko (regression due to package update)
  * nouvelle écran "tableau de bord" pour voir à un seul endroit l'ensemble des demandes sur les enfants de la famille
     * v1 / juste affichage
-
-todo :
- * Ajouter interraction dans l'écran "tableau de bord"
- * externaliser la gestions des notifs dans google fonction (exemple lors de la C/U/D d'un lieu, enfant, personne de confiance
- * debug des notifications
-
-
-#Avant
 Features de la version :
  * Gestion des notifications dans la barre de menu
  * Choix d'un logo
