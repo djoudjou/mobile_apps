@@ -2,6 +2,8 @@ import 'dart:async';
 
 import 'package:bloc/bloc.dart';
 import 'package:bloc_concurrency/bloc_concurrency.dart';
+import 'package:dartz/dartz.dart';
+import 'package:familytrusts/injection.dart';
 import 'package:familytrusts/src/application/auth/authentication_event.dart';
 import 'package:familytrusts/src/application/auth/authentication_state.dart';
 import 'package:familytrusts/src/domain/auth/i_auth_facade.dart';
@@ -35,6 +37,14 @@ class AuthenticationBloc
     Emitter<AuthenticationState> emit,
   ) async {
     await _authFacade.signOut();
-    emit(const AuthenticationState.unauthenticated());
+
+    final Option<String> optionUser = getIt<IAuthFacade>().getSignedInUserId();
+
+    emit(
+      optionUser.fold(
+        () => const AuthenticationState.unauthenticated(),
+        (userId) => AuthenticationState.authenticated(userId),
+      ),
+    );
   }
 }

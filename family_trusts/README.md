@@ -67,3 +67,7 @@ Java -jar bundletool-all-1.2.0.jar build-apks --bundle=outputs/bundle/release/ap
 clear pg connexion
 heroku login
 heroku pg:killall
+
+
+** publication
+https://app-privacy-policy-generator.firebaseapp.com/

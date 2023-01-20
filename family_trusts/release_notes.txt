@@ -1,4 +1,5 @@
 Features de la version :
+ * fix login issue
  * evol : maj des dépendances
  * evol : migration bouton -> elevator (correction de la couleur du bouton supprimé)
  * fix bug sur la gestion des onglets de l'écran profil
@@ -12,7 +13,6 @@ Features de la version :
       * affichage du boutton "retirer en tant que personne de confiance" si personne de confiance et non conjoint
  * refacto écran notification (1 bloc par onglet)
  * bug pour ajout d'enfant
- * fix login issue
  * fix "création demande" ko (regression due to package update)
  * nouvelle écran "tableau de bord" pour voir à un seul endroit l'ensemble des demandes sur les enfants de la famille
     * v1 / juste affichage
